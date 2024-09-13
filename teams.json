@@ -1,0 +1,219 @@
+[
+    {
+      "name": "Real Madrid",
+      "pot": 1,
+      "country": "ES",
+      "logo": "default.png"
+    },
+    {
+      "name": "Manchester City",
+      "pot": 1,
+      "country": "GB",
+      "logo": "default.png"
+    },
+    {
+      "name": "Bayern München",
+      "pot": 1,
+      "country": "DE",
+      "logo": "default.png"
+    },
+    {
+      "name": "Paris Saint-Germain",
+      "pot": 1,
+      "country": "FR",
+      "logo": "default.png"
+    },
+    {
+      "name": "Liverpool",
+      "pot": 1,
+      "country": "GB",
+      "logo": "default.png"
+    },
+    {
+      "name": "Inter",
+      "pot": 1,
+      "country": "IT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Dortmund",
+      "pot": 1,
+      "country": "DE",
+      "logo": "default.png"
+    },
+    {
+      "name": "Leipzig",
+      "pot": 1,
+      "country": "DE",
+      "logo": "default.png"
+    },
+    {
+      "name": "Barcelona",
+      "pot": 1,
+      "country": "ES",
+      "logo": "default.png"
+    },
+    {
+      "name": "Leverkusen",
+      "pot": 2,
+      "country": "DE",
+      "logo": "default.png"
+    },
+    {
+      "name": "Atlético de Madrid",
+      "pot": 2,
+      "country": "ES",
+      "logo": "default.png"
+    },
+    {
+      "name": "Atalanta",
+      "pot": 2,
+      "country": "IT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Juventus",
+      "pot": 2,
+      "country": "IT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Benfica",
+      "pot": 2,
+      "country": "PT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Arsenal",
+      "pot": 2,
+      "country": "GB",
+      "logo": "default.png"
+    },
+    {
+      "name": "Club Brugge",
+      "pot": 2,
+      "country": "BE",
+      "logo": "default.png"
+    },
+    {
+      "name": "Shakhtar Donetsk",
+      "pot": 2,
+      "country": "UA",
+      "logo": "default.png"
+    },
+    {
+      "name": "AC Milan",
+      "pot": 2,
+      "country": "IT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Feyenoord",
+      "pot": 3,
+      "country": "NL",
+      "logo": "default.png"
+    },
+    {
+      "name": "Sporting CP",
+      "pot": 3,
+      "country": "PT",
+      "logo": "default.png"
+    },
+    {
+      "name": "PSV Eindhoven",
+      "pot": 3,
+      "country": "NL",
+      "logo": "default.png"
+    },
+    {
+      "name": "GNK Dinamo",
+      "pot": 3,
+      "country": "HR",
+      "logo": "default.png"
+    },
+    {
+      "name": "Salzburg",
+      "pot": 3,
+      "country": "AT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Lille",
+      "pot": 3,
+      "country": "FR",
+      "logo": "default.png"
+    },
+    {
+      "name": "Crvena Zvezda",
+      "pot": 3,
+      "country": "RS",
+      "logo": "default.png"
+    },
+    {
+      "name": "Young Boys",
+      "pot": 3,
+      "country": "CH",
+      "logo": "default.png"
+    },
+    {
+      "name": "Celtic",
+      "pot": 3,
+      "country": "GB",
+      "logo": "default.png"
+    },
+    {
+      "name": "Slovan Bratislava",
+      "pot": 4,
+      "country": "SK",
+      "logo": "default.png"
+    },
+    {
+      "name": "Monaco",
+      "pot": 4,
+      "country": "FR",
+      "logo": "default.png"
+    },
+    {
+      "name": "Sparta Praha",
+      "pot": 4,
+      "country": "CZ",
+      "logo": "default.png"
+    },
+    {
+      "name": "Aston Villa",
+      "pot": 4,
+      "country": "GB",
+      "logo": "default.png"
+    },
+    {
+      "name": "Bologna",
+      "pot": 4,
+      "country": "IT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Girona",
+      "pot": 4,
+      "country": "ES",
+      "logo": "default.png"
+    },
+    {
+      "name": "Stuttgart",
+      "pot": 4,
+      "country": "DE",
+      "logo": "default.png"
+    },
+    {
+      "name": "Sturm Graz",
+      "pot": 4,
+      "country": "AT",
+      "logo": "default.png"
+    },
+    {
+      "name": "Brest",
+      "pot": 4,
+      "country": "FR",
+      "logo": "default.png"
+    }
+  ]
+  

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Champions League Draft</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Link to the external JavaScript file -->
+    <script src="scripts.js" defer></script>
+</head>
+<body>
+    <div class="title-container">
+        <img src="img/championsleague.png" alt="Champions League" class="title-image">
+        <h1>Champions League Betting Game</h1>
+        <img src="img/avinor.PNG" alt="Company Logo" class="title-image">
+    </div>
+
+    <div class="rules">
+        <p><strong>Rules:</strong></p>
+        <ul>
+            <li>Each team is assigned to a Pot based on their ranking (1 to 4).</li>
+            <li>You can select up to 5 teams for your draft.</li>
+            <li>Scoring System:</li>
+            <ul>
+                <li>Match Win: 3 points</li>
+                <li>Match Draw: 1 point</li>
+                <li>Progression Bonuses:</li>
+                <ul>
+                    <li>Qualify Directly to Round of 16 (Top 8): 5 bonus points</li>
+                    <li>Qualify via Playoffs: 3 bonus points</li>
+                    <li>Advancing to Quarter-finals: 4 bonus points</li>
+                    <li>Advancing to Semi-finals: 6 bonus points</li>
+                    <li>Advancing to Final: 8 bonus points</li>
+                    <li>Winning the Final: 10 bonus points</li>
+                </ul>
+            </ul>
+            <li>Multipliers are applied based on team pots:</li>
+            <ul>
+                <li>Pot 1: x1 multiplier</li>
+                <li>Pot 2: x1.5 multiplier</li>
+                <li>Pot 3: x2 multiplier</li>
+                <li>Pot 4: x2.5 multiplier</li>
+            </ul>
+        </ul>
+    </div>
+
+    <div class="card-container" id="team-cards"></div>
+
+    <div class="header">
+        <p id="teams-indicator">0/5 Teams Selected</p>
+        <div class="selected-logos" id="selected-logos"></div>
+        <div class="input-container">
+            <input type="text" id="player-name" placeholder="Player name">
+            <button id="submit-button" disabled>Submit</button>
+        </div>
+    </div>
+</body>
+</html>
