@@ -63,13 +63,13 @@
       "name": "Atlético de Madrid",
       "pot": 2,
       "country": "ES",
-      "logo": "default.png"
+      "logo": "athletico.png"
     },
     {
       "name": "Atalanta",
       "pot": 2,
       "country": "IT",
-      "logo": "default.png"
+      "logo": "atalanta.png"
     },
     {
       "name": "Juventus",
@@ -87,7 +87,7 @@
       "name": "Arsenal",
       "pot": 2,
       "country": "GB",
-      "logo": "default.png"
+      "logo": "arsenal.png"
     },
     {
       "name": "Club Brugge",
@@ -183,7 +183,7 @@
       "name": "Aston Villa",
       "pot": 4,
       "country": "GB",
-      "logo": "default.png"
+      "logo": "astonvilla.png"
     },
     {
       "name": "Bologna",
