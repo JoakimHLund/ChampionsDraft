@@ -1,219 +1,218 @@
 [
-    {
-      "name": "Real Madrid",
-      "pot": 1,
-      "country": "ES",
-      "logo": "default.png"
-    },
-    {
-      "name": "Manchester City",
-      "pot": 1,
-      "country": "GB",
-      "logo": "default.png"
-    },
-    {
-      "name": "Bayern München",
-      "pot": 1,
-      "country": "DE",
-      "logo": "default.png"
-    },
-    {
-      "name": "Paris Saint-Germain",
-      "pot": 1,
-      "country": "FR",
-      "logo": "default.png"
-    },
-    {
-      "name": "Liverpool",
-      "pot": 1,
-      "country": "GB",
-      "logo": "default.png"
-    },
-    {
-      "name": "Inter",
-      "pot": 1,
-      "country": "IT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Dortmund",
-      "pot": 1,
-      "country": "DE",
-      "logo": "default.png"
-    },
-    {
-      "name": "Leipzig",
-      "pot": 1,
-      "country": "DE",
-      "logo": "default.png"
-    },
-    {
-      "name": "Barcelona",
-      "pot": 1,
-      "country": "ES",
-      "logo": "default.png"
-    },
-    {
-      "name": "Leverkusen",
-      "pot": 2,
-      "country": "DE",
-      "logo": "default.png"
-    },
-    {
-      "name": "Atlético de Madrid",
-      "pot": 2,
-      "country": "ES",
-      "logo": "athletico.png"
-    },
-    {
-      "name": "Atalanta",
-      "pot": 2,
-      "country": "IT",
-      "logo": "atalanta.png"
-    },
-    {
-      "name": "Juventus",
-      "pot": 2,
-      "country": "IT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Benfica",
-      "pot": 2,
-      "country": "PT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Arsenal",
-      "pot": 2,
-      "country": "GB",
-      "logo": "arsenal.png"
-    },
-    {
-      "name": "Club Brugge",
-      "pot": 2,
-      "country": "BE",
-      "logo": "default.png"
-    },
-    {
-      "name": "Shakhtar Donetsk",
-      "pot": 2,
-      "country": "UA",
-      "logo": "default.png"
-    },
-    {
-      "name": "AC Milan",
-      "pot": 2,
-      "country": "IT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Feyenoord",
-      "pot": 3,
-      "country": "NL",
-      "logo": "default.png"
-    },
-    {
-      "name": "Sporting CP",
-      "pot": 3,
-      "country": "PT",
-      "logo": "default.png"
-    },
-    {
-      "name": "PSV Eindhoven",
-      "pot": 3,
-      "country": "NL",
-      "logo": "default.png"
-    },
-    {
-      "name": "GNK Dinamo",
-      "pot": 3,
-      "country": "HR",
-      "logo": "default.png"
-    },
-    {
-      "name": "Salzburg",
-      "pot": 3,
-      "country": "AT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Lille",
-      "pot": 3,
-      "country": "FR",
-      "logo": "default.png"
-    },
-    {
-      "name": "Crvena Zvezda",
-      "pot": 3,
-      "country": "RS",
-      "logo": "default.png"
-    },
-    {
-      "name": "Young Boys",
-      "pot": 3,
-      "country": "CH",
-      "logo": "default.png"
-    },
-    {
-      "name": "Celtic",
-      "pot": 3,
-      "country": "GB",
-      "logo": "default.png"
-    },
-    {
-      "name": "Slovan Bratislava",
-      "pot": 4,
-      "country": "SK",
-      "logo": "default.png"
-    },
-    {
-      "name": "Monaco",
-      "pot": 4,
-      "country": "FR",
-      "logo": "default.png"
-    },
-    {
-      "name": "Sparta Praha",
-      "pot": 4,
-      "country": "CZ",
-      "logo": "default.png"
-    },
-    {
-      "name": "Aston Villa",
-      "pot": 4,
-      "country": "GB",
-      "logo": "astonvilla.png"
-    },
-    {
-      "name": "Bologna",
-      "pot": 4,
-      "country": "IT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Girona",
-      "pot": 4,
-      "country": "ES",
-      "logo": "default.png"
-    },
-    {
-      "name": "Stuttgart",
-      "pot": 4,
-      "country": "DE",
-      "logo": "default.png"
-    },
-    {
-      "name": "Sturm Graz",
-      "pot": 4,
-      "country": "AT",
-      "logo": "default.png"
-    },
-    {
-      "name": "Brest",
-      "pot": 4,
-      "country": "FR",
-      "logo": "default.png"
-    }
-  ]
-  
+  {
+    "name": "Real Madrid",
+    "pot": 1,
+    "country": "ES",
+    "logo": "realmadrid.png"
+  },
+  {
+    "name": "Manchester City",
+    "pot": 1,
+    "country": "GB",
+    "logo": "mancity.png"
+  },
+  {
+    "name": "Bayern München",
+    "pot": 1,
+    "country": "DE",
+    "logo": "bayernmunchen.png"
+  },
+  {
+    "name": "Paris Saint-Germain",
+    "pot": 1,
+    "country": "FR",
+    "logo": "psg.png"
+  },
+  {
+    "name": "Liverpool",
+    "pot": 1,
+    "country": "GB",
+    "logo": "liverpool.png"
+  },
+  {
+    "name": "Inter",
+    "pot": 1,
+    "country": "IT",
+    "logo": "intermilan.png"
+  },
+  {
+    "name": "Dortmund",
+    "pot": 1,
+    "country": "DE",
+    "logo": "dortmund.png"
+  },
+  {
+    "name": "Leipzig",
+    "pot": 1,
+    "country": "DE",
+    "logo": "leipzig.png"
+  },
+  {
+    "name": "Barcelona",
+    "pot": 1,
+    "country": "ES",
+    "logo": "barcelona.png"
+  },
+  {
+    "name": "Leverkusen",
+    "pot": 2,
+    "country": "DE",
+    "logo": "leverkusen.png"
+  },
+  {
+    "name": "Atlético de Madrid",
+    "pot": 2,
+    "country": "ES",
+    "logo": "athletico.png"
+  },
+  {
+    "name": "Atalanta",
+    "pot": 2,
+    "country": "IT",
+    "logo": "atalanta.png"
+  },
+  {
+    "name": "Juventus",
+    "pot": 2,
+    "country": "IT",
+    "logo": "juventus.png"
+  },
+  {
+    "name": "Benfica",
+    "pot": 2,
+    "country": "PT",
+    "logo": "benfica.png"
+  },
+  {
+    "name": "Arsenal",
+    "pot": 2,
+    "country": "GB",
+    "logo": "arsenal.png"
+  },
+  {
+    "name": "Club Brugge",
+    "pot": 2,
+    "country": "BE",
+    "logo": "brugge.png"
+  },
+  {
+    "name": "Shakhtar Donetsk",
+    "pot": 2,
+    "country": "UA",
+    "logo": "shaktardonetsk.png"
+  },
+  {
+    "name": "AC Milan",
+    "pot": 2,
+    "country": "IT",
+    "logo": "acmilan.png"
+  },
+  {
+    "name": "Feyenoord",
+    "pot": 3,
+    "country": "NL",
+    "logo": "feyenoord.png"
+  },
+  {
+    "name": "Sporting CP",
+    "pot": 3,
+    "country": "PT",
+    "logo": "sporting.png"
+  },
+  {
+    "name": "PSV Eindhoven",
+    "pot": 3,
+    "country": "NL",
+    "logo": "psv.png"
+  },
+  {
+    "name": "GNK Dinamo",
+    "pot": 3,
+    "country": "HR",
+    "logo": "dinamo.png"
+  },
+  {
+    "name": "Salzburg",
+    "pot": 3,
+    "country": "AT",
+    "logo": "salzburg.png"
+  },
+  {
+    "name": "Lille",
+    "pot": 3,
+    "country": "FR",
+    "logo": "lille.png"
+  },
+  {
+    "name": "Crvena Zvezda",
+    "pot": 3,
+    "country": "RS",
+    "logo": "crvena.png"
+  },
+  {
+    "name": "Young Boys",
+    "pot": 3,
+    "country": "CH",
+    "logo": "youngboys.png"
+  },
+  {
+    "name": "Celtic",
+    "pot": 3,
+    "country": "GB",
+    "logo": "celtic.png"
+  },
+  {
+    "name": "Slovan Bratislava",
+    "pot": 4,
+    "country": "SK",
+    "logo": "bratislava.png"
+  },
+  {
+    "name": "Monaco",
+    "pot": 4,
+    "country": "FR",
+    "logo": "monaco.png"
+  },
+  {
+    "name": "Sparta Praha",
+    "pot": 4,
+    "country": "CZ",
+    "logo": "spartapraha.png"
+  },
+  {
+    "name": "Aston Villa",
+    "pot": 4,
+    "country": "GB",
+    "logo": "astonvilla.png"
+  },
+  {
+    "name": "Bologna",
+    "pot": 4,
+    "country": "IT",
+    "logo": "bologna.png"
+  },
+  {
+    "name": "Girona",
+    "pot": 4,
+    "country": "ES",
+    "logo": "girona.png"
+  },
+  {
+    "name": "Stuttgart",
+    "pot": 4,
+    "country": "DE",
+    "logo": "stuttgart.png"
+  },
+  {
+    "name": "Sturm Graz",
+    "pot": 4,
+    "country": "AT",
+    "logo": "sturmgraz.png"
+  },
+  {
+    "name": "Brest",
+    "pot": 4,
+    "country": "FR",
+    "logo": "stade.png"
+  }
+]
