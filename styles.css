@@ -11,64 +11,112 @@ h1, h2 {
     padding: 0;
 }
 
-/* Header Styles */
+/* Adjusted Header Styles */
 .header {
     width: 100%;
+    height: 25vh; /* Set height to 25% of the viewport */
     background-color: #4a148c; /* Rich purple */
-    padding: 15px 20px;
+    box-sizing: border-box;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
     position: fixed;
     bottom: 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-between; /* Spread elements horizontally */
     align-items: center;
+    padding: 0 30px; /* Add padding for better alignment */
     color: #fff;
-    font-size: 1.2em;
+    font-size: 1.5em; /* Larger text for clarity */
     z-index: 1000;
 }
 
+/* Style for the teams indicator text */
 .header p {
     margin: 0;
-    font-size: 1.4em;
+    font-size: 1.6em; /* Bigger and clearer text */
     font-weight: bold;
 }
-
-.header .selected-logos {
+.indicators{
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+}
+/* Style for the container holding the selected logos */
+.selected-logos {
+    display: flex;
+    flex-direction: column; /* Stack logos vertically */
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100%; /* Make the logos fill the header vertically */
+    margin-left: 20px;
+    width: 40%;
 }
 
-.header .selected-logos img {
-    width: 30px;
-    height: auto;
+/* Style for the group of logos */
+.step-logo-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2); /* Softer background */
+}
+
+/* Placeholder text for empty selections */
+.step-logo-group p.empty {
+    color: #fff; /* Color for the "No teams selected" message */
+    font-size: 0.9em;
     margin-left: 10px;
-    vertical-align: middle;
-    border: solid #4a148c 1px;
-    border-radius: 4px;
 }
 
-.header .input-container {
+.step-logo-group p {
+    margin: 0 10px 0 0;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1em;
+}
+
+.small-logo {
+    width: 50px; /* Bigger logo */
+    height: auto;
+    margin-right: 10px;
+}
+
+/* Adjusted input field and button styles */
+.input-container {
     display: flex;
+    justify-content: flex-end; /* Align input and button to the right */
     align-items: center;
+    width: 20%;
 }
 
-.header .input-container input[type="text"] {
+.input-container input[type="text"] {
     padding: 10px;
-    margin-right: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     font-size: 1.2em;
-}
-
-.header button {
-    padding: 10px 15px;
-    background-color: #ddd;
+    width: 200px;
+    margin-right: 20px;
     border: none;
     border-radius: 4px;
+}
+
+.input-container input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+.input-container button {
+    padding: 10px 20px;
+    background-color: #ff6f00;
+    color: #fff;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.input-container button:disabled {
+    background-color: #ddd;
     color: #aaa;
     cursor: not-allowed;
-    margin-right: 1em;
 }
 
 /* Title Container Styles */
@@ -204,44 +252,25 @@ h1, h2 {
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
-        align-items: flex-start;
-        padding: 10px 20px;
+        height: auto;
+        padding: 10px;
     }
 
-    .header p {
+    .header p, .input-container {
         width: 100%;
-        text-align: center;
-        margin-bottom: 10px;
     }
 
-    .header .selected-logos {
-        width: 100%;
+    .input-container {
         justify-content: center;
-        margin-bottom: 10px;
     }
 
-    .header .input-container {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
+    .selected-logos {
+        flex-direction: row; /* Stack logos horizontally on smaller screens */
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
-    .header input[type="text"] {
-        margin: 10px 0;
-        width: 100%;
-    }
-
-    .header button {
-        width: 100%;
-        font-size: 1.2em;
-    }
-
-    .pot-container {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 15px;
-    }
-
-    .card img.logo {
-        width: 60px;
+    .small-logo {
+        width: 40px; /* Reduce logo size on small screens */
     }
 }

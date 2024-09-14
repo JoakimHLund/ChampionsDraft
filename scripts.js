@@ -1,5 +1,11 @@
-let maxTeams = 5;
-let selectedTeamsCount = 0;
+const totalSteps = 3;
+let currentStep = 1;
+const maxTeamsPerStep = 5;
+let selectedTeams = {
+    1: [],
+    2: [],
+    3: []
+};
 
 // Pot multipliers
 const potMultipliers = {
@@ -9,29 +15,56 @@ const potMultipliers = {
     4: 2.5
 };
 
-function updateTeamsIndicator() {
-    document.getElementById('teams-indicator').textContent = `${selectedTeamsCount}/${maxTeams} Teams Selected`;
+function updateStepIndicator() {
+    document.getElementById('step-indicator').textContent = `Step ${currentStep}/${totalSteps}`;
 }
+
+function updateTeamsIndicator() {
+    document.getElementById('teams-indicator').textContent = `${selectedTeams[currentStep].length}/${maxTeamsPerStep} Teams Selected`;
+}
+
 
 function updateSelectedLogos() {
     const selectedLogosContainer = document.getElementById('selected-logos');
     selectedLogosContainer.innerHTML = ''; // Clear existing logos
-    const selectedLogos = document.querySelectorAll('.card.selected img.logo');
-    selectedLogos.forEach(logo => {
-        const smallLogo = document.createElement('img');
-        smallLogo.src = logo.src;
-        smallLogo.className = 'small-logo';
-        selectedLogosContainer.appendChild(smallLogo);
-    });
+
+    for (let step = 1; step <= totalSteps; step++) {
+        const stepContainer = document.createElement('div');
+        stepContainer.className = 'step-logo-group';
+
+        // Always show the step header, even if no teams are selected
+        const stepHeader = document.createElement('p');
+        stepHeader.textContent = `Selection ${step}`;
+        stepContainer.appendChild(stepHeader);
+
+        if (selectedTeams[step].length > 0) {
+            selectedTeams[step].forEach(team => {
+                const smallLogo = document.createElement('img');
+                smallLogo.src = `img/logos/${team.logo}`;
+                smallLogo.className = 'small-logo';
+                stepContainer.appendChild(smallLogo);
+            });
+        } else {
+            // If no teams are selected, add a placeholder or empty state
+            const emptyState = document.createElement('p');
+            emptyState.textContent = 'No teams selected';
+            emptyState.style.color = '#fff';
+            stepContainer.appendChild(emptyState);
+        }
+
+        selectedLogosContainer.appendChild(stepContainer);
+    }
+
     toggleSubmitButton();
 }
 
+
 function toggleSubmitButton() {
     const playerName = document.getElementById('player-name').value.trim();
-    const selectedTeams = document.querySelectorAll('.card.selected').length;
+    const selectedTeamsInCurrentStep = selectedTeams[currentStep].length;
     const submitButton = document.getElementById('submit-button');
 
-    if (playerName !== '' && selectedTeams === maxTeams) {
+    if (playerName !== '' && selectedTeamsInCurrentStep === maxTeamsPerStep) {
         submitButton.disabled = false;
         submitButton.style.backgroundColor = '#ff6f00';
         submitButton.style.color = '#fff';
@@ -47,18 +80,35 @@ function toggleSubmitButton() {
 document.getElementById('player-name').addEventListener('input', toggleSubmitButton);
 
 document.getElementById('submit-button').addEventListener('click', () => {
-    const playerName = document.getElementById('player-name').value.trim();
-    const selectedTeams = Array.from(document.querySelectorAll('.card.selected')).map(card => card.querySelector('h2').textContent);
-    const dateTime = new Date().toISOString();
-    const playerData = {
-        playerName: playerName,
-        selectedTeams: selectedTeams,
-        dateTime: dateTime
-    };
+    if (currentStep < totalSteps) {
+        // Move to next step
+        currentStep++;
+        // Remove 'selected' class from all cards
+        document.querySelectorAll('.card.selected').forEach(card => card.classList.remove('selected'));
+        // Change button text if needed
+        if (currentStep === totalSteps) {
+            document.getElementById('submit-button').textContent = 'Submit';
+        }
+        // Load teams for the next step
+        loadTeamsForCurrentStep();
+        // Update teams indicator and selected logos
+        updateStepIndicator();
+        updateTeamsIndicator();
+        updateSelectedLogos();
+        toggleSubmitButton();
+    } else {
+        // Final submission
+        const playerName = document.getElementById('player-name').value.trim();
+        const dateTime = new Date().toISOString();
+        const playerData = {
+            playerName: playerName,
+            selectedTeams: selectedTeams,
+            dateTime: dateTime
+        };
 
-    console.log("Player Data:", playerData);
-    // Here you can handle the form submission, e.g., send data to a server or display a confirmation message.
-    alert('Your selection has been submitted!');
+        console.log("Player Data:", playerData);
+        alert('Your selection has been submitted!');
+    }
 });
 
 function createCard(team) {
@@ -66,6 +116,7 @@ function createCard(team) {
     const card = document.createElement('div');
     card.className = 'card';
     card.dataset.pot = pot;
+    card.dataset.teamName = name;
 
     card.innerHTML = `
         <img src="img/logos/${logo}" class="logo">
@@ -78,11 +129,12 @@ function createCard(team) {
     card.addEventListener('click', () => {
         if (card.classList.contains('selected')) {
             card.classList.remove('selected');
-            selectedTeamsCount--;
-        } else if (selectedTeamsCount < maxTeams) {
+            selectedTeams[currentStep] = selectedTeams[currentStep].filter(t => t.name !== team.name);
+        } else if (selectedTeams[currentStep].length < maxTeamsPerStep) {
             card.classList.add('selected');
-            selectedTeamsCount++;
+            selectedTeams[currentStep].push(team);
         }
+        updateStepIndicator();
         updateTeamsIndicator();
         updateSelectedLogos();
         toggleSubmitButton();
@@ -93,6 +145,7 @@ function createCard(team) {
 
 function initializeTeamCards(teams) {
     const cardContainer = document.getElementById('team-cards');
+    cardContainer.innerHTML = ''; // Clear existing cards
 
     // Group teams by pot
     const teamsByPot = teams.reduce((acc, team) => {
@@ -125,13 +178,27 @@ function initializeTeamCards(teams) {
     });
 
     updateTeamsIndicator();
+    updateStepIndicator();
     toggleSubmitButton();
 }
 
-// Fetch teams from teams.json
-fetch('teams.json')
-    .then(response => response.json())
-    .then(data => {
-        initializeTeamCards(data);
-    })
-    .catch(error => console.error('Error fetching teams:', error));
+function loadTeamsForCurrentStep() {
+    let jsonFile;
+    if (currentStep === 1) {
+        jsonFile = 'teams.json';
+    } else if (currentStep === 2) {
+        jsonFile = 'europa.json';
+    } else if (currentStep === 3) {
+        jsonFile = 'conference.json';
+    }
+
+    fetch(jsonFile)
+        .then(response => response.json())
+        .then(data => {
+            initializeTeamCards(data);
+        })
+        .catch(error => console.error('Error fetching teams:', error));
+}
+
+// Load initial teams
+loadTeamsForCurrentStep();
