@@ -40,6 +40,7 @@ h1, h2 {
     flex-direction: column;
     height: 100%;
     justify-content: space-around;
+    max-width: 20vw;
 }
 /* Style for the container holding the selected logos */
 .selected-logos {
@@ -47,7 +48,6 @@ h1, h2 {
     flex-direction: column; /* Stack logos vertically */
     justify-content: flex-start;
     align-items: flex-start;
-    height: 100%; /* Make the logos fill the header vertically */
     margin-left: 20px;
     width: 40%;
 }
@@ -56,10 +56,14 @@ h1, h2 {
 .step-logo-group {
     display: flex;
     align-items: center;
+    justify-content:center ;
     margin-bottom: 10px;
     padding: 5px;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.2); /* Softer background */
+    background-color: rgba(255, 255, 255, 0.411); /* Softer background */
+    height: 50%;
+    width: 50%;
+    min-height: 35px;
 }
 
 /* Placeholder text for empty selections */
@@ -88,6 +92,8 @@ h1, h2 {
     justify-content: flex-end; /* Align input and button to the right */
     align-items: center;
     width: 20%;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .input-container input[type="text"] {
@@ -186,6 +192,7 @@ h1, h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 25vh;
 }
 
 .pot-container {
@@ -248,29 +255,154 @@ h1, h2 {
     max-width: 100%;
 }
 
+.championsselection{
+    border: 2px solid blue;
+    margin:2px;
+    padding: 2px;
+    width: 100%;
+    background-color: #6594C0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.championsselection p{
+    font-size: 1em;
+    
+}
+
+.europaselection{
+    border: 2px solid #F99500;
+    margin:2px;
+    padding: 2px;
+    width: 100%;
+    background-color: #c0a065;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.europaselection p{
+    font-size: 1em;
+    
+}
+
+.conferenceselection{
+    border: 2px solid green;
+    margin:2px;
+    padding: 2px;
+    width: 100%;
+   background-color: #74c065;
+   display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.conferenceselection p{
+    font-size: 1em;
+    
+}
+
+.step-indicator{
+    max-width: 20vw;
+}
+.teams-indicator{
+    max-width: 20vw;
+}
 /* Responsive Styles */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .header {
-        flex-direction: column;
-        height: auto;
+        flex-direction: column; /* Stack the elements vertically */
+        height: auto; /* Adjust height to content */
         padding: 10px;
     }
 
-    .header p, .input-container {
+    .indicators {
         width: 100%;
-    }
-
-    .input-container {
-        justify-content: center;
+        display: flex;
+        flex-direction: row; /* Display step and team indicators side by side */
+        justify-content: space-between;
+        margin-bottom: 10px;
+        max-width: 100vw;
+        
     }
 
     .selected-logos {
         flex-direction: row; /* Stack logos horizontally on smaller screens */
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .step-logo-group {
+        width: auto; /* Allow logos to resize naturally */
+        height: auto;
+        margin: 5px;
     }
 
     .small-logo {
         width: 40px; /* Reduce logo size on small screens */
     }
+
+    .input-container {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+        flex-direction: column;
+        gap:5px;
+    }
+
+    .input-container input[type="text"], .input-container button {
+        width: auto; /* Ensure inputs and buttons adapt to screen size */
+        font-size: 1em;
+    }
+
+    .header p, .input-container input[type="text"]::placeholder {
+        font-size: 1.2em; /* Reduce font size for mobile */
+    }
+    .championsselection{
+        margin-bottom: 2px;
+    }
 }
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    .indicators {
+        flex-direction: column; /* Stack indicators vertically */
+        align-items: center;
+        margin-bottom: 10px;
+        max-width: 20vw;
+    }
+
+    .selected-logos {
+        flex-direction: row;
+        overflow-x: scroll; /* Allow horizontal scrolling for logos */
+        width: 100%;
+    }
+
+    .small-logo {
+        width: 30px; /* Further reduce logo size for smaller screens */
+    }
+    .input-container {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+        flex-direction: column;
+    }
+
+    .input-container input[type="text"], .input-container button {
+        width: 100%;
+        font-size: 1em;
+    }
+    .step-indicator{
+        max-width: 20vw;
+    }
+    .teams-indicator{
+        max-width: 20vw;
+    }
+}
+

@@ -12,7 +12,9 @@ const potMultipliers = {
     1: 1,
     2: 1.5,
     3: 2,
-    4: 2.5
+    4: 2.5,
+    5: 3,
+    6: 3.5
 };
 
 function updateStepIndicator() {
@@ -25,17 +27,9 @@ function updateTeamsIndicator() {
 
 
 function updateSelectedLogos() {
-    const selectedLogosContainer = document.getElementById('selected-logos');
-    selectedLogosContainer.innerHTML = ''; // Clear existing logos
-
     for (let step = 1; step <= totalSteps; step++) {
-        const stepContainer = document.createElement('div');
-        stepContainer.className = 'step-logo-group';
-
-        // Always show the step header, even if no teams are selected
-        const stepHeader = document.createElement('p');
-        stepHeader.textContent = `Selection ${step}`;
-        stepContainer.appendChild(stepHeader);
+        const stepContainer = document.getElementById(`selection-step-${step}`);
+        stepContainer.innerHTML = ``; // Keep the step header
 
         if (selectedTeams[step].length > 0) {
             selectedTeams[step].forEach(team => {
@@ -45,14 +39,12 @@ function updateSelectedLogos() {
                 stepContainer.appendChild(smallLogo);
             });
         } else {
-            // If no teams are selected, add a placeholder or empty state
+            // If no teams are selected, display a placeholder
             const emptyState = document.createElement('p');
             emptyState.textContent = 'No teams selected';
             emptyState.style.color = '#fff';
             stepContainer.appendChild(emptyState);
         }
-
-        selectedLogosContainer.appendChild(stepContainer);
     }
 
     toggleSubmitButton();
