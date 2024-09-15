@@ -1,3 +1,18 @@
+const firebaseConfig = {
+    apiKey: "AIzaSyC36DXqx9qnp1TjMGNX32Nm1p9uGXp62ZA",
+    authDomain: "championsdraft-403d0.firebaseapp.com",
+    projectId: "championsdraft-403d0",
+    storageBucket: "championsdraft-403d0.appspot.com",
+    messagingSenderId: "766027841647",
+    appId: "1:766027841647:web:99ef32b25549054b218d9a"
+  };
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+
+
 const totalSteps = 3;
 let currentStep = 1;
 const maxTeamsPerStep = 5;
@@ -91,15 +106,28 @@ document.getElementById('submit-button').addEventListener('click', () => {
     } else {
         // Final submission
         const playerName = document.getElementById('player-name').value.trim();
-        const dateTime = new Date().toISOString();
+        const department = document.getElementById('department').value.trim();
         const playerData = {
-            playerName: playerName,
-            selectedTeams: selectedTeams,
-            dateTime: dateTime
+            Name: playerName,
+            Department: department,
+            championspoints: 0,
+            europapoints: 0,
+            conferencepoints: 0,
+            totalpoints: 0,
+            selectedChampions: selectedTeams[1],
+            selectedEuropa: selectedTeams[2],
+            selectedConference: selectedTeams[3]
         };
 
-        console.log("Player Data:", playerData);
-        alert('Your selection has been submitted!');
+        // Store player data in Firebase
+        db.collection("players").add(playerData)
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            alert('Your selection has been submitted!');
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
     }
 });
 
