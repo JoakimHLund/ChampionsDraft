@@ -1,0 +1,76 @@
+/* leaderboard.css */
+
+body {
+    background-color: #1a1a1a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.title-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.leaderboard-container {
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+thead th {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap; /* Prevent header text from wrapping */
+}
+
+tbody td {
+    background-color: #2a2a2a;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    vertical-align: top;
+}
+
+tbody tr:nth-child(even) td {
+    background-color: #242424;
+}
+
+tbody tr:hover td {
+    background-color: #383838;
+}
+
+.logos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.logos-container img.small-logo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+@media screen and (max-width: 600px) {
+    /* Hide selection columns on mobile */
+    th:nth-child(3),
+    th:nth-child(4),
+    th:nth-child(5),
+    td:nth-child(3),
+    td:nth-child(4),
+    td:nth-child(5) {
+        display: none;
+    }
+
+    /* Adjust other columns if needed */
+    table {
+        font-size: 12px;
+    }
+}

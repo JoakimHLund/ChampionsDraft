@@ -1,12 +1,42 @@
-<!-- leaderboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Leaderboard</title>
+    <!-- Link to the general styles.css if it's needed -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Link to the leaderboard-specific CSS file -->
+    <link rel="stylesheet" href="leaderboard.css">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-app-compat.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-compat.js"></script>
+    <!-- Link to the external JavaScript file -->
+    <script src="leaderboard.js" defer></script>
 </head>
 <body>
-    <h1>Leaderboard Coming Soon!</h1>
+    <div class="title-container">
+        <h1>Leaderboard</h1>
+    </div>
+    <div class="leaderboard-container">
+        <table id="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Champions Selection</th>
+                    <th>Europa Selection</th>
+                    <th>Conference Selection</th>
+                    <th>Champions Points</th>
+                    <th>Europa Points</th>
+                    <th>Conference Points</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- Player rows will be populated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
