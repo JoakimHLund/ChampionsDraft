@@ -14,7 +14,7 @@ h1, h2 {
 /* Adjusted Header Styles */
 .header {
     width: 100%;
-    height: 25vh; /* Set height to 25% of the viewport */
+    min-height: 25vh; /* Set height to 25% of the viewport */
     background-color: #4a148c; /* Rich purple */
     box-sizing: border-box;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);

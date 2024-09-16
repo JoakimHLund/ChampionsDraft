@@ -123,7 +123,7 @@ document.getElementById('submit-button').addEventListener('click', () => {
         db.collection("players").add(playerData)
         .then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
-            alert('Your selection has been submitted!');
+            window.location.href = 'confirmation.html';
         })
         .catch((error) => {
             console.error("Error adding document: ", error);

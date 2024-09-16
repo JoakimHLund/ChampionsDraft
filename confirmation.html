@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Confirmation</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file if you have one -->
+    <style>
+        /* Inline CSS for simplicity; you can move this to your styles.css */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a1a1a;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+        }
+        .confirmation-container {
+            text-align: center;
+        }
+        .confirmation-container h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .confirmation-container button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #ff6f00;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .confirmation-container button:hover {
+            background-color: #e65c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <h1>You are now registered, Good Luck!</h1>
+        <button onclick="window.location.href='leaderboard.html'">Go to Leaderboard</button>
+    </div>
+</body>
+</html>
