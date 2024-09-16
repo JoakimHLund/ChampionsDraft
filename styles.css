@@ -197,7 +197,7 @@ h1, h2 {
 
 .pot-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     gap: 20px;
     width: 90%;
     max-width: 1200px;
@@ -232,14 +232,13 @@ h1, h2 {
 }
 
 .card h2 {
-    font-size: 1.2em;
     margin-bottom: 5px;
     color: #4a148c;
 }
 
 .card p {
     margin: 5px 0;
-    font-size: 1em;
+    font-size: 1.5em;
     color: #333;
 }
 
@@ -249,7 +248,7 @@ h1, h2 {
     color: #fff;
     padding: 3px 7px;
     border-radius: 4px;
-    font-size: 0.9em;
+    font-size: 1.2em;
     display: inline-block;
     margin-top: 5px;
     max-width: 100%;

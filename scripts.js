@@ -103,6 +103,7 @@ document.getElementById('submit-button').addEventListener('click', () => {
         updateTeamsIndicator();
         updateSelectedLogos();
         toggleSubmitButton();
+        updateTitleAndBackground();
     } else {
         // Final submission
         const playerName = document.getElementById('player-name').value.trim();
@@ -219,6 +220,21 @@ function loadTeamsForCurrentStep() {
         })
         .catch(error => console.error('Error fetching teams:', error));
 }
+
+function updateTitleAndBackground() {
+    const titleElement = document.getElementById('main-title');
+    if (currentStep === 1) {
+        titleElement.textContent = 'Champions League Betting Game';
+        document.body.style.backgroundColor = '#f0f8ff'; // Default background color
+    } else if (currentStep === 2) {
+        titleElement.textContent = 'Europa League Betting Game';
+        document.body.style.backgroundColor = '#FFDAB9'; // Pale orange
+    } else if (currentStep === 3) {
+        titleElement.textContent = 'Conference League Betting Game';
+        document.body.style.backgroundColor = '#98FB98'; // Pale green
+    }
+}
+
 
 // Load initial teams
 loadTeamsForCurrentStep();
