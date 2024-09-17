@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="player.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Information</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        img {
+            width: 50px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="player-name"></h1>
+
+    <h2>Champions League</h2>
+    <table id="champions-league-table">
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>Team</th>
+                <th>Points</th>
+                <th>Multiplier</th>
+                <th>Total Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">Total</td>
+                <td id="champions-league-table-total"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h2>Europa League</h2>
+    <table id="europa-league-table">
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>Team</th>
+                <th>Points</th>
+                <th>Multiplier</th>
+                <th>Total Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Conference League</h2>
+    <table id="conference-league-table">
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>Team</th>
+                <th>Points</th>
+                <th>Multiplier</th>
+                <th>Total Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC36DXqx9qnp1TjMGNX32Nm1p9uGXp62ZA",
+            authDomain: "championsdraft-403d0.firebaseapp.com",
+            projectId: "championsdraft-403d0",
+            storageBucket: "championsdraft-403d0.appspot.com",
+            messagingSenderId: "766027841647",
+            appId: "1:766027841647:web:99ef32b25549054b218d9a"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const potMultipliers = {
+            1: 1,
+            2: 1.5,
+            3: 2,
+            4: 2.5,
+            5: 3,
+            6: 3.5
+        };
+
+        // Get player name from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerName = urlParams.get('playername');
+
+        // Set the player name heading
+        document.getElementById('player-name').textContent = playerName;
+
+        async function getPlayerData() {
+            // Fetch player data by name
+            const playerSnapshot = await db.collection('players').where('Name', '==', playerName).get();
+
+            if (playerSnapshot.empty) {
+                alert('Player not found');
+                return;
+            }
+
+            const playerData = playerSnapshot.docs[0].data();
+
+            // Populate tables
+            populateTable(playerData.selectedChampions, 'champions-league-table');
+            // You can also populate Europa and Conference leagues similarly if you have the data in the player's entry
+        }
+
+        async function populateTable(selectedTeams, tableId) {
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+            let totalScore = 0;
+
+            for (const team of selectedTeams) {
+                // Find the team in the ChampionsTeams collection
+                const teamDoc = await db.collection('ChampionsTeams').doc(team.name).get();
+
+                if (teamDoc.exists) {
+                    const teamData = teamDoc.data();
+                    const multiplier = potMultipliers[teamData.pot] || 1;
+                    const totalScoreForTeam = teamData.points * multiplier;
+
+                    totalScore += totalScoreForTeam;
+
+                    // Add row to the table
+                    const row = `
+                        <tr>
+                            <td><img src="img/logos/${teamData.logo}" alt="${teamData.team} logo"></td>
+                            <td>${teamData.team}</td>
+                            <td>${teamData.points}</td>
+                            <td>${multiplier}</td>
+                            <td>${totalScoreForTeam.toFixed(2)}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                }
+            }
+
+            // Update the total score in the footer
+            document.getElementById(`${tableId}-total`).textContent = totalScore.toFixed(2);
+        }
+
+        // Call the function to fetch and populate player data
+        getPlayerData();
+    </script>
+</body>
+</html>

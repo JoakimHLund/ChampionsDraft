@@ -1,0 +1,101 @@
+/* General styling for the body */
+body {
+    background-color: #1a1a1a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 20px 0;
+    color: #fff;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+thead th {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+tbody td {
+    background-color: #2a2a2a;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    vertical-align: middle;
+    text-align: left;
+}
+
+tbody tr:nth-child(even) td {
+    background-color: #242424;
+}
+
+tbody tr:hover td {
+    background-color: #383838;
+}
+
+/* Styling for images inside tables */
+table img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/* Total row styling */
+tfoot td {
+    background-color: #333;
+    font-weight: bold;
+    padding: 10px;
+}
+
+tfoot td:last-child {
+    text-align: right;
+}
+
+/* Responsive design for small screens */
+@media screen and (max-width: 600px) {
+    /* Hide points, multiplier, and score columns on mobile */
+    th:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(3),
+    td:nth-child(4) {
+        display: none;
+    }
+
+    /* Make font size smaller for mobile */
+    table {
+        font-size: 12px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    /* Adjust logo size for mobile */
+    table img {
+        width: 30px;
+        height: 30px;
+    }
+}
