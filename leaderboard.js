@@ -93,10 +93,17 @@ function createLogosContainer(teamArray) {
     logosContainer.className = 'logos-container';
 
     if (teamArray && teamArray.length > 0) {
+        // Sort the team array alphabetically by team name
+        teamArray.sort((a, b) => a.name.localeCompare(b.name));
+
         teamArray.forEach(team => {
             const logoImg = document.createElement('img');
             logoImg.src = `img/logos/${team.logo}`;
             logoImg.className = 'small-logo';
+
+            // Add the club name as a tooltip
+            logoImg.title = team.name;
+
             logosContainer.appendChild(logoImg);
         });
     } else {
@@ -107,6 +114,8 @@ function createLogosContainer(teamArray) {
 
     return logosContainer;
 }
+
+
 
 // Call the function to load the leaderboard
 loadLeaderboard();
