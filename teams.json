@@ -12,7 +12,7 @@
     "logo": "mancity.png"
   },
   {
-    "name": "Bayern München",
+    "name": "Bayern Munich",
     "pot": 1,
     "country": "DE",
     "logo": "bayernmunchen.png"
@@ -30,19 +30,19 @@
     "logo": "liverpool.png"
   },
   {
-    "name": "Inter",
+    "name": "Inter Milan",
     "pot": 1,
     "country": "IT",
     "logo": "intermilan.png"
   },
   {
-    "name": "Dortmund",
+    "name": "Borussia Dortmund",
     "pot": 1,
     "country": "DE",
     "logo": "dortmund.png"
   },
   {
-    "name": "Leipzig",
+    "name": "RB Leipzig",
     "pot": 1,
     "country": "DE",
     "logo": "leipzig.png"
@@ -54,13 +54,13 @@
     "logo": "barcelona.png"
   },
   {
-    "name": "Leverkusen",
+    "name": "Bayer Leverkusen",
     "pot": 2,
     "country": "DE",
     "logo": "leverkusen.png"
   },
   {
-    "name": "Atlético de Madrid",
+    "name": "Atlético Madrid",
     "pot": 2,
     "country": "ES",
     "logo": "athletico.png"
@@ -126,13 +126,13 @@
     "logo": "psv.png"
   },
   {
-    "name": "GNK Dinamo",
+    "name": "Dinamo Zagreb",
     "pot": 3,
     "country": "HR",
     "logo": "dinamo.png"
   },
   {
-    "name": "Salzburg",
+    "name": "Red Bull Salzburg",
     "pot": 3,
     "country": "AT",
     "logo": "salzburg.png"
@@ -144,7 +144,7 @@
     "logo": "lille.png"
   },
   {
-    "name": "Crvena Zvezda",
+    "name": "Red Star Belgrade",
     "pot": 3,
     "country": "RS",
     "logo": "crvena.png"
@@ -174,7 +174,7 @@
     "logo": "monaco.png"
   },
   {
-    "name": "Sparta Praha",
+    "name": "Sparta Prague",
     "pot": 4,
     "country": "CZ",
     "logo": "spartapraha.png"
@@ -198,7 +198,7 @@
     "logo": "girona.png"
   },
   {
-    "name": "Stuttgart",
+    "name": "VfB Stuttgart",
     "pot": 4,
     "country": "DE",
     "logo": "stuttgart.png"
