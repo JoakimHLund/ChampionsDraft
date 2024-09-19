@@ -30,7 +30,7 @@
     "logo": "rangers.png"
   },
   {
-    "name": "Frankfurt",
+    "name": "Eintracht Frankfurt",
     "pot": 1,
     "country": "GER",
     "logo": "frankfurt.png"
@@ -42,13 +42,13 @@
     "logo": "lazio.png"
   },
   {
-    "name": "Tottenham",
+    "name": "Tottenham Hotspur",
     "pot": 1,
     "country": "ENG",
     "logo": "tottenham.png"
   },
   {
-    "name": "Slavia Praha",
+    "name": "Slavia Prague",
     "pot": 1,
     "country": "CZE",
     "logo": "slaviapraha.png"
@@ -60,7 +60,7 @@
     "logo": "realsociedad.png"
   },
   {
-    "name": "AZ Alkmaar",
+    "name": "AZ",
     "pot": 2,
     "country": "NED",
     "logo": "azalkmaar.png"
@@ -132,7 +132,7 @@
     "logo": "bodo.png"
   },
   {
-    "name": "Union SG",
+    "name": "Union Saint-Gilloise",
     "pot": 3,
     "country": "BEL",
     "logo": "unionsg.png"
@@ -156,13 +156,13 @@
     "logo": "midtjylland.png"
   },
   {
-    "name": "Malmö",
+    "name": "Malmö FF",
     "pot": 3,
     "country": "SWE",
     "logo": "malmo.png"
   },
   {
-    "name": "Athletic Club",
+    "name": "Athletic Bilbao",
     "pot": 4,
     "country": "ESP",
     "logo": "athleticclub.png"

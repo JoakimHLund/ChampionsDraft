@@ -36,7 +36,7 @@
     "logo": "realbetis.png"
   },
   {
-    "name": "Başakşehir",
+    "name": "İstanbul Başakşehir",
     "pot": 2,
     "country": "TUR",
     "logo": "basaksehir.png"
@@ -48,7 +48,7 @@
     "logo": "molde.png"
   },
   {
-    "name": "Legia Warszawa",
+    "name": "Legia Warsaw",
     "pot": 2,
     "country": "POL",
     "logo": "legiawarszawa.png"
@@ -60,7 +60,7 @@
     "logo": "heidenheim.png"
   },
   {
-    "name": "Djurgården",
+    "name": "Djurgårdens IF",
     "pot": 2,
     "country": "SWE",
     "logo": "djurgarden.png"
@@ -72,13 +72,13 @@
     "logo": "apoel.png"
   },
   {
-    "name": "SK Rapid",
+    "name": "Rapid Wien",
     "pot": 3,
     "country": "AUT",
     "logo": "rapid.png"
   },
   {
-    "name": "Omonoia",
+    "name": "Omonia",
     "pot": 3,
     "country": "CYP",
     "logo": "omonoia.png"
@@ -90,7 +90,7 @@
     "logo": "helsinki.png"
   },
   {
-    "name": "Vitória SC",
+    "name": "Vitória de Guimarães",
     "pot": 3,
     "country": "POR",
     "logo": "vitoria.png"
@@ -102,7 +102,7 @@
     "logo": "astana.png"
   },
   {
-    "name": "Olimpija",
+    "name": "Olimpija Ljubljana",
     "pot": 3,
     "country": "SVN",
     "logo": "ljubljana.png"
@@ -132,7 +132,7 @@
     "logo": "lugano.png"
   },
   {
-    "name": "Hearts",
+    "name": "Hearts of Midlothian",
     "pot": 4,
     "country": "SCO",
     "logo": "hearts.png"
@@ -168,7 +168,7 @@
     "logo": "tsc.png"
   },
   {
-    "name": "Borac",
+    "name": "Borac Banja Luka",
     "pot": 5,
     "country": "BIH",
     "logo": "borac.png"
@@ -192,7 +192,7 @@
     "logo": "larne.png"
   },
   {
-    "name": "Dinamo-Minsk",
+    "name": "Dinamo Minsk",
     "pot": 6,
     "country": "BLR",
     "logo": "dinamominsk.png"

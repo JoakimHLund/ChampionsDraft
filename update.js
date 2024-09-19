@@ -94,10 +94,157 @@ async function updatePlayers() {
       document.getElementById('update-status').textContent = 'Error updating players';
     }
   }
+
+ // Function to update the player's selectedEuropa
+async function updatePlayersEuropa() {
+  try {
+      const statusElement = document.getElementById('update-status');
+      statusElement.textContent = 'Updating Europa teams...';
+
+      // Fetch all players
+      const playersSnapshot = await db.collection('players').get();
+
+      playersSnapshot.forEach(async (playerDoc) => {
+          const playerData = playerDoc.data();
+
+          // Check if selectedEuropa exists
+          if (playerData.selectedEuropa) {
+              let updated = false;
+              const updatedEuropa = playerData.selectedEuropa.map(europaTeam => {
+                  // Check for specific team names and update them
+                  switch(europaTeam.name) {
+                      case "Athletic Club":
+                          europaTeam.name = "Athletic Bilbao";
+                          updated = true;
+                          break;
+                      case "Frankfurt":
+                          europaTeam.name = "Eintracht Frankfurt";
+                          updated = true;
+                          break;
+                      case "AZ Alkmaar":
+                          europaTeam.name = "AZ";
+                          updated = true;
+                          break;
+                      case "Tottenham":
+                          europaTeam.name = "Tottenham Hotspur";
+                          updated = true;
+                          break;
+                      case "Slavia Praha":
+                          europaTeam.name = "Slavia Prague";
+                          updated = true;
+                          break;
+                      case "Union SG":
+                          europaTeam.name = "Union Saint-Gilloise";
+                          updated = true;
+                          break;
+                      case "Malmö":
+                          europaTeam.name = "Malmö FF";
+                          updated = true;
+                          break;
+                  }
+                  return europaTeam;
+              });
+
+              // If any updates were made, update Firestore
+              if (updated) {
+                  await db.collection('players').doc(playerDoc.id).update({
+                      selectedEuropa: updatedEuropa
+                  });
+                  console.log(`Updated player ${playerDoc.id} Europa teams`);
+              }
+          }
+      });
+
+      statusElement.textContent = 'Europa teams update complete!';
+  } catch (error) {
+      console.error("Error updating Europa teams: ", error);
+      document.getElementById('update-status').textContent = 'Error updating Europa teams';
+  }
+}
+
+async function updatePlayersConference() {
+  try {
+      const statusElement = document.getElementById('update-status');
+      statusElement.textContent = 'Updating Conference teams...';
+
+      // Fetch all players
+      const playersSnapshot = await db.collection('players').get();
+
+      playersSnapshot.forEach(async (playerDoc) => {
+          const playerData = playerDoc.data();
+
+          // Check if selectedConference exists
+          if (playerData.selectedConference) {
+              let updated = false;
+              const updatedConference = playerData.selectedConference.map(conferenceTeam => {
+                  // Check for specific team names and update them to the longer versions
+                  switch(conferenceTeam.name) {
+                      case "Başakşehir":
+                          conferenceTeam.name = "İstanbul Başakşehir";
+                          updated = true;
+                          break;
+                      case "Legia Warszawa":
+                          conferenceTeam.name = "Legia Warsaw";
+                          updated = true;
+                          break;
+                      case "Djurgården":
+                          conferenceTeam.name = "Djurgårdens IF";
+                          updated = true;
+                          break;
+                      case "SK Rapid":
+                          conferenceTeam.name = "Rapid Wien";
+                          updated = true;
+                          break;
+                      case "Omonoia":
+                          conferenceTeam.name = "Omonia";
+                          updated = true;
+                          break;
+                      case "Vitória SC":
+                          conferenceTeam.name = "Vitória de Guimarães";
+                          updated = true;
+                          break;
+                      case "Olimpija":
+                          conferenceTeam.name = "Olimpija Ljubljana";
+                          updated = true;
+                          break;
+                      case "Hearts":
+                          conferenceTeam.name = "Heart of Midlothian";
+                          updated = true;
+                          break;
+                      case "Borac":
+                          conferenceTeam.name = "Borac Banja Luka";
+                          updated = true;
+                          break;
+                      case "Dinamo-Minsk":
+                          conferenceTeam.name = "Dinamo Minsk";
+                          updated = true;
+                          break;
+                  }
+                  return conferenceTeam;
+              });
+
+              // If any updates were made, update Firestore
+              if (updated) {
+                  await db.collection('players').doc(playerDoc.id).update({
+                      selectedConference: updatedConference
+                  });
+                  console.log(`Updated player ${playerDoc.id} Conference teams`);
+              }
+          }
+      });
+
+      statusElement.textContent = 'Conference teams update complete!';
+  } catch (error) {
+      console.error("Error updating Conference teams: ", error);
+      document.getElementById('update-status').textContent = 'Error updating Conference teams';
+  }
+}
+
+
   
   // Add event listener to the update button
   document.getElementById('update-names-button').addEventListener('click', function () {
-    updatePlayers();
+    updatePlayersConference();
   });
 
 
