@@ -96,7 +96,7 @@
     "logo": "fenerbahce.png"
   },
   {
-    "name": "M. Tel-Aviv",
+    "name": "Maccabi Tel Aviv",
     "pot": 2,
     "country": "ISR",
     "logo": "mtelaviv.png"
@@ -144,7 +144,7 @@
     "logo": "dynamokyiv.png"
   },
   {
-    "name": "Ludogorets",
+    "name": "Ludogorets Razgrad",
     "pot": 3,
     "country": "BUL",
     "logo": "ludogorets.png"
@@ -168,7 +168,7 @@
     "logo": "athleticclub.png"
   },
   {
-    "name": "Hoffenheim",
+    "name": "TSG Hoffenheim",
     "pot": 4,
     "country": "GER",
     "logo": "hoffenheim.png"
@@ -210,7 +210,7 @@
     "logo": "rfs.png"
   },
   {
-    "name": "Elfsborg",
+    "name": "IF Elfsborg",
     "pot": 4,
     "country": "SWE",
     "logo": "elfsborg.png"

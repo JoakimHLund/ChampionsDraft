@@ -54,7 +54,7 @@
     "logo": "legiawarszawa.png"
   },
   {
-    "name": "Heidenheim",
+    "name": "1. FC Heidenheim",
     "pot": 2,
     "country": "GER",
     "logo": "heidenheim.png"
@@ -84,7 +84,7 @@
     "logo": "omonoia.png"
   },
   {
-    "name": "Helsinki",
+    "name": "HJK",
     "pot": 3,
     "country": "FIN",
     "logo": "helsinki.png"
@@ -132,7 +132,7 @@
     "logo": "lugano.png"
   },
   {
-    "name": "Hearts of Midlothian",
+    "name": "Heart of Midlothian",
     "pot": 4,
     "country": "SCO",
     "logo": "hearts.png"
@@ -144,7 +144,7 @@
     "logo": "mlada.png"
   },
   {
-    "name": "Petrocub",
+    "name": "Petrocub Hîncești",
     "pot": 5,
     "country": "MDA",
     "logo": "petrocub.png"
@@ -174,7 +174,7 @@
     "logo": "borac.png"
   },
   {
-    "name": "Jagiellonia",
+    "name": "Jagiellonia Białystok",
     "pot": 5,
     "country": "POL",
     "logo": "jagiellonia.png"
@@ -204,7 +204,7 @@
     "logo": "pafos.png"
   },
   {
-    "name": "Víkingur",
+    "name": "Víkingur Reykjavík",
     "pot": 6,
     "country": "ISL",
     "logo": "vikingur.png"
