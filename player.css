@@ -75,11 +75,17 @@ tfoot td:last-child {
     /* Hide points, multiplier, and score columns on mobile */
     th:nth-child(3),
     th:nth-child(4),
+    th:nth-child(5),
     td:nth-child(3),
-    td:nth-child(4) {
+    td:nth-child(4),
+    td:nth-child(5) {
         display: none;
     }
 
+    tfoot td[colspan="5"] {
+        colspan: 2;
+    }
+    
     /* Make font size smaller for mobile */
     table {
         font-size: 12px;

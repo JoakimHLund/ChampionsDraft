@@ -35,6 +35,7 @@
             <tr>
                 <th>Logo</th>
                 <th>Team</th>
+                <th>Played Games</th>
                 <th>Points</th>
                 <th>Multiplier</th>
                 <th>Total Score</th>
@@ -43,7 +44,7 @@
         <tbody></tbody>
         <tfoot>
             <tr>
-                <td colspan="4">Total</td>
+                <td colspan="5">Total</td>
                 <td id="champions-league-table-total"></td>
             </tr>
         </tfoot>
@@ -55,12 +56,19 @@
             <tr>
                 <th>Logo</th>
                 <th>Team</th>
+                <th>Played Games</th>
                 <th>Points</th>
                 <th>Multiplier</th>
                 <th>Total Score</th>
             </tr>
         </thead>
         <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5">Total</td>
+                <td id="europa-league-table-total"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <h2>Conference League</h2>
@@ -69,12 +77,19 @@
             <tr>
                 <th>Logo</th>
                 <th>Team</th>
+                <th>Played Games</th>
                 <th>Points</th>
                 <th>Multiplier</th>
                 <th>Total Score</th>
             </tr>
         </thead>
         <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5">Total</td>
+                <td id="conference-league-table-total"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -121,42 +136,54 @@
             const playerData = playerSnapshot.docs[0].data();
 
             // Populate tables
-            populateTable(playerData.selectedChampions, 'champions-league-table');
+            populateTable(playerData.selectedChampions, 'champions-league-table','ChampionsTeams');
+            populateTable(playerData.selectedEuropa, 'europa-league-table','EuropaTeams');
+            populateTable(playerData.selectedConference, 'conference-league-table','ConferenceTeams');
             // You can also populate Europa and Conference leagues similarly if you have the data in the player's entry
         }
 
-        async function populateTable(selectedTeams, tableId) {
-            const tableBody = document.querySelector(`#${tableId} tbody`);
-            let totalScore = 0;
+        async function populateTable(selectedTeams, tableId, collection) {
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        let totalScore = 0;
 
-            for (const team of selectedTeams) {
-                // Find the team in the ChampionsTeams collection
-                const teamDoc = await db.collection('ChampionsTeams').doc(team.name).get();
+        for (const team of selectedTeams) {
+            // Sanitize the team name
+            const sanitizedTeamName = team.name.replace(/\//g, '_');
 
-                if (teamDoc.exists) {
-                    const teamData = teamDoc.data();
-                    const multiplier = potMultipliers[teamData.pot] || 1;
-                    const totalScoreForTeam = teamData.points * multiplier;
+            // Find the team in the specified collection
+            const teamDoc = await db.collection(collection).doc(sanitizedTeamName).get();
 
-                    totalScore += totalScoreForTeam;
+            if (teamDoc.exists) {
+                const teamData = teamDoc.data();
+                const multiplier = potMultipliers[teamData.pot] || 1;
+                const totalScoreForTeam = teamData.points * multiplier;
 
-                    // Add row to the table
-                    const row = `
-                        <tr>
-                            <td><img src="img/logos/${teamData.logo}" alt="${teamData.team} logo"></td>
-                            <td>${teamData.team}</td>
-                            <td>${teamData.points}</td>
-                            <td>${multiplier}</td>
-                            <td>${totalScoreForTeam.toFixed(2)}</td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
+                totalScore += totalScoreForTeam;
+
+                // Add row to the table
+                const row = `
+                    <tr>
+                        <td><img src="img/logos/${teamData.logo}" alt="${teamData.team} logo"></td>
+                        <td>${teamData.team}</td>
+                        <td>${teamData.played}</td>
+                        <td>${teamData.points}</td>
+                        <td>${multiplier}</td>
+                        <td>${totalScoreForTeam.toFixed(1)}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+                } else {
+                    console.warn(`Team ${team.name} not found in collection ${collection}`);
                 }
             }
 
             // Update the total score in the footer
-            document.getElementById(`${tableId}-total`).textContent = totalScore.toFixed(2);
+            const totalElement = document.getElementById(`${tableId}-total`);
+            if (totalElement) {
+                totalElement.textContent = totalScore.toFixed(1);
+            }
         }
+
 
         // Call the function to fetch and populate player data
         getPlayerData();

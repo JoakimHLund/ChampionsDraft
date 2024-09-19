@@ -47,6 +47,7 @@ async function addOrUpdateTeamInFirestore(teamData, collectionName) {
       // If the document exists, update the points and score
       await teamRef.update({
           points: teamData.points,
+          played: teamData.played,
           score: teamData.score,
           pot: teamData.pot, // Optionally update the pot and logo as well
           logo: teamData.logo,
@@ -58,6 +59,7 @@ async function addOrUpdateTeamInFirestore(teamData, collectionName) {
       await teamRef.set({
           team: teamData.team,
           points: teamData.points,
+          played: teamData.played,
           score: teamData.score,
           pot: teamData.pot,
           logo: teamData.logo,
@@ -123,6 +125,8 @@ async function fetchLeagueData(leagueName, url, teamsJson, collectionName, butto
                           const team = teamLink.innerText.trim();
 
                           if (team && team !== "GD" && team !== "e") {
+                              const playedText = cells[2].innerText.trim();
+                              const played = parseFloat(playedText) || 0;
                               const pointsText = cells[9].innerText.trim(); // Points are in the 10th column
                               const points = parseFloat(pointsText) || 0;
 
@@ -137,6 +141,7 @@ async function fetchLeagueData(leagueName, url, teamsJson, collectionName, butto
                                   const teamResult = {
                                       team: teamData.name,
                                       points: points,
+                                      played:played,
                                       pot: teamData.pot,
                                       logo: teamData.logo,
                                       score: score.toFixed(1) // Keep the score to 1 decimal place
