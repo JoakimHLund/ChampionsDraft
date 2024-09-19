@@ -199,83 +199,143 @@ fetchLeagueData(
   "update-conference-button"
 );
 
-// Function to update leaderboard by calculating points
 async function updateLeaderboard() {
-  try {
-      const statusElement = document.getElementById('update-status');
-      statusElement.textContent = "Updating leaderboard...";
+    try {
+        const statusElement = document.getElementById('update-status');
+        statusElement.textContent = "Updating leaderboard...";
 
-      // Fetch all players from the players collection
-      const playersSnapshot = await db.collection('players').get();
+        // Fetch all players from the players collection
+        const playersSnapshot = await db.collection('players').get();
+        const players = playersSnapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
 
-      // Loop through each player
-      for (const playerDoc of playersSnapshot.docs) {
-          const playerData = playerDoc.data();
-          let championspoints = 0;
-          let europapoints = 0;
-          let conferencepoints = 0;
+        // Collect all unique team names from all players
+        const teamNames = {
+            champions: new Set(),
+            europa: new Set(),
+            conference: new Set()
+        };
 
-          // Loop through each selected Champions League team for the player
-          if (playerData.selectedChampions) {
-              for (const champion of playerData.selectedChampions) {
-                  // Find the same team in the ChampionsTeams collection
-                  const teamDoc = await db.collection('ChampionsTeams').doc(champion.name).get();
+        players.forEach(player => {
+            if (player.data.selectedChampions) {
+                player.data.selectedChampions.forEach(team => {
+                    const sanitizedTeamName = team.name.replace(/\//g, '_');
+                    teamNames.champions.add(sanitizedTeamName);
+                });
+            }
+            if (player.data.selectedEuropa) {
+                player.data.selectedEuropa.forEach(team => {
+                    const sanitizedTeamName = team.name.replace(/\//g, '_');
+                    teamNames.europa.add(sanitizedTeamName);
+                });
+            }
+            if (player.data.selectedConference) {
+                player.data.selectedConference.forEach(team => {
+                    const sanitizedTeamName = team.name.replace(/\//g, '_');
+                    teamNames.conference.add(sanitizedTeamName);
+                });
+            }
+        });
 
-                  if (teamDoc.exists) {
-                      const teamData = teamDoc.data();
-                      championspoints += parseFloat(teamData.score); // Add the team's score to championspoints
-                  }
-              }
-          }
+        // Fetch all team documents in batch
+        const [championsTeams, europaTeams, conferenceTeams] = await Promise.all([
+            fetchTeamsInBatch('ChampionsTeams', teamNames.champions),
+            fetchTeamsInBatch('EuropaTeams', teamNames.europa),
+            fetchTeamsInBatch('ConferenceTeams', teamNames.conference)
+        ]);
 
-          // Loop through each selected Europa League team for the player
-          if (playerData.selectedEuropa) {
-              for (const europa of playerData.selectedEuropa) {
-                  // Find the same team in the EuropaTeams collection
-                  const teamDoc = await db.collection('EuropaTeams').doc(europa.name).get();
+        // Create maps for quick lookup
+        const championsTeamMap = createTeamMap(championsTeams);
+        const europaTeamMap = createTeamMap(europaTeams);
+        const conferenceTeamMap = createTeamMap(conferenceTeams);
 
-                  if (teamDoc.exists) {
-                      const teamData = teamDoc.data();
-                      europapoints += parseFloat(teamData.score); // Add the team's score to europapoints
-                  }
-              }
-          }
+        // Batch write to update players
+        const batch = db.batch();
 
-          // Loop through each selected Conference League team for the player
-          if (playerData.selectedConference) {
-              for (const conference of playerData.selectedConference) {
-                  // Find the same team in the ConferenceTeams collection
-                  const teamDoc = await db.collection('ConferenceTeams').doc(conference.name).get();
+        players.forEach(player => {
+            let championspoints = 0;
+            let europapoints = 0;
+            let conferencepoints = 0;
 
-                  if (teamDoc.exists) {
-                      const teamData = teamDoc.data();
-                      conferencepoints += parseFloat(teamData.score); // Add the team's score to conferencepoints
-                  }
-              }
-          }
+            if (player.data.selectedChampions) {
+                player.data.selectedChampions.forEach(team => {
+                    const sanitizedTeamName = team.name.replace(/\//g, '_');
+                    const teamData = championsTeamMap[sanitizedTeamName];
+                    if (teamData) {
+                        championspoints += parseFloat(teamData.score);
+                    }
+                });
+            }
 
-          // Calculate totalpoints (sum of championspoints, europapoints, and conferencepoints)
-          const totalpoints = championspoints + europapoints + conferencepoints;
+            if (player.data.selectedEuropa) {
+                player.data.selectedEuropa.forEach(team => {
+                    const sanitizedTeamName = team.name.replace(/\//g, '_');
+                    const teamData = europaTeamMap[sanitizedTeamName];
+                    if (teamData) {
+                        europapoints += parseFloat(teamData.score);
+                    }
+                });
+            }
 
-          // Update the player's points in Firestore
-          await db.collection('players').doc(playerDoc.id).update({
-              championspoints: championspoints,
-              europapoints: europapoints,
-              conferencepoints: conferencepoints,
-              totalpoints: totalpoints
-          });
+            if (player.data.selectedConference) {
+                player.data.selectedConference.forEach(team => {
+                    const sanitizedTeamName = team.name.replace(/\//g, '_');
+                    const teamData = conferenceTeamMap[sanitizedTeamName];
+                    if (teamData) {
+                        conferencepoints += parseFloat(teamData.score);
+                    }
+                });
+            }
 
-          console.log(`Updated player ${playerData.name} with championspoints: ${championspoints}, europapoints: ${europapoints}, conferencepoints: ${conferencepoints}, and totalpoints: ${totalpoints}`);
-      }
+            const totalpoints = championspoints + europapoints + conferencepoints;
 
-      statusElement.textContent = "Leaderboard updated successfully!";
-  } catch (error) {
-      console.error("Error updating leaderboard: ", error);
-      document.getElementById('update-status').textContent = "Error updating leaderboard!";
-  }
+            const playerRef = db.collection('players').doc(player.id);
+            batch.update(playerRef, {
+                championspoints: championspoints,
+                europapoints: europapoints,
+                conferencepoints: conferencepoints,
+                totalpoints: totalpoints
+            });
+        });
+
+        // Commit the batch
+        await batch.commit();
+
+        statusElement.textContent = "Leaderboard updated successfully!";
+    } catch (error) {
+        console.error("Error updating leaderboard: ", error);
+        document.getElementById('update-status').textContent = "Error updating leaderboard!";
+    }
 }
 
-// Add event listener to the update leaderboard button
-document.getElementById('update-leaderboard-button').addEventListener('click', function () {
-  updateLeaderboard();
-});
+// Helper function to fetch team documents in batch
+async function fetchTeamsInBatch(collectionName, teamNamesSet) {
+    const teamNamesArray = Array.from(teamNamesSet);
+    const teamDocs = [];
+    const batchSize = 10; // Firestore allows up to 10 in 'in' queries
+
+    for (let i = 0; i < teamNamesArray.length; i += batchSize) {
+        const batchNames = teamNamesArray.slice(i, i + batchSize);
+        const querySnapshot = await db.collection(collectionName)
+            .where(firebase.firestore.FieldPath.documentId(), 'in', batchNames)
+            .get();
+        teamDocs.push(...querySnapshot.docs);
+    }
+
+    return teamDocs;
+}
+
+// Helper function to create a map of team data
+function createTeamMap(teamDocs) {
+    const teamMap = {};
+    teamDocs.forEach(doc => {
+        teamMap[doc.id] = doc.data();
+    });
+    return teamMap;
+}
+
+  
+  // Add event listener to the update leaderboard button
+  document.getElementById('update-leaderboard-button').addEventListener('click', function () {
+    updateLeaderboard();
+  });
+  
