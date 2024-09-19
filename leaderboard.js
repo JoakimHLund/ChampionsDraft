@@ -19,8 +19,10 @@ function loadLeaderboard() {
         leaderboardBody.innerHTML = ''; // Clear existing content
 
         let rank = 1;
+        let previousPoints = null; // Track previous player's total points
+        let sameRankCount = 0; // Track how many players share the same rank
 
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach((doc, index) => {
             const playerData = doc.data();
 
             // Format the name as "[Department] Name" if department is present
@@ -28,6 +30,18 @@ function loadLeaderboard() {
             if (playerData.Department && playerData.Department.trim() !== '') {
                 playerName = `[${playerData.Department}] ${playerName}`;
             }
+
+            const currentPoints = playerData.totalpoints || 0;
+
+            // Adjust rank only if the current player's points are different from the previous player's points
+            if (previousPoints !== null && currentPoints === previousPoints) {
+                sameRankCount++;  // Increment if points are the same
+            } else {
+                rank += sameRankCount;  // Update rank only if the points differ
+                sameRankCount = 1;      // Reset for the new group
+            }
+
+            previousPoints = currentPoints; // Update the previous player's points
 
             // Create a table row
             const row = document.createElement('tr');
@@ -64,7 +78,7 @@ function loadLeaderboard() {
             conferencePointsCell.textContent = playerData.conferencepoints || 0;
 
             const totalPointsCell = document.createElement('td');
-            totalPointsCell.textContent = playerData.totalpoints || 0;
+            totalPointsCell.textContent = currentPoints;
 
             // Append cells to the row
             row.appendChild(rankCell);
@@ -79,13 +93,12 @@ function loadLeaderboard() {
 
             // Append row to the table body
             leaderboardBody.appendChild(row);
-
-            rank++;
         });
     }).catch((error) => {
         console.error("Error getting documents: ", error);
     });
 }
+
 
 // Helper function to create logos container
 function createLogosContainer(teamArray) {
