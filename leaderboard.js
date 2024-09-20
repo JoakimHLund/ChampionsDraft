@@ -51,7 +51,11 @@ function loadLeaderboard() {
             rankCell.textContent = rank;
 
             const nameCell = document.createElement('td');
-            nameCell.textContent = playerName;
+            const nameLink = document.createElement('a');
+            nameLink.textContent = playerName;
+            nameLink.href = 'player.html?playername=' + encodeURIComponent(playerData.Name);
+            nameLink.className = 'player-link';
+            nameCell.appendChild(nameLink);
 
             // Champions Selection Cell
             const championsSelectionCell = document.createElement('td');

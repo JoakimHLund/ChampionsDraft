@@ -119,7 +119,7 @@
 
         // Get player name from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const playerName = urlParams.get('playername');
+        const playerName = decodeURIComponent(urlParams.get('playername'));
 
         // Set the player name heading
         document.getElementById('player-name').textContent = playerName;

@@ -74,3 +74,24 @@ tbody tr:hover td {
         font-size: 12px;
     }
 }
+
+
+/* Styles for the player name links */
+.player-link {
+    color: #fff;                /* White color */
+    text-decoration: none;      /* Remove underline */
+    font-weight: bold;          /* Make text bold */
+    font-size: 16px;            /* Increase font size */
+}
+
+/* Optional: Change color on hover */
+.player-link:hover {
+    color: #ccc;                /* Slightly lighter color on hover */
+}
+
+/* Ensure the cursor changes to a pointer on hover */
+.player-link {
+    cursor: pointer;
+    font-size: 18px;    /* Makes the text larger */
+    font-weight: 600;
+}
