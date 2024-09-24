@@ -549,3 +549,93 @@ function createTeamMap(teamDocs) {
     updateLeaderboard();
   });
   
+
+  // Function to update the 'selectedBy' count for each team
+async function updateTeamSelectionCounts() {
+    try {
+      const statusElement = document.getElementById('update-status');
+      statusElement.textContent = 'Updating team selection counts...';
+  
+      // Initialize counts for each team collection
+      const championsTeamCounts = {};
+      const europaTeamCounts = {};
+      const conferenceTeamCounts = {};
+  
+      // Fetch all players
+      const playersSnapshot = await db.collection('players').get();
+  
+      playersSnapshot.forEach(playerDoc => {
+        const playerData = playerDoc.data();
+  
+        // Process selectedChampions
+        if (playerData.selectedChampions) {
+          playerData.selectedChampions.forEach(team => {
+            const sanitizedTeamName = team.name.replace(/\//g, '_');
+            if (championsTeamCounts[sanitizedTeamName]) {
+              championsTeamCounts[sanitizedTeamName] += 1;
+            } else {
+              championsTeamCounts[sanitizedTeamName] = 1;
+            }
+          });
+        }
+  
+        // Process selectedEuropa
+        if (playerData.selectedEuropa) {
+          playerData.selectedEuropa.forEach(team => {
+            const sanitizedTeamName = team.name.replace(/\//g, '_');
+            if (europaTeamCounts[sanitizedTeamName]) {
+              europaTeamCounts[sanitizedTeamName] += 1;
+            } else {
+              europaTeamCounts[sanitizedTeamName] = 1;
+            }
+          });
+        }
+  
+        // Process selectedConference
+        if (playerData.selectedConference) {
+          playerData.selectedConference.forEach(team => {
+            const sanitizedTeamName = team.name.replace(/\//g, '_');
+            if (conferenceTeamCounts[sanitizedTeamName]) {
+              conferenceTeamCounts[sanitizedTeamName] += 1;
+            } else {
+              conferenceTeamCounts[sanitizedTeamName] = 1;
+            }
+          });
+        }
+      });
+  
+      // Function to update the teams in a collection with the counts
+      async function updateTeamCountsInCollection(collectionName, teamCounts) {
+        // Fetch all teams in the collection
+        const teamsSnapshot = await db.collection(collectionName).get();
+  
+        const batch = db.batch();
+  
+        teamsSnapshot.forEach(teamDoc => {
+          const teamId = teamDoc.id;
+          const selectedByCount = teamCounts[teamId] || 0;
+  
+          batch.update(teamDoc.ref, { selectedBy: selectedByCount });
+        });
+  
+        // Commit the batch update
+        await batch.commit();
+      }
+  
+      // Update counts in each collection
+      await updateTeamCountsInCollection('ChampionsTeams', championsTeamCounts);
+      await updateTeamCountsInCollection('EuropaTeams', europaTeamCounts);
+      await updateTeamCountsInCollection('ConferenceTeams', conferenceTeamCounts);
+  
+      statusElement.textContent = 'Team selection counts updated successfully!';
+    } catch (error) {
+      console.error("Error updating team selection counts: ", error);
+      document.getElementById('update-status').textContent = 'Error updating team selection counts';
+    }
+  }
+  
+  // Add event listener to the update team counts button
+  document.getElementById('update-team-counts-button').addEventListener('click', function () {
+    updateTeamSelectionCounts();
+  });
+  
