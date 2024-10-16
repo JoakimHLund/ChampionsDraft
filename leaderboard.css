@@ -95,3 +95,49 @@ tbody tr:hover td {
     font-size: 18px;    /* Makes the text larger */
     font-weight: 600;
 }
+
+
+.trophy-icon {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    filter: brightness(0) saturate(100%);
+}
+
+/* Blue for Champions Trophy */
+.trophy-icon.champions {
+    filter: brightness(0) saturate(100%) invert(38%) sepia(87%) saturate(672%) hue-rotate(178deg) brightness(92%) contrast(88%);
+}
+
+/* Orange for Europa Trophy */
+.trophy-icon.europa {
+    filter: brightness(0) saturate(100%) invert(49%) sepia(92%) saturate(3182%) hue-rotate(1deg) brightness(101%) contrast(102%);
+}
+
+/* Green for Conference Trophy */
+.trophy-icon.conference {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(54%) saturate(571%) hue-rotate(83deg) brightness(95%) contrast(91%);
+}
+
+/* Ensure rows take full height and align correctly */
+#leaderboard-table tr {
+    display: table-row; /* Ensures the layout behaves like a table row */
+    height: auto; /* Adjusts to the content height */
+}
+
+#leaderboard-table th,
+#leaderboard-table td {
+    text-align: center;
+    height: 100%; /* Matches the tallest cell within the row */
+    vertical-align: middle; /* Vertically centers content */
+}
+
+
+
+/* Rank container ensures full height and centered content */
+.rank-container {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    height: 100%;
+}

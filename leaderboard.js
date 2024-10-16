@@ -12,18 +12,31 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Function to fetch players data and populate the leaderboard
 function loadLeaderboard() {
     db.collection("players").orderBy("totalpoints", "desc").get().then((querySnapshot) => {
         const leaderboardBody = document.getElementById('leaderboard-body');
         leaderboardBody.innerHTML = ''; // Clear existing content
 
+        let highestChampionsPoints = 0;
+        let highestEuropaPoints = 0;
+        let highestConferencePoints = 0;
+
+        // First pass: Determine highest score in each league
+        querySnapshot.forEach(doc => {
+            const playerData = doc.data();
+            highestChampionsPoints = Math.max(highestChampionsPoints, playerData.championspoints || 0);
+            highestEuropaPoints = Math.max(highestEuropaPoints, playerData.europapoints || 0);
+            highestConferencePoints = Math.max(highestConferencePoints, playerData.conferencepoints || 0);
+        });
+
+        // Second pass: Build leaderboard with trophy icons for top scorers
         let rank = 1;
-        let previousPoints = null; // Track previous player's total points
-        let sameRankCount = 0; // Track how many players share the same rank
+        let previousPoints = null;
+        let sameRankCount = 0;
 
         querySnapshot.forEach((doc, index) => {
             const playerData = doc.data();
+            const currentPoints = playerData.totalpoints || 0;
 
             // Format the name as "[Department] Name" if department is present
             let playerName = playerData.Name;
@@ -31,25 +44,50 @@ function loadLeaderboard() {
                 playerName = `[${playerData.Department}] ${playerName}`;
             }
 
-            const currentPoints = playerData.totalpoints || 0;
-
             // Adjust rank only if the current player's points are different from the previous player's points
             if (previousPoints !== null && currentPoints === previousPoints) {
-                sameRankCount++;  // Increment if points are the same
+                sameRankCount++;
             } else {
-                rank += sameRankCount;  // Update rank only if the points differ
-                sameRankCount = 1;      // Reset for the new group
+                rank += sameRankCount;
+                sameRankCount = 1;
             }
 
-            previousPoints = currentPoints; // Update the previous player's points
+            previousPoints = currentPoints;
 
             // Create a table row
             const row = document.createElement('tr');
 
-            // Create cells
+            // Inside the loadLeaderboard function, where you create the rank cell
             const rankCell = document.createElement('td');
-            rankCell.textContent = rank;
+            rankCell.classList.add('rank-cell');
 
+            const rankContainer = document.createElement('div');
+            rankContainer.classList.add('rank-container');
+
+            // Add trophy icons to the rank container
+            if (playerData.championspoints === highestChampionsPoints) {
+                const championsIcon = createTrophyIcon('img/icons/championstrophy.png', 'Champions Trophy', 'champions');
+                rankContainer.appendChild(championsIcon);
+            }
+            if (playerData.europapoints === highestEuropaPoints) {
+                const europaIcon = createTrophyIcon('img/icons/europatrophy.png', 'Europa Trophy', 'europa');
+                rankContainer.appendChild(europaIcon);
+            }
+            if (playerData.conferencepoints === highestConferencePoints) {
+                const conferenceIcon = createTrophyIcon('img/icons/conferencetrophy.png', 'Conference Trophy', 'conference');
+                rankContainer.appendChild(conferenceIcon);
+            }
+
+            // Add the rank number as a separate element
+            const rankNumber = document.createElement('span');
+            rankNumber.textContent = rank;
+            rankContainer.appendChild(rankNumber);
+
+            // Append the rank container to the rank cell
+            rankCell.appendChild(rankContainer);
+
+
+            // Rest of the cells (name, selections, points)
             const nameCell = document.createElement('td');
             const nameLink = document.createElement('a');
             nameLink.textContent = playerName;
@@ -57,17 +95,14 @@ function loadLeaderboard() {
             nameLink.className = 'player-link';
             nameCell.appendChild(nameLink);
 
-            // Champions Selection Cell
             const championsSelectionCell = document.createElement('td');
             const championsLogosContainer = createLogosContainer(playerData.selectedChampions);
             championsSelectionCell.appendChild(championsLogosContainer);
 
-            // Europa Selection Cell
             const europaSelectionCell = document.createElement('td');
             const europaLogosContainer = createLogosContainer(playerData.selectedEuropa);
             europaSelectionCell.appendChild(europaLogosContainer);
 
-            // Conference Selection Cell
             const conferenceSelectionCell = document.createElement('td');
             const conferenceLogosContainer = createLogosContainer(playerData.selectedConference);
             conferenceSelectionCell.appendChild(conferenceLogosContainer);
@@ -101,6 +136,15 @@ function loadLeaderboard() {
     }).catch((error) => {
         console.error("Error getting documents: ", error);
     });
+}
+
+// Helper function to create a trophy icon
+function createTrophyIcon(src, alt, className) {
+    const icon = document.createElement('img');
+    icon.src = src;
+    icon.alt = alt;
+    icon.className = `trophy-icon ${className}`;
+    return icon;
 }
 
 
