@@ -36,18 +36,19 @@
         th {
             background-color: #333;
             color: #fff;
+            position: relative;
+            user-select: none; /* Prevent text selection */
         }
+
 
         th.sorted-asc::after {
             content: "↑";
             position: absolute;
-            right: 10px;
         }
 
         th.sorted-desc::after {
             content: "↓";
             position: absolute;
-            right: 10px;
         }
 
         tbody tr:nth-child(even) td {
@@ -64,24 +65,20 @@
             object-fit: contain;
         }
 
-        /* General style for league logos */
         .league-logo {
             width: 40px;
             height: 40px;
             object-fit: contain;
         }
 
-        /* Champions League: Invert to brighten and adjust as needed */
         .champions-league-logo {
             filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(0deg);
         }
 
-        /* Europa League: Invert to brighten, then adjust hue to restore orange */
         .europa-league-logo {
             filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
         }
 
-        /* Conference League: Invert to brighten, then adjust hue to restore green */
         .conference-league-logo {
             filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
         }
@@ -138,17 +135,13 @@
             'ConferenceTeams': { src: 'img/icons/ecLogo.png', className: 'conference-league-logo' }
         };
 
-        let teamsData = []; // Array to store all team data
-        let currentSortColumn = 'totalScore'; // Default column to sort by
-        let sortAscending = false; // Default sort order
+        let teamsData = [];
+        let currentSortColumn = 'name'; // Set to false for initial descending order
 
         async function getTeamsData() {
-            const teamStatsBody = document.getElementById('team-stats-body');
-            teamsData = []; // Reset array for fresh fetch
-
+            teamsData = [];
             const leagues = ['ChampionsTeams', 'EuropaTeams', 'ConferenceTeams'];
             
-            // Fetch data from each league collection
             for (const league of leagues) {
                 const teamsSnapshot = await db.collection(league).get();
 
@@ -156,7 +149,7 @@
                     const teamData = doc.data();
                     const multiplier = potMultipliers[teamData.pot] || 1;
                     const totalScore = teamData.points * multiplier;
-                    const selectedBy = teamData.selectedBy || 0; // Default to 0 if undefined
+                    const selectedBy = teamData.selectedBy || 0;
 
                     teamsData.push({
                         league: league,
@@ -171,8 +164,8 @@
                 });
             }
 
-            // Populate the table after fetching data
-            populateTable();
+            // Sort by 'totalScore' descending by default and apply initial arrow indicator
+            sortTable('totalScore');
         }
 
         function populateTable() {
@@ -196,7 +189,13 @@
         }
 
         function sortTable(column) {
-            sortAscending = currentSortColumn === column ? !sortAscending : true;
+            if (currentSortColumn === column) {
+                sortAscending = !sortAscending;
+            } else {
+                // If it's a different column, reset to ascending
+                sortAscending = false;
+            }
+    
             currentSortColumn = column;
 
             teamsData.sort((a, b) => {
@@ -208,15 +207,19 @@
                 return 0;
             });
 
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            const currentTh = document.querySelector(`th[data-column="${column}"]`);
+            currentTh.classList.add(sortAscending ? 'sorted-asc' : 'sorted-desc');
+
             populateTable();
         }
 
-        // Add event listeners to header cells
         document.querySelectorAll('th[data-column]').forEach(th => {
             th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
         });
 
-        // Initial call to fetch and display data
         getTeamsData();
     </script>
 </body>
