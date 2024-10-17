@@ -119,6 +119,12 @@ function loadLeaderboard() {
             const totalPointsCell = document.createElement('td');
             totalPointsCell.textContent = currentPoints;
 
+            championsPointsCell.setAttribute('data-column', 'championspoints');
+            europaPointsCell.setAttribute('data-column', 'europapoints');
+            conferencePointsCell.setAttribute('data-column', 'conferencepoints');
+            totalPointsCell.setAttribute('data-column', 'totalpoints');
+
+
             // Append cells to the row
             row.appendChild(rankCell);
             row.appendChild(nameCell);
@@ -132,6 +138,11 @@ function loadLeaderboard() {
 
             // Append row to the table body
             leaderboardBody.appendChild(row);
+
+            document.querySelectorAll('th[data-column]').forEach(th => {
+                th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
+            });
+            
         });
     }).catch((error) => {
         console.error("Error getting documents: ", error);
@@ -174,6 +185,36 @@ function createLogosContainer(teamArray) {
     }
 
     return logosContainer;
+}
+
+
+let currentSortColumn = 'totalpoints';
+let sortAscending = false;
+
+function sortTable(column) {
+    if (currentSortColumn === column) {
+        sortAscending = !sortAscending;
+    } else {
+        sortAscending = false;
+    }
+    currentSortColumn = column;
+
+    const rows = Array.from(document.querySelectorAll('#leaderboard-body tr'));
+    rows.sort((a, b) => {
+        const valueA = parseFloat(a.querySelector(`td[data-column="${column}"]`).textContent) || 0;
+        const valueB = parseFloat(b.querySelector(`td[data-column="${column}"]`).textContent) || 0;
+
+        return sortAscending ? valueA - valueB : valueB - valueA;
+    });
+
+    rows.forEach(row => document.getElementById('leaderboard-body').appendChild(row));
+
+    document.querySelectorAll('th').forEach(th => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+    });
+
+    const currentTh = document.querySelector(`th[data-column="${column}"]`);
+    currentTh.classList.add(sortAscending ? 'sorted-asc' : 'sorted-desc');
 }
 
 

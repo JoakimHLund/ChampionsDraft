@@ -29,6 +29,7 @@ thead th {
     padding: 10px;
     text-align: left;
     white-space: nowrap; /* Prevent header text from wrapping */
+    user-select: none; /* Prevent text selection */
 }
 
 tbody td {
@@ -140,4 +141,14 @@ tbody tr:hover td {
     align-items: center;
     justify-content: right;
     height: 100%;
+}
+
+th.sorted-asc::after {
+    content: "↑";
+    position: absolute;
+}
+
+th.sorted-desc::after {
+    content: "↓";
+    position: absolute;
 }
