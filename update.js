@@ -70,8 +70,8 @@ async function updatePlayers() {
                 champion.name = "Sparta Prague";
                 updated = true;
                 break;
-              case "Stuttgart":
-                champion.name = "VfB Stuttgart";
+              case "AC Milan":
+                champion.name = "Milan";
                 updated = true;
                 break;
             }
@@ -218,7 +218,7 @@ async function updatePlayers() {
   
   // Add event listener to the update button
   document.getElementById('update-names-button').addEventListener('click', function () {
-    updatePlayersConference();
+    updatePlayers();
   });
 
 
