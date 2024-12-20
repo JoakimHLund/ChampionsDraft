@@ -8,11 +8,38 @@ const firebaseConfig = {
     appId: "1:766027841647:web:99ef32b25549054b218d9a"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function loadLeaderboard() {
+// Global object to store eliminated status of teams by competition
+const eliminatedStatus = {
+    champions: {},
+    europa: {},
+    conference: {}
+};
+
+// Fetch eliminated status for all teams
+async function fetchEliminatedStatus() {
+    const championsSnapshot = await db.collection('ChampionsTeams').get();
+    championsSnapshot.forEach(doc => {
+        eliminatedStatus.champions[doc.data().team] = doc.data().eliminated;
+    });
+
+    const europaSnapshot = await db.collection('EuropaTeams').get();
+    europaSnapshot.forEach(doc => {
+        eliminatedStatus.europa[doc.data().team] = doc.data().eliminated;
+    });
+
+    const conferenceSnapshot = await db.collection('ConferenceTeams').get();
+    conferenceSnapshot.forEach(doc => {
+        eliminatedStatus.conference[doc.data().team] = doc.data().eliminated;
+    });
+}
+
+async function loadLeaderboard() {
+    // First fetch eliminated statuses
+    await fetchEliminatedStatus();
+
     db.collection("players").orderBy("totalpoints", "desc").get().then((querySnapshot) => {
         const leaderboardBody = document.getElementById('leaderboard-body');
         leaderboardBody.innerHTML = ''; // Clear existing content
@@ -38,13 +65,12 @@ function loadLeaderboard() {
             const playerData = doc.data();
             const currentPoints = playerData.totalpoints || 0;
 
-            // Format the name as "[Department] Name" if department is present
             let playerName = playerData.Name;
             if (playerData.Department && playerData.Department.trim() !== '') {
                 playerName = `[${playerData.Department}] ${playerName}`;
             }
 
-            // Adjust rank only if the current player's points are different from the previous player's points
+            // Adjust rank only if the current player's points differ from the previous player's
             if (previousPoints !== null && currentPoints === previousPoints) {
                 sameRankCount++;
             } else {
@@ -54,17 +80,15 @@ function loadLeaderboard() {
 
             previousPoints = currentPoints;
 
-            // Create a table row
             const row = document.createElement('tr');
 
-            // Inside the loadLeaderboard function, where you create the rank cell
             const rankCell = document.createElement('td');
             rankCell.classList.add('rank-cell');
 
             const rankContainer = document.createElement('div');
             rankContainer.classList.add('rank-container');
 
-            // Add trophy icons to the rank container
+            // Add trophy icons for top scorers
             if (playerData.championspoints === highestChampionsPoints) {
                 const championsIcon = createTrophyIcon('img/icons/championstrophy.png', 'Champions Trophy', 'champions');
                 rankContainer.appendChild(championsIcon);
@@ -78,16 +102,11 @@ function loadLeaderboard() {
                 rankContainer.appendChild(conferenceIcon);
             }
 
-            // Add the rank number as a separate element
             const rankNumber = document.createElement('span');
             rankNumber.textContent = rank;
             rankContainer.appendChild(rankNumber);
-
-            // Append the rank container to the rank cell
             rankCell.appendChild(rankContainer);
 
-
-            // Rest of the cells (name, selections, points)
             const nameCell = document.createElement('td');
             const nameLink = document.createElement('a');
             nameLink.textContent = playerName;
@@ -95,37 +114,35 @@ function loadLeaderboard() {
             nameLink.className = 'player-link';
             nameCell.appendChild(nameLink);
 
+            // Create containers with league name for eliminated check
             const championsSelectionCell = document.createElement('td');
-            const championsLogosContainer = createLogosContainer(playerData.selectedChampions);
+            const championsLogosContainer = createLogosContainer(playerData.selectedChampions, 'champions');
             championsSelectionCell.appendChild(championsLogosContainer);
 
             const europaSelectionCell = document.createElement('td');
-            const europaLogosContainer = createLogosContainer(playerData.selectedEuropa);
+            const europaLogosContainer = createLogosContainer(playerData.selectedEuropa, 'europa');
             europaSelectionCell.appendChild(europaLogosContainer);
 
             const conferenceSelectionCell = document.createElement('td');
-            const conferenceLogosContainer = createLogosContainer(playerData.selectedConference);
+            const conferenceLogosContainer = createLogosContainer(playerData.selectedConference, 'conference');
             conferenceSelectionCell.appendChild(conferenceLogosContainer);
 
             const championsPointsCell = document.createElement('td');
             championsPointsCell.textContent = playerData.championspoints || 0;
+            championsPointsCell.setAttribute('data-column', 'championspoints');
 
             const europaPointsCell = document.createElement('td');
             europaPointsCell.textContent = playerData.europapoints || 0;
+            europaPointsCell.setAttribute('data-column', 'europapoints');
 
             const conferencePointsCell = document.createElement('td');
             conferencePointsCell.textContent = playerData.conferencepoints || 0;
+            conferencePointsCell.setAttribute('data-column', 'conferencepoints');
 
             const totalPointsCell = document.createElement('td');
             totalPointsCell.textContent = currentPoints;
-
-            championsPointsCell.setAttribute('data-column', 'championspoints');
-            europaPointsCell.setAttribute('data-column', 'europapoints');
-            conferencePointsCell.setAttribute('data-column', 'conferencepoints');
             totalPointsCell.setAttribute('data-column', 'totalpoints');
 
-
-            // Append cells to the row
             row.appendChild(rankCell);
             row.appendChild(nameCell);
             row.appendChild(championsSelectionCell);
@@ -136,13 +153,11 @@ function loadLeaderboard() {
             row.appendChild(conferencePointsCell);
             row.appendChild(totalPointsCell);
 
-            // Append row to the table body
             leaderboardBody.appendChild(row);
 
             document.querySelectorAll('th[data-column]').forEach(th => {
                 th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
             });
-            
         });
     }).catch((error) => {
         console.error("Error getting documents: ", error);
@@ -158,23 +173,25 @@ function createTrophyIcon(src, alt, className) {
     return icon;
 }
 
-
-// Helper function to create logos container
-function createLogosContainer(teamArray) {
+// Modified helper function to create logos container with eliminated check
+function createLogosContainer(teamArray, leagueName) {
     const logosContainer = document.createElement('div');
     logosContainer.className = 'logos-container';
 
     if (teamArray && teamArray.length > 0) {
-        // Sort the team array alphabetically by team name
         teamArray.sort((a, b) => a.name.localeCompare(b.name));
 
         teamArray.forEach(team => {
             const logoImg = document.createElement('img');
             logoImg.src = `img/logos/${team.logo}`;
             logoImg.className = 'small-logo';
-
-            // Add the club name as a tooltip
             logoImg.title = team.name;
+
+            // Check if eliminated and apply grayscale if true
+            const isEliminated = eliminatedStatus[leagueName][team.name] === true;
+            if (isEliminated) {
+                logoImg.classList.add('eliminated-logo'); // Add CSS class that applies grayscale
+            }
 
             logosContainer.appendChild(logoImg);
         });
@@ -186,7 +203,6 @@ function createLogosContainer(teamArray) {
 
     return logosContainer;
 }
-
 
 let currentSortColumn = 'totalpoints';
 let sortAscending = false;
@@ -203,7 +219,6 @@ function sortTable(column) {
     rows.sort((a, b) => {
         const valueA = parseFloat(a.querySelector(`td[data-column="${column}"]`).textContent) || 0;
         const valueB = parseFloat(b.querySelector(`td[data-column="${column}"]`).textContent) || 0;
-
         return sortAscending ? valueA - valueB : valueB - valueA;
     });
 
@@ -217,7 +232,5 @@ function sortTable(column) {
     currentTh.classList.add(sortAscending ? 'sorted-asc' : 'sorted-desc');
 }
 
-
-
-// Call the function to load the leaderboard
+// Call the loadLeaderboard function after the eliminated status is fetched
 loadLeaderboard();

@@ -12,215 +12,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 
-// Function to update the player's selectedChampions
-async function updatePlayers() {
-    try {
-      const statusElement = document.getElementById('update-status');
-      statusElement.textContent = 'Updating...';
-      
-      // Fetch all players
-      const playersSnapshot = await db.collection('players').get();
-      
-      playersSnapshot.forEach(async (playerDoc) => {
-        const playerData = playerDoc.data();
-        
-        // Check if selectedChampions exists
-        if (playerData.selectedChampions) {
-          let updated = false;
-          const updatedChampions = playerData.selectedChampions.map(champion => {
-            // Check for specific team names and update them
-            switch(champion.name) {
-              case "GNK Dinamo":
-                champion.name = "Dinamo Zagreb";
-                updated = true;
-                break;
-              case "Bayern München":
-                champion.name = "Bayern Munich";
-                updated = true;
-                break;
-              case "Inter":
-                champion.name = "Inter Milan";
-                updated = true;
-                break;
-              case "Dortmund":
-                champion.name = "Borussia Dortmund";
-                updated = true;
-                break;
-              case "Leipzig":
-                champion.name = "RB Leipzig";
-                updated = true;
-                break;
-              case "Leverkusen":
-                champion.name = "Bayer Leverkusen";
-                updated = true;
-                break;
-              case "Atlético de Madrid":
-                champion.name = "Atlético Madrid";
-                updated = true;
-                break;
-              case "Salzburg":
-                champion.name = "Red Bull Salzburg";
-                updated = true;
-                break;
-              case "Crvena Zvezda":
-                champion.name = "Red Star Belgrade";
-                updated = true;
-                break;
-              case "Sparta Praha":
-                champion.name = "Sparta Prague";
-                updated = true;
-                break;
-              case "AC Milan":
-                champion.name = "Milan";
-                updated = true;
-                break;
-            }
-            return champion;
-          });
-  
-          // If any updates were made, update Firestore
-          if (updated) {
-            await db.collection('players').doc(playerDoc.id).update({
-              selectedChampions: updatedChampions
-            });
-            console.log(`Updated player ${playerDoc.id}`);
-          }
-        }
-      });
-      
-      statusElement.textContent = 'Update complete!';
-    } catch (error) {
-      console.error("Error updating players: ", error);
-      document.getElementById('update-status').textContent = 'Error updating players';
-    }
-  }
-  // Function to update the player's selectedEuropa
-  async function updatePlayersEuropa() {
-  try {
-      const statusElement = document.getElementById('update-status');
-      statusElement.textContent = 'Updating Europa teams...';
-      // Fetch all players
-      const playersSnapshot = await db.collection('players').get();
-      playersSnapshot.forEach(async (playerDoc) => {
-          const playerData = playerDoc.data();
-          // Check if selectedEuropa exists
-          if (playerData.selectedEuropa) {
-              let updated = false;
-              const updatedEuropa = playerData.selectedEuropa.map(europaTeam => {
-                  // Check for specific team names and update them
-                  switch(europaTeam.name) {
-                      case "M. Tel-Aviv":
-                          europaTeam.name = "Maccabi Tel Aviv";
-                          updated = true;
-                          break;
-                      case "Ludogorets":
-                          europaTeam.name = "Ludogorets Razgrad";
-                          updated = true;
-                          break;
-                      case "Hoffenheim":
-                          europaTeam.name = "TSG Hoffenheim";
-                          updated = true;
-                          break;
-                      case "Elfsborg":
-                          europaTeam.name = "Elfsborg";
-                          updated = true;
-                          break;
-                  }
-                  return europaTeam;
-              });
-              // If any updates were made, update Firestore
-              if (updated) {
-                  await db.collection('players').doc(playerDoc.id).update({
-                      selectedEuropa: updatedEuropa
-                  });
-                  console.log(`Updated player ${playerDoc.id} Europa teams`);
-              }
-          }
-      });
-      statusElement.textContent = 'Europa teams update complete!';
-  } catch (error) {
-      console.error("Error updating Europa teams: ", error);
-      document.getElementById('update-status').textContent = 'Error updating Europa teams';
-  }
-  }
-  async function updatePlayersConference() {
-  try {
-      const statusElement = document.getElementById('update-status');
-      statusElement.textContent = 'Updating Conference teams...';
-      // Fetch all players
-      const playersSnapshot = await db.collection('players').get();
-      playersSnapshot.forEach(async (playerDoc) => {
-          const playerData = playerDoc.data();
-          // Check if selectedConference exists
-          if (playerData.selectedConference) {
-              let updated = false;
-              const updatedConference = playerData.selectedConference.map(conferenceTeam => {
-                  // Check for specific team names and update them to the longer versions
-                  switch(conferenceTeam.name) {
-                      case "Heidenheim":
-                          conferenceTeam.name = "1. FC Heidenheim";
-                          updated = true;
-                          break;
-                      case "Helsinki":
-                          conferenceTeam.name = "HJK";
-                          updated = true;
-                          break;
-                      case "Hearts of Midlothian":
-                          conferenceTeam.name = "Heart of Midlothian";
-                          updated = true;
-                          break;
-                      case "Petrocub":
-                          conferenceTeam.name = "Petrocub Hîncești";
-                          updated = true;
-                          break;
-                      case "Jagiellonia":
-                          conferenceTeam.name = "Jagiellonia Białystok";
-                          updated = true;
-                          break;
-                      case "Víkingur":
-                          conferenceTeam.name = "Víkingur Reykjavík";
-                          updated = true;
-                          break;
-                      case "Olimpija":
-                          conferenceTeam.name = "Olimpija Ljubljana";
-                          updated = true;
-                          break;
-                      case "Hearts":
-                          conferenceTeam.name = "Heart of Midlothian";
-                          updated = true;
-                          break;
-                      case "Borac":
-                          conferenceTeam.name = "Borac Banja Luka";
-                          updated = true;
-                          break;
-                      case "Dinamo-Minsk":
-                          conferenceTeam.name = "Dinamo Minsk";
-                          updated = true;
-                          break;
-                  }
-                  return conferenceTeam;
-              });
-              // If any updates were made, update Firestore
-              if (updated) {
-                  await db.collection('players').doc(playerDoc.id).update({
-                      selectedConference: updatedConference
-                  });
-                  console.log(`Updated player ${playerDoc.id} Conference teams`);
-              }
-          }
-      });
-      statusElement.textContent = 'Conference teams update complete!';
-  } catch (error) {
-      console.error("Error updating Conference teams: ", error);
-      document.getElementById('update-status').textContent = 'Error updating Conference teams';
-  }
-  }
-  
-  // Add event listener to the update button
-  document.getElementById('update-names-button').addEventListener('click', function () {
-    updatePlayers();
-  });
 
+  
+
+  document.getElementById('set-eliminated-button').addEventListener('click', function() {
+    setEliminatedFalseForAllTeams();
+  });
 
 // Pot multipliers based on the pot value
 const potMultipliers = {
@@ -633,9 +430,23 @@ async function updateTeamSelectionCounts() {
       document.getElementById('update-status').textContent = 'Error updating team selection counts';
     }
   }
+
+  async function setEliminatedFalseForAllTeams() {
+    const collections = ['ChampionsTeams', 'EuropaTeams', 'ConferenceTeams'];
+  
+    for (const collectionName of collections) {
+      const snapshot = await db.collection(collectionName).get();
+      const batch = db.batch();
+      snapshot.forEach(doc => {
+        batch.update(doc.ref, { eliminated: false });
+      });
+      await batch.commit();
+      console.log(`Set eliminated = false for all teams in ${collectionName}`);
+    }
+  }
+  
   
   // Add event listener to the update team counts button
   document.getElementById('update-team-counts-button').addEventListener('click', function () {
     updateTeamSelectionCounts();
   });
-  

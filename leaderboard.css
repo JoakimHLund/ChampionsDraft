@@ -152,3 +152,7 @@ th.sorted-desc::after {
     content: "↓";
     position: absolute;
 }
+
+.eliminated-logo {
+    filter: grayscale(100%);
+}
