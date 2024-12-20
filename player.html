@@ -68,6 +68,7 @@
                 <th>Team</th>
                 <th>Played Games</th>
                 <th>Points</th>
+                <th>Bonus Points</th>
                 <th>Multiplier</th>
                 <th>Total Score</th>
             </tr>
@@ -75,7 +76,7 @@
         <tbody></tbody>
         <tfoot>
             <tr>
-                <td colspan="5">Total</td>
+                <td colspan="6">Total</td>
                 <td id="champions-league-table-total"></td>
             </tr>
         </tfoot>
@@ -92,6 +93,7 @@
                 <th>Team</th>
                 <th>Played Games</th>
                 <th>Points</th>
+                <th>Bonus Points</th>
                 <th>Multiplier</th>
                 <th>Total Score</th>
             </tr>
@@ -99,7 +101,7 @@
         <tbody></tbody>
         <tfoot>
             <tr>
-                <td colspan="5">Total</td>
+                <td colspan="6">Total</td>
                 <td id="europa-league-table-total"></td>
             </tr>
         </tfoot>
@@ -116,6 +118,7 @@
                 <th>Team</th>
                 <th>Played Games</th>
                 <th>Points</th>
+                <th>Bonus Points</th>
                 <th>Multiplier</th>
                 <th>Total Score</th>
             </tr>
@@ -123,7 +126,7 @@
         <tbody></tbody>
         <tfoot>
             <tr>
-                <td colspan="5">Total</td>
+                <td colspan="6">Total</td>
                 <td id="conference-league-table-total"></td>
             </tr>
         </tfoot>
@@ -189,7 +192,7 @@
             if (teamDoc.exists) {
                 const teamData = teamDoc.data();
                 const multiplier = potMultipliers[teamData.pot] || 1;
-                const totalScoreForTeam = teamData.points * multiplier;
+                const totalScoreForTeam = (teamData.points * multiplier) + (teamData.bonuspoints * multiplier);
                 totalScore += totalScoreForTeam;
 
                 const selectedBy = teamData.selectedBy !== undefined ? teamData.selectedBy : 1;
@@ -213,6 +216,7 @@
                         </td>
                         <td>${teamData.played}</td>
                         <td>${teamData.points}</td>
+                        <td>${teamData.bonuspoints}</td>
                         <td>${multiplier}</td>
                         <td>${totalScoreForTeam.toFixed(1)}</td>
                     </tr>
