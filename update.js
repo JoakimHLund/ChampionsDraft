@@ -146,6 +146,13 @@ async function fetchLeagueData(leagueName, url, teamsJson, collectionName, butto
                                   if (leagueName === "Conference League" && teamCount < 8) {
                                       playoffbonus = true;
                                   }
+                                  if (leagueName === "Champions League" && teamCount < 8) {
+                                    playoffbonus = true;
+                                  }
+                                  if (leagueName === "Europa League" && teamCount < 8) {
+                                    playoffbonus = true;
+                                  }
+                                  
 
                                   // If playoffbonus is true, bonuspoints = 5, else 0
                                   const bonuspoints = playoffbonus ? 5 : 0;
