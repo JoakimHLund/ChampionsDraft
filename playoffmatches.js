@@ -63,7 +63,6 @@ async function loadTeams(existingMatches) {
     try {
         const teamsRef = db.collection(`${league}Teams`);
         const teamsSnapshot = await teamsRef
-            .where("eliminated", "==", false)
             .where("playoffbonus", "==", false)
             .get();
 
