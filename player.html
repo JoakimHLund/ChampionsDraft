@@ -215,7 +215,9 @@
                             ${personSVG}${personCount}
                         </td>
                         <td>${teamData.played}</td>
-                        <td>${teamData.points}</td>
+                        <td>
+                            ${teamData.EndgameMatchPoints ? teamData.points + teamData.EndgameMatchPoints : teamData.points}
+                        </td>
                         <td>${teamData.bonuspoints}</td>
                         <td>${multiplier}</td>
                         <td>${totalScoreForTeam.toFixed(1)}</td>

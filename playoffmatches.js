@@ -230,12 +230,22 @@ function createMatchdayUI(matchday1ContainerId, matchday2ContainerId, teams, exi
 }
 
 
+// Pot multipliers
+const potMultipliers = {
+    1: 1,
+    2: 1.5,
+    3: 2,
+    4: 2.5,
+    5: 3,
+    6: 3.5
+};
+
 // Get the "Update Table" button
 document.getElementById("update-table").addEventListener("click", async function () {
     await updateEndgameMatchPoints();
 });
 
-// Function to update EndgameMatchPoints
+// Function to update EndgameMatchPoints and Score
 async function updateEndgameMatchPoints() {
     try {
         const matchesSnapshot = await db.collection("playoffmatches")
@@ -280,22 +290,37 @@ async function updateEndgameMatchPoints() {
             await matchRef.update({ pointsUpdated: true });
         }
 
-        // Update each team's EndgameMatchPoints in Firestore
+        // Update each team's EndgameMatchPoints and Score in Firestore
         for (const [teamId, points] of Object.entries(teamPoints)) {
             const teamRef = db.collection(`${league}Teams`).doc(teamId);
             const teamDoc = await teamRef.get();
 
             if (teamDoc.exists) {
-                let currentPoints = teamDoc.data().EndgameMatchPoints || 0;
-                await teamRef.update({ EndgameMatchPoints: currentPoints + points });
-                console.log(`Updated ${teamId} with ${points} new points.`);
+                let teamData = teamDoc.data();
+                let currentEndgamePoints = teamData.EndgameMatchPoints || 0;
+                let newEndgamePoints = currentEndgamePoints + points;
+
+                // Calculate score using (points + bonuspoints + EndgameMatchPoints) * multiplier
+                let basePoints = teamData.points || 0;
+                let bonusPoints = teamData.bonuspoints || 0;
+                let potMultiplier = potMultipliers[teamData.pot] || 1; // Default to 1 if pot is missing
+
+                let finalScore = (basePoints + bonusPoints + newEndgamePoints) * potMultiplier;
+
+                // Update Firestore
+                await teamRef.update({
+                    EndgameMatchPoints: newEndgamePoints,
+                    score: finalScore.toFixed(1) // Ensure consistent decimal formatting
+                });
+
+                console.log(`Updated ${teamData.originalTeamName} - EndgameMatchPoints: ${newEndgamePoints}, Score: ${finalScore.toFixed(1)}`);
             }
         }
 
-        alert("EndgameMatchPoints updated successfully!");
+        alert("EndgameMatchPoints and scores updated successfully!");
 
     } catch (error) {
-        console.error("Error updating EndgameMatchPoints:", error);
+        console.error("Error updating EndgameMatchPoints and scores:", error);
         alert("Error updating table. See console for details.");
     }
 }
