@@ -182,58 +182,63 @@
         }
 
         async function populateTable(selectedTeams, tableId, collection) {
-        const tableBody = document.querySelector(`#${tableId} tbody`);
-        let totalScore = 0;
+    const tableBody = document.querySelector(`#${tableId} tbody`);
+    let totalScore = 0;
 
-        for (const team of selectedTeams) {
-            const sanitizedTeamName = team.name.replace(/\//g, '_');
-            const teamDoc = await db.collection(collection).doc(sanitizedTeamName).get();
+    for (const team of selectedTeams) {
+        const sanitizedTeamName = team.name.replace(/\//g, '_');
+        const teamDoc = await db.collection(collection).doc(sanitizedTeamName).get();
 
-            if (teamDoc.exists) {
-                const teamData = teamDoc.data();
-                const multiplier = potMultipliers[teamData.pot] || 1;
-                const totalScoreForTeam = (teamData.points * multiplier) + (teamData.bonuspoints * multiplier);
-                totalScore += totalScoreForTeam;
+        if (teamDoc.exists) {
+            const teamData = teamDoc.data();
+            const multiplier = potMultipliers[teamData.pot] || 1;
+            
+            // Calculate total points including EndgameMatchPoints if present
+            const basePoints = teamData.points || 0;
+            const bonusPoints = teamData.bonuspoints || 0;
+            const endgameMatchPoints = teamData.EndgameMatchPoints || 0;
 
-                const selectedBy = teamData.selectedBy !== undefined ? teamData.selectedBy : 1;
-                const otherPlayers = Math.max(0, selectedBy - 1);
+            const totalScoreForTeam = ((basePoints + endgameMatchPoints) * multiplier) + (bonusPoints * multiplier);
+            totalScore += totalScoreForTeam;
 
-                const personSVG = `
-                    <svg class="person-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M23.2136 9.07935C19.2946 9.07935 16.1177 12.2564 16.1177 16.1754C16.1177 20.0944 19.2946 23.2714 23.2136 23.2714C24.3963 23.2714 25.5115 22.982 26.4921 22.4702C26.505 22.463 26.5181 22.4561 26.5314 22.4496C28.7787 21.2588 30.3096 18.8959 30.3096 16.1754C30.3096 12.2564 27.1326 9.07935 23.2136 9.07935ZM28.4931 22.9595C30.5115 21.3865 31.8096 18.9326 31.8096 16.1754C31.8096 11.428 27.9611 7.57935 23.2136 7.57935C18.4662 7.57935 14.6177 11.428 14.6177 16.1754C14.6177 18.9324 15.9156 21.3863 17.9338 22.9593C15.9952 23.8569 14.309 25.2375 13.0434 26.9792C11.4817 29.1283 10.6406 31.7168 10.6406 34.3734V39.5924C10.6406 40.0066 10.9764 40.3424 11.3906 40.3424H35.0366C35.4508 40.3424 35.7866 40.0066 35.7866 39.5924V34.3734C35.7864 31.7167 34.9452 29.1283 33.3833 26.9791C32.1177 25.2377 30.4317 23.8571 28.4931 22.9595ZM26.9174 23.9347C25.7958 24.4711 24.5398 24.7714 23.2136 24.7714C21.8873 24.7714 20.6312 24.471 19.5095 23.9346C17.4048 24.6824 15.5727 26.0501 14.2569 27.8609C12.8814 29.7538 12.1406 32.0336 12.1406 34.3734V38.8424H34.2866V34.3735C34.2866 34.3734 34.2866 34.3735 34.2866 34.3735C34.2864 32.0335 33.5455 29.7538 32.1699 27.861C30.854 26.0503 29.022 24.6826 26.9174 23.9347Z"/>
-                    </svg>
-                `;
+            const selectedBy = teamData.selectedBy !== undefined ? teamData.selectedBy : 1;
+            const otherPlayers = Math.max(0, selectedBy - 1);
 
-                const personCount = otherPlayers > 0 ? ` x ${otherPlayers}` : '';
+            const personSVG = `
+                <svg class="person-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M23.2136 9.07935C19.2946 9.07935 16.1177 12.2564 16.1177 16.1754C16.1177 20.0944 19.2946 23.2714 23.2136 23.2714C24.3963 23.2714 25.5115 22.982 26.4921 22.4702C26.505 22.463 26.5181 22.4561 26.5314 22.4496C28.7787 21.2588 30.3096 18.8959 30.3096 16.1754C30.3096 12.2564 27.1326 9.07935 23.2136 9.07935ZM28.4931 22.9595C30.5115 21.3865 31.8096 18.9326 31.8096 16.1754C31.8096 11.428 27.9611 7.57935 23.2136 7.57935C18.4662 7.57935 14.6177 11.428 14.6177 16.1754C14.6177 18.9324 15.9156 21.3863 17.9338 22.9593C15.9952 23.8569 14.309 25.2375 13.0434 26.9792C11.4817 29.1283 10.6406 31.7168 10.6406 34.3734V39.5924C10.6406 40.0066 10.9764 40.3424 11.3906 40.3424H35.0366C35.4508 40.3424 35.7866 40.0066 35.7866 39.5924V34.3734C35.7864 31.7167 34.9452 29.1283 33.3833 26.9791C32.1177 25.2377 30.4317 23.8571 28.4931 22.9595ZM26.9174 23.9347C25.7958 24.4711 24.5398 24.7714 23.2136 24.7714C21.8873 24.7714 20.6312 24.471 19.5095 23.9346C17.4048 24.6824 15.5727 26.0501 14.2569 27.8609C12.8814 29.7538 12.1406 32.0336 12.1406 34.3734V38.8424H34.2866V34.3735C34.2866 34.3734 34.2866 34.3735 34.2866 34.3735C34.2864 32.0335 33.5455 29.7538 32.1699 27.861C30.854 26.0503 29.022 24.6826 26.9174 23.9347Z"/>
+                </svg>
+            `;
 
-                const row = `
-                    <tr>
-                        <td class="logo-cell">
-                            <img src="img/logos/${teamData.logo}" alt="${teamData.team} logo">
-                        </td>
-                        <td>${teamData.team}
-                            ${personSVG}${personCount}
-                        </td>
-                        <td>${teamData.played}</td>
-                        <td>
-                            ${teamData.EndgameMatchPoints ? teamData.points + teamData.EndgameMatchPoints : teamData.points}
-                        </td>
-                        <td>${teamData.bonuspoints}</td>
-                        <td>${multiplier}</td>
-                        <td>${totalScoreForTeam.toFixed(1)}</td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            } else {
-                console.warn(`Team ${team.name} not found in collection ${collection}`);
-            }
-        }
+            const personCount = otherPlayers > 0 ? ` x ${otherPlayers}` : '';
 
-        const totalElement = document.getElementById(`${tableId}-total`);
-        if (totalElement) {
-            totalElement.textContent = totalScore.toFixed(1);
+            const row = `
+                <tr>
+                    <td class="logo-cell">
+                        <img src="img/logos/${teamData.logo}" alt="${teamData.team} logo">
+                    </td>
+                    <td>${teamData.team}
+                        ${personSVG}${personCount}
+                    </td>
+                    <td>${teamData.played}</td>
+                    <td>${basePoints + endgameMatchPoints}</td> <!-- Include EndgameMatchPoints -->
+                    <td>${bonusPoints}</td>
+                    <td>${multiplier}</td>
+                    <td>${totalScoreForTeam.toFixed(1)}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        } else {
+            console.warn(`Team ${team.name} not found in collection ${collection}`);
         }
     }
+
+    const totalElement = document.getElementById(`${tableId}-total`);
+    if (totalElement) {
+        totalElement.textContent = totalScore.toFixed(1);
+    }
+}
+
 
 
         // Call the function to fetch and populate player data
