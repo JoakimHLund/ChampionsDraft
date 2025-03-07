@@ -300,7 +300,11 @@ document.getElementById("update-table").addEventListener("click", async function
 async function updateEndgameMatchPoints() {
     try {
         const collections = ["playoffmatches", "roundof16matches"];
-        let teamPoints = {}; // Store points for each team
+        let teamPoints = {}; 
+        // Keeps track if a specific doc has been processed in this function call.
+        // Key it by 'collection_matchIndex' so that "roundof16matches_3" is distinct 
+        // from "playoffmatches_3".
+        let processedMatches = {};
 
         for (const collection of collections) {
             const matchesSnapshot = await db.collection(collection)
@@ -315,66 +319,76 @@ async function updateEndgameMatchPoints() {
             for (const doc of matchesSnapshot.docs) {
                 let data = doc.data();
 
-                // Only process matches that have a winner set
+                // Skip if there's no winner/team info yet
                 if (!data.winner || !data.team1 || !data.team2) continue;
 
-                // Ensure points are initialized
-                if (!teamPoints[data.team1]) teamPoints[data.team1] = 0;
-                if (!teamPoints[data.team2]) teamPoints[data.team2] = 0;
-
-                // Only count match once (check Firestore if it has already been counted)
-                const matchRef = db.collection(collection).doc(doc.id);
-                if (data.pointsUpdated) {
-                    console.log(`Match ${data.matchIndex} already counted in ${collection}.`);
+                // Create a combined key so "roundof16matches_3" != "playoffmatches_3"
+                const combinedKey = `${collection}_${data.matchIndex}`;
+                
+                // Skip if we've handled this doc in the *same* run 
+                // (for safety if you re-run in one button click)
+                if (processedMatches[combinedKey]) {
+                    console.log(`Already processed ${combinedKey}; skipping...`);
                     continue;
                 }
 
-                // Assign points based on result
-                if (data.winner === data.team1) {
-                    teamPoints[data.team1] += 3;
-                } else if (data.winner === data.team2) {
-                    teamPoints[data.team2] += 3;
-                } else if (data.winner === "draw") {
-                    teamPoints[data.team1] += 1;
-                    teamPoints[data.team2] += 1;
+                // Also skip if this doc was previously updated in Firestore
+                // (so we don't double-count across multiple runs)
+                if (data.pointsUpdated) {
+                    console.log(`Match ${data.matchIndex} in ${collection} was already counted previously.`);
+                    continue;
                 }
 
-                // Mark match as counted
+                // Make sure to record we've processed it *this run*, to avoid duplicates in the loop
+                processedMatches[combinedKey] = true;
+
+                // Award points
+                if (data.winner === data.team1) {
+                    teamPoints[data.team1] = (teamPoints[data.team1] || 0) + 3;
+                } else if (data.winner === data.team2) {
+                    teamPoints[data.team2] = (teamPoints[data.team2] || 0) + 3;
+                } else if (data.winner === "draw") {
+                    teamPoints[data.team1] = (teamPoints[data.team1] || 0) + 1;
+                    teamPoints[data.team2] = (teamPoints[data.team2] || 0) + 1;
+                }
+
+                // Mark this doc so we don't process it again in future runs
+                const matchRef = db.collection(collection).doc(doc.id);
                 await matchRef.update({ pointsUpdated: true });
             }
         }
 
-        // Update each team's EndgameMatchPoints and Score in Firestore
+        // Now update EndgameMatchPoints / Score for each team
         for (const [teamId, points] of Object.entries(teamPoints)) {
             const teamRef = db.collection(`${league}Teams`).doc(teamId);
             const teamDoc = await teamRef.get();
 
-            if (teamDoc.exists) {
-                let teamData = teamDoc.data();
-                let currentEndgamePoints = teamData.EndgameMatchPoints || 0;
-                let newEndgamePoints = currentEndgamePoints + points;
+            if (!teamDoc.exists) continue;
 
-                // Calculate score using (points + bonuspoints + EndgameMatchPoints) * multiplier
-                let basePoints = teamData.points || 0;
-                let bonusPoints = teamData.bonuspoints || 0;
-                let potMultiplier = potMultipliers[teamData.pot] || 1; // Default to 1 if pot is missing
+            let teamData = teamDoc.data();
+            let currentEndgamePoints = teamData.EndgameMatchPoints || 0;
+            let newEndgamePoints = currentEndgamePoints + points;
 
-                let finalScore = (basePoints + bonusPoints + newEndgamePoints) * potMultiplier;
+            let basePoints = teamData.points || 0;
+            let bonusPoints = teamData.bonuspoints || 0;
+            let potMultiplier = potMultipliers[teamData.pot] || 1;
 
-                // Update Firestore
-                await teamRef.update({
-                    EndgameMatchPoints: newEndgamePoints,
-                    score: finalScore.toFixed(1) // Ensure consistent decimal formatting
-                });
+            let finalScore = (basePoints + bonusPoints + newEndgamePoints) * potMultiplier;
 
-                console.log(`Updated ${teamData.originalTeamName} - EndgameMatchPoints: ${newEndgamePoints}, Score: ${finalScore.toFixed(1)}`);
-            }
+            await teamRef.update({
+                EndgameMatchPoints: newEndgamePoints,
+                score: finalScore.toFixed(1)
+            });
+
+            console.log(`Updated ${teamData.originalTeamName}: 
+                EndgameMatchPoints = ${newEndgamePoints}, 
+                score = ${finalScore.toFixed(1)}`);
         }
 
         alert("EndgameMatchPoints and scores updated successfully!");
-
     } catch (error) {
         console.error("Error updating EndgameMatchPoints and scores:", error);
         alert("Error updating table. See console for details.");
     }
 }
+
