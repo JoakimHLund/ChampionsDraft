@@ -139,34 +139,34 @@
         let currentSortColumn = 'name'; // Set to false for initial descending order
 
         async function getTeamsData() {
-            teamsData = [];
-            const leagues = ['ChampionsTeams', 'EuropaTeams', 'ConferenceTeams'];
-            
-            for (const league of leagues) {
-                const teamsSnapshot = await db.collection(league).get();
+    teamsData = [];
+    const leagues = ['ChampionsTeams', 'EuropaTeams', 'ConferenceTeams'];
+    
+    for (const league of leagues) {
+        const teamsSnapshot = await db.collection(league).get();
 
-                teamsSnapshot.forEach(doc => {
-                    const teamData = doc.data();
-                    const multiplier = potMultipliers[teamData.pot] || 1;
-                    const totalScore = teamData.points * multiplier;
-                    const selectedBy = teamData.selectedBy || 0;
+        teamsSnapshot.forEach(doc => {
+            const teamData = doc.data();
+            const multiplier = potMultipliers[teamData.pot] || 1;
+            const selectedBy = teamData.selectedBy || 0;
 
-                    teamsData.push({
-                        league: league,
-                        logo: teamData.logo,
-                        team: teamData.team,
-                        selectedBy: selectedBy,
-                        played: teamData.played,
-                        points: teamData.points,
-                        multiplier: multiplier,
-                        totalScore: totalScore
-                    });
-                });
-            }
+            teamsData.push({
+                league: league,
+                logo: teamData.logo,
+                team: teamData.team,
+                selectedBy: selectedBy,
+                played: teamData.played,
+                points: teamData.points + teamData.EndgameMatchPoints + teamData.bonuspoints,
+                multiplier: multiplier,
+                totalScore: Number(teamData.score) || 0
+            });
+        });
+    }
 
-            // Sort by 'totalScore' descending by default and apply initial arrow indicator
-            sortTable('totalScore');
-        }
+    // Sort by 'totalScore' descending by default and apply initial arrow indicator
+    sortTable('totalScore');
+}
+
 
         function populateTable() {
             const teamStatsBody = document.getElementById('team-stats-body');

@@ -14,9 +14,6 @@ const db = firebase.firestore();
 
 
 
-document.getElementById('set-eliminated-button').addEventListener('click', function() {
-  setEliminatedFalseForAllTeams();
-});
 
 // Pot multipliers based on the pot value
 const potMultipliers = {
@@ -76,183 +73,6 @@ async function addOrUpdateTeamInFirestore(teamData, collectionName) {
 }
 
 
-// Common function to fetch and process league data
-async function fetchLeagueData(leagueName, url, teamsJson, collectionName, buttonId) {
-  document.getElementById(buttonId).addEventListener('click', async () => {
-      try {
-          const statusElement = document.getElementById('update-status');
-          statusElement.textContent = `Fetching ${leagueName} results...`;
-
-          // Cache-busting parameter
-          const cacheBuster = new Date().getTime();
-
-          // Fetch the Wikipedia page through CORS proxy with cache-busting
-          const response = await fetch(`https://corsproxy.io/?${url}?_=${cacheBuster}`);
-          const html = await response.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-
-          // Fetch teams data from the specified JSON file
-          const teamsData = await getTeamsData(teamsJson);
-
-          // Select all wikitable sortable tables
-          const tables = doc.querySelectorAll('.wikitable');
-
-          // Identify the specific tables based on headers or unique structure
-          const targetTables = [];
-          tables.forEach(table => {
-              const headerRow = table.querySelector('tr');
-              if (headerRow && headerRow.innerText.includes("Pos")) {
-                  targetTables.push(table);
-              }
-          });
-
-          if (targetTables.length === 0) {
-              throw new Error("No matching tables found!");
-          }
-
-          const results = [];
-          let teamCount = 0; // Count how many teams have been processed
-
-          // Loop through each target table
-          for (const targetTable of targetTables) {
-              // Parse the table rows and extract data
-              const rows = targetTable.querySelectorAll('tr');
-
-              for (const row of rows) {
-                  const cells = row.querySelectorAll('td, th');
-
-                  if (cells.length >= 10) {
-                      const teamCell = cells[1];  // Team name is in the second cell
-
-                      // Check if the <a> tag exists within the cell
-                      const links = teamCell.querySelectorAll('a');
-                      const teamLink = links[links.length - 1];
-                      if (teamLink) {
-                          const team = teamLink.innerText.trim();
-
-                          if (team && team !== "GD" && team !== "e") {
-                              const playedText = cells[2].innerText.trim();
-                              const played = parseFloat(playedText) || 0;
-                              const pointsText = cells[9].innerText.trim(); // Points are in the 10th column
-                              const points = parseFloat(pointsText) || 0;
-
-                              // Find the matching team in the teams data
-                              const teamData = teamsData.find(t => t.name === team);
-
-                              if (teamData) {
-                                  // Determine if this team gets playoffbonus
-                                  let playoffbonus = false;
-                                  if (leagueName === "Conference League" && teamCount < 8) {
-                                      playoffbonus = true;
-                                  }
-                                  if (leagueName === "Champions League" && teamCount < 8) {
-                                    playoffbonus = true;
-                                  }
-                                  if (leagueName === "Europa League" && teamCount < 8) {
-                                    playoffbonus = true;
-                                  }
-                                  
-
-                                  // If playoffbonus is true, bonuspoints = 5, else 0
-                                  const bonuspoints = playoffbonus ? 5 : 0;
-
-                                  // Calculate the score using the pot multiplier
-                                  const multiplier = potMultipliers[teamData.pot] || 1;
-                                  const score = (points * multiplier) + (bonuspoints * multiplier);
-
-                                  const teamResult = {
-                                      team: teamData.name,
-                                      points: points,
-                                      played: played,
-                                      pot: teamData.pot,
-                                      logo: teamData.logo,
-                                      bonuspoints: bonuspoints,
-                                      playoffbonus: playoffbonus,
-                                      score: score.toFixed(1) // Keep the score to 1 decimal place
-                                  };
-
-                                  // Add or update the team in Firebase Firestore
-                                  const sanitizedTeamName = teamResult.team.replace(/\//g, '_');
-                                  const teamRef = db.collection(collectionName).doc(sanitizedTeamName);
-                                  const doc = await teamRef.get();
-                                  if (doc.exists) {
-                                      await teamRef.update({
-                                          points: teamResult.points,
-                                          played: teamResult.played,
-                                          pot: teamResult.pot,
-                                          logo: teamResult.logo,
-                                          originalTeamName: teamResult.team,
-                                          playoffbonus: teamResult.playoffbonus,
-                                          bonuspoints: teamResult.bonuspoints,
-                                          score: teamResult.score
-                                      });
-                                      console.log(`Updated team ${teamResult.team} in ${collectionName} with points: ${teamResult.points}, score: ${teamResult.score}, playoffbonus: ${teamResult.playoffbonus}, bonuspoints: ${teamResult.bonuspoints}`);
-                                  } else {
-                                      await teamRef.set({
-                                          team: teamResult.team,
-                                          points: teamResult.points,
-                                          played: teamResult.played,
-                                          pot: teamResult.pot,
-                                          logo: teamResult.logo,
-                                          originalTeamName: teamResult.team,
-                                          playoffbonus: teamResult.playoffbonus,
-                                          bonuspoints: teamResult.bonuspoints,
-                                          score: teamResult.score
-                                      });
-                                      console.log(`Created new team entry for ${teamResult.team} in ${collectionName} with playoffbonus: ${teamResult.playoffbonus}, bonuspoints: ${teamResult.bonuspoints}`);
-                                  }
-
-                                  results.push(teamResult);
-                                  teamCount++; // Increment the team counter only if we actually found a matching team
-                              } else {
-                                  console.warn(`Team ${team} not found in ${teamsJson}`);
-                                  results.push({ team, points });
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-
-          // Log the final results with team name, points, pot, logo, bonuspoints, playoffbonus, and score
-          console.log(`${leagueName} Results:`, results);
-
-          statusElement.textContent = `${leagueName} results fetched successfully!`;
-      } catch (error) {
-          console.error(`Error fetching ${leagueName} results: `, error);
-          document.getElementById('update-status').textContent = `Failed to fetch ${leagueName} results!`;
-      }
-  });
-}
-
-
-// Champions League
-fetchLeagueData(
-  "Champions League",
-  "https://en.wikipedia.org/wiki/2024–25_UEFA_Champions_League",
-  "teams.json",
-  "ChampionsTeams",
-  "update-champions-button"
-);
-
-// Europa League
-fetchLeagueData(
-  "Europa League",
-  "https://en.wikipedia.org/wiki/2024–25_UEFA_Europa_League",
-  "europa.json",
-  "EuropaTeams",
-  "update-europa-button"
-);
-
-// Conference League
-fetchLeagueData(
-  "Conference League",
-  "https://en.wikipedia.org/wiki/2024–25_UEFA_Europa_Conference_League",
-  "conference.json",
-  "ConferenceTeams",
-  "update-conference-button"
-);
 
 async function updateLeaderboard() {
     try {
@@ -316,6 +136,7 @@ async function updateLeaderboard() {
                     const sanitizedTeamName = team.name.replace(/\//g, '_');
                     const teamData = championsTeamMap[sanitizedTeamName];
                     if (teamData) {
+                        console.log(`Champion team: ${sanitizedTeamName}, Score: ${teamData.score}`);
                         championspoints += parseFloat(teamData.score);
                     }
                 });
@@ -344,6 +165,8 @@ async function updateLeaderboard() {
             const totalpoints = championspoints + europapoints + conferencepoints;
 
             const playerRef = db.collection('players').doc(player.id);
+            console.log('Player:', player.id, 'Champions points:', championspoints, 'Europa:', europapoints, 'Conference:', conferencepoints);
+
             batch.update(playerRef, {
                 championspoints: championspoints,
                 europapoints: europapoints,
@@ -351,7 +174,7 @@ async function updateLeaderboard() {
                 totalpoints: totalpoints
             });
         });
-
+        
         // Commit the batch
         await batch.commit();
 
@@ -392,6 +215,10 @@ function createTeamMap(teamDocs) {
   // Add event listener to the update leaderboard button
   document.getElementById('update-leaderboard-button').addEventListener('click', function () {
     updateLeaderboard();
+  });
+
+  document.getElementById('update-bonus-button').addEventListener('click', function () {
+    updateAllTeamsBonusPoints();
   });
   
 
@@ -492,6 +319,56 @@ async function updateTeamSelectionCounts() {
       console.log(`Set eliminated = false for all teams in ${collectionName}`);
     }
   }
+
+  async function updateAllTeamsBonusPoints() {
+    const collections = ['ChampionsTeams', 'EuropaTeams', 'ConferenceTeams'];
+  
+    for (const collectionName of collections) {
+      const snapshot = await db.collection(collectionName).get();
+      const batch = db.batch();
+  
+      snapshot.forEach(doc => {
+        const teamData = doc.data();
+        
+        // If qfbonus doesn't exist, set it to false
+        let qfbonus = (teamData.qfbonus === undefined) ? false : teamData.qfbonus;
+        let sfbonus = (teamData.sfbonus === undefined) ? false : teamData.sfbonus;
+        let endgamepointS= (teamData.EndgameMatchPoints  === undefined)? 0 : teamData.EndgameMatchPoints;
+        // Calculate bonus points
+        let bonuspoints = 0;
+        if (teamData.playoffbonus) bonuspoints += 5;
+        if (qfbonus) bonuspoints += 4;
+        if (sfbonus) bonuspoints += 6;
+  
+        // Calculate new score
+        const multiplier = potMultipliers[teamData.pot] || 1;
+        const newScore = (teamData.points + bonuspoints + endgamepointS) * multiplier;
+
+        // Log details to console
+        console.log(`Team: ${doc.id}`);
+        console.log(`  Points: ${teamData.points}`);
+        console.log(`  Playoff Bonus: ${teamData.playoffbonus ? 5 : 0}`);
+        console.log(`  QF Bonus: ${qfbonus ? 4 : 0}`);
+        console.log(`  Total Bonus Points: ${bonuspoints}`);
+        console.log(`  Multiplier: ${multiplier}`);
+        console.log(`  New Score: ${newScore.toFixed(1)}`);
+  
+        // Update the document in this batch
+        batch.update(doc.ref, {
+          qfbonus: qfbonus,
+          bonuspoints: bonuspoints,
+          score: newScore.toFixed(1) // keep one decimal
+        });
+      });
+  
+      // Commit the batch updates for this collection
+      await batch.commit();
+      console.log(`Bonus points updated for ${collectionName}`);
+    }
+  
+    console.log("Bonus points updated for all teams!");
+  }
+  
   
   // Add event listener to the update team counts button
   document.getElementById('update-team-counts-button').addEventListener('click', function () {
