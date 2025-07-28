@@ -334,6 +334,7 @@ async function updateTeamSelectionCounts() {
         let qfbonus = (teamData.qfbonus === undefined) ? false : teamData.qfbonus;
         let sfbonus = (teamData.sfbonus === undefined) ? false : teamData.sfbonus;
         let finalbonus = (teamData.finalbonus === undefined) ? false : teamData.finalbonus;
+        let winnerbonus = (teamData.winnerbonus === undefined) ? false : teamData.winnerbonus;
         let endgamepointS= (teamData.EndgameMatchPoints  === undefined)? 0 : teamData.EndgameMatchPoints;
         // Calculate bonus points
         let bonuspoints = 0;
@@ -341,6 +342,7 @@ async function updateTeamSelectionCounts() {
         if (qfbonus) bonuspoints += 4;
         if (sfbonus) bonuspoints += 6;
         if (finalbonus) bonuspoints += 8;
+        if (winnerbonus) bonuspoints += 10;
   
         // Calculate new score
         const multiplier = potMultipliers[teamData.pot] || 1;
@@ -352,7 +354,8 @@ async function updateTeamSelectionCounts() {
         console.log(`  Playoff Bonus: ${teamData.playoffbonus ? 5 : 0}`);
         console.log(`  QF Bonus: ${qfbonus ? 4 : 0}`);
         console.log(`  SF Bonus: ${sfbonus ? 6 : 0}`);
-        console.log(`  Final Bonus: ${sfbonus ? 8 : 0}`);
+        console.log(`  Final Bonus: ${finalbonus ? 8 : 0}`);
+        console.log(`  Winner Bonus: ${winnerbonus ? 10 : 0}`);
         console.log(`  Total Bonus Points: ${bonuspoints}`);
         console.log(`  Multiplier: ${multiplier}`);
         console.log(`  New Score: ${newScore.toFixed(1)}`);
