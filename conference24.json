@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Chelsea",
+    "pot": 1,
+    "country": "ENG",
+    "logo": "chelsea.png"
+  },
+  {
+    "name": "Copenhagen",
+    "pot": 1,
+    "country": "DEN",
+    "logo": "copenhagen.png"
+  },
+  {
+    "name": "Gent",
+    "pot": 1,
+    "country": "BEL",
+    "logo": "gent.png"
+  },
+  {
+    "name": "Fiorentina",
+    "pot": 1,
+    "country": "ITA",
+    "logo": "fiorentina.png"
+  },
+  {
+    "name": "LASK",
+    "pot": 1,
+    "country": "AUT",
+    "logo": "lask.png"
+  },
+  {
+    "name": "Real Betis",
+    "pot": 1,
+    "country": "ESP",
+    "logo": "realbetis.png"
+  },
+  {
+    "name": "İstanbul Başakşehir",
+    "pot": 2,
+    "country": "TUR",
+    "logo": "basaksehir.png"
+  },
+  {
+    "name": "Molde",
+    "pot": 2,
+    "country": "NOR",
+    "logo": "molde.png"
+  },
+  {
+    "name": "Legia Warsaw",
+    "pot": 2,
+    "country": "POL",
+    "logo": "legiawarszawa.png"
+  },
+  {
+    "name": "1. FC Heidenheim",
+    "pot": 2,
+    "country": "GER",
+    "logo": "heidenheim.png"
+  },
+  {
+    "name": "Djurgårdens IF",
+    "pot": 2,
+    "country": "SWE",
+    "logo": "djurgarden.png"
+  },
+  {
+    "name": "APOEL",
+    "pot": 2,
+    "country": "CYP",
+    "logo": "apoel.png"
+  },
+  {
+    "name": "Rapid Wien",
+    "pot": 3,
+    "country": "AUT",
+    "logo": "rapid.png"
+  },
+  {
+    "name": "Omonia",
+    "pot": 3,
+    "country": "CYP",
+    "logo": "omonoia.png"
+  },
+  {
+    "name": "HJK",
+    "pot": 3,
+    "country": "FIN",
+    "logo": "helsinki.png"
+  },
+  {
+    "name": "Vitória de Guimarães",
+    "pot": 3,
+    "country": "POR",
+    "logo": "vitoria.png"
+  },
+  {
+    "name": "Astana",
+    "pot": 3,
+    "country": "KAZ",
+    "logo": "astana.png"
+  },
+  {
+    "name": "Olimpija Ljubljana",
+    "pot": 3,
+    "country": "SVN",
+    "logo": "ljubljana.png"
+  },
+  {
+    "name": "Cercle Brugge",
+    "pot": 4,
+    "country": "BEL",
+    "logo": "cerclebrugge.png"
+  },
+  {
+    "name": "Shamrock Rovers",
+    "pot": 4,
+    "country": "IRL",
+    "logo": "rovers.png"
+  },
+  {
+    "name": "The New Saints",
+    "pot": 4,
+    "country": "WAL",
+    "logo": "newsaints.png"
+  },
+  {
+    "name": "Lugano",
+    "pot": 4,
+    "country": "SUI",
+    "logo": "lugano.png"
+  },
+  {
+    "name": "Heart of Midlothian",
+    "pot": 4,
+    "country": "SCO",
+    "logo": "hearts.png"
+  },
+  {
+    "name": "Mladá Boleslav",
+    "pot": 4,
+    "country": "CZE",
+    "logo": "mlada.png"
+  },
+  {
+    "name": "Petrocub Hîncești",
+    "pot": 5,
+    "country": "MDA",
+    "logo": "petrocub.png"
+  },
+  {
+    "name": "St. Gallen",
+    "pot": 5,
+    "country": "SUI",
+    "logo": "stgallen.png"
+  },
+  {
+    "name": "Panathinaikos",
+    "pot": 5,
+    "country": "GRE",
+    "logo": "panathinaikos.png"
+  },
+  {
+    "name": "TSC",
+    "pot": 5,
+    "country": "SRB",
+    "logo": "tsc.png"
+  },
+  {
+    "name": "Borac Banja Luka",
+    "pot": 5,
+    "country": "BIH",
+    "logo": "borac.png"
+  },
+  {
+    "name": "Jagiellonia Białystok",
+    "pot": 5,
+    "country": "POL",
+    "logo": "jagiellonia.png"
+  },
+  {
+    "name": "Celje",
+    "pot": 6,
+    "country": "SVN",
+    "logo": "celje.png"
+  },
+  {
+    "name": "Larne",
+    "pot": 6,
+    "country": "NIR",
+    "logo": "larne.png"
+  },
+  {
+    "name": "Dinamo Minsk",
+    "pot": 6,
+    "country": "BLR",
+    "logo": "dinamominsk.png"
+  },
+  {
+    "name": "Pafos",
+    "pot": 6,
+    "country": "CYP",
+    "logo": "pafos.png"
+  },
+  {
+    "name": "Víkingur Reykjavík",
+    "pot": 6,
+    "country": "ISL",
+    "logo": "vikingur.png"
+  },
+  {
+    "name": "Noah",
+    "pot": 6,
+    "country": "ARM",
+    "logo": "noah.png"
+  }
+]

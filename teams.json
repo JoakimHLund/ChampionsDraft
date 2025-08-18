@@ -96,6 +96,18 @@
     "logo": "frankfurt.png"
   },
   {
+    "name": "Tottenham Hotspur",
+    "pot": 3,
+    "country": "GB",
+    "logo": "tottenham.png"
+  },
+  {
+    "name": "PSV Eindhoven",
+    "pot": 3,
+    "country": "NL",
+    "logo": "psv.png"
+  },
+  {
     "name": "Ajax",
     "pot": 3,
     "country": "NL",
@@ -130,6 +142,24 @@
     "pot": 3,
     "country": "FR",
     "logo": "marseille.png"
+  },
+  {
+    "name": "Monaco",
+    "pot": 4,
+    "country": "FR",
+    "logo": "monaco.png"
+  },
+  {
+    "name": "Galatasaray",
+    "pot": 4,
+    "country": "TR",
+    "logo": "galatasaray.png"
+  },
+  {
+    "name": "Union Saint-Gilloise",
+    "pot": 4,
+    "country": "BE",
+    "logo": "unionsg.png"
   },
   {
     "name": "Athletic Bilbao",

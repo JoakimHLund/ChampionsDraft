@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background-color: #111;
+}
+
+.logo-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.logo {
+  position: absolute;
+  opacity: 0.8;
+  pointer-events: none;
+  transition: transform 0.1s linear;
+}
+
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.promo-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-top: 20vh;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.promo-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 30px 50px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 80%;
+  z-index: 2;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.promo-card h1 {
+  margin-bottom: 15px;
+  font-size: 1.8rem;
+}
+
+.promo-card p {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+
+/* Corner logos */
+.corner-logo {
+  position: absolute;
+  top: 10px;
+  width: 60px;
+  height: auto;
+}
+
+.left-logo {
+  left: 10px;
+}
+
+.right-logo {
+  right: 10px;
+}
+
+/* Trophy row */
+.trophy-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+
+.trophy-icon {
+  width: 40px;
+  height: auto;
+}
+
+/* Colors for trophies */
+.trophy-icon.champions {
+    filter: brightness(0) saturate(100%) invert(38%) sepia(87%) saturate(672%) hue-rotate(178deg) brightness(92%) contrast(88%);
+}
+
+.trophy-icon.europa {
+    filter: brightness(0) saturate(100%) invert(49%) sepia(92%) saturate(3182%) hue-rotate(1deg) brightness(101%) contrast(102%);
+}
+
+.trophy-icon.conference {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(54%) saturate(571%) hue-rotate(83deg) brightness(95%) contrast(91%);
+}

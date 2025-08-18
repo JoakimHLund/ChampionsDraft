@@ -2,217 +2,79 @@
   {
     "name": "Roma",
     "pot": 1,
-    "country": "ITA",
+    "country": "IT",
     "logo": "roma.png"
-  },
-  {
-    "name": "Manchester United",
-    "pot": 1,
-    "country": "ENG",
-    "logo": "manutd.png"
   },
   {
     "name": "Porto",
     "pot": 1,
-    "country": "POR",
+    "country": "PT",
     "logo": "porto.png"
   },
   {
-    "name": "Ajax",
+    "name": "Lille",
     "pot": 1,
-    "country": "NED",
-    "logo": "ajax.png"
+    "country": "FR",
+    "logo": "lille.png"
   },
   {
-    "name": "Rangers",
+    "name": "Dinamo Zagreb",
     "pot": 1,
-    "country": "SCO",
-    "logo": "rangers.png"
+    "country": "HR",
+    "logo": "dinamozagreb.png"
   },
   {
-    "name": "Eintracht Frankfurt",
+    "name": "Real Betis",
     "pot": 1,
-    "country": "GER",
-    "logo": "frankfurt.png"
+    "country": "ES",
+    "logo": "realbetis.png"
   },
   {
-    "name": "Lazio",
+    "name": "Aston Villa",
     "pot": 1,
-    "country": "ITA",
-    "logo": "lazio.png"
-  },
-  {
-    "name": "Tottenham Hotspur",
-    "pot": 1,
-    "country": "ENG",
-    "logo": "tottenham.png"
-  },
-  {
-    "name": "Slavia Prague",
-    "pot": 1,
-    "country": "CZE",
-    "logo": "slaviapraha.png"
-  },
-  {
-    "name": "Real Sociedad",
-    "pot": 2,
-    "country": "ESP",
-    "logo": "realsociedad.png"
-  },
-  {
-    "name": "AZ",
-    "pot": 2,
-    "country": "NED",
-    "logo": "azalkmaar.png"
-  },
-  {
-    "name": "Braga",
-    "pot": 2,
-    "country": "POR",
-    "logo": "braga.png"
-  },
-  {
-    "name": "Olympiacos",
-    "pot": 2,
-    "country": "GRE",
-    "logo": "olympiacos.png"
+    "country": "GB",
+    "logo": "astonvilla.png"
   },
   {
     "name": "Lyon",
-    "pot": 2,
-    "country": "FRA",
+    "pot": 1,
+    "country": "FR",
     "logo": "lyon.png"
   },
   {
-    "name": "PAOK",
+    "name": "SC Freiburg",
     "pot": 2,
-    "country": "GRE",
-    "logo": "paok.png"
+    "country": "DE",
+    "logo": "freiburg.png"
   },
   {
-    "name": "Fenerbahçe",
+    "name": "Nottingham Forest",
     "pot": 2,
-    "country": "TUR",
-    "logo": "fenerbahce.png"
+    "country": "GB",
+    "logo": "nottinghamforest.png"
   },
   {
-    "name": "Maccabi Tel Aviv",
+    "name": "Bologna",
     "pot": 2,
-    "country": "ISR",
-    "logo": "mtelaviv.png"
+    "country": "IT",
+    "logo": "bologna.png"
   },
   {
-    "name": "Ferencváros",
+    "name": "Celta Vigo",
     "pot": 2,
-    "country": "HUN",
-    "logo": "ferencvaros.png"
+    "country": "ES",
+    "logo": "celtavigo.png"
   },
   {
-    "name": "Qarabağ",
-    "pot": 3,
-    "country": "AZE",
-    "logo": "qarabag.png"
+    "name": "VfB Stuttgart",
+    "pot": 2,
+    "country": "DE",
+    "logo": "stuttgart.png"
   },
   {
-    "name": "Galatasaray",
-    "pot": 3,
-    "country": "TUR",
-    "logo": "galatasaray.png"
-  },
-  {
-    "name": "Viktoria Plzeň",
-    "pot": 3,
-    "country": "CZE",
-    "logo": "viktoriaplzen.png"
-  },
-  {
-    "name": "Bodø/Glimt",
-    "pot": 3,
-    "country": "NOR",
-    "logo": "bodo.png"
-  },
-  {
-    "name": "Union Saint-Gilloise",
-    "pot": 3,
-    "country": "BEL",
-    "logo": "unionsg.png"
-  },
-  {
-    "name": "Dynamo Kyiv",
-    "pot": 3,
-    "country": "UKR",
-    "logo": "dynamokyiv.png"
-  },
-  {
-    "name": "Ludogorets Razgrad",
-    "pot": 3,
-    "country": "BUL",
-    "logo": "ludogorets.png"
-  },
-  {
-    "name": "Midtjylland",
-    "pot": 3,
-    "country": "DEN",
-    "logo": "midtjylland.png"
-  },
-  {
-    "name": "Malmö FF",
-    "pot": 3,
-    "country": "SWE",
-    "logo": "malmo.png"
-  },
-  {
-    "name": "Athletic Bilbao",
-    "pot": 4,
-    "country": "ESP",
-    "logo": "athleticclub.png"
-  },
-  {
-    "name": "TSG Hoffenheim",
-    "pot": 4,
-    "country": "GER",
-    "logo": "hoffenheim.png"
-  },
-  {
-    "name": "Nice",
-    "pot": 4,
-    "country": "FRA",
-    "logo": "nice.png"
-  },
-  {
-    "name": "Anderlecht",
-    "pot": 4,
-    "country": "BEL",
-    "logo": "anderlecht.png"
-  },
-  {
-    "name": "Twente",
-    "pot": 4,
-    "country": "NED",
-    "logo": "twente.png"
-  },
-  {
-    "name": "Beşiktaş",
-    "pot": 4,
-    "country": "TUR",
-    "logo": "besiktas.png"
-  },
-  {
-    "name": "FCSB",
-    "pot": 4,
-    "country": "ROU",
-    "logo": "fcsb.png"
-  },
-  {
-    "name": "RFS",
-    "pot": 4,
-    "country": "LVA",
-    "logo": "rfs.png"
-  },
-  {
-    "name": "IF Elfsborg",
-    "pot": 4,
-    "country": "SWE",
-    "logo": "elfsborg.png"
+    "name": "Go Ahead Eagles",
+    "pot": 2,
+    "country": "NL",
+    "logo": "goaheadeagles.png"
   }
 ]
