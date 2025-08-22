@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Choose Your Teams</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-compat.js"></script>
+  <script defer src="scripts.js"></script>
+  <script>
+    // Guard: if user lands here without starting
+    document.addEventListener('DOMContentLoaded', () => {
+      const name = localStorage.getItem('playerName');
+      if (!name) {
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="title-container">
+    <img src="img/championsleague.png" alt="Champions League" class="title-image" />
+    <h1 id="main-title">Champions League Betting Game</h1>
+    <img src="img/avinor.PNG" alt="Company Logo" class="title-image" />
+  </div>
+
+  <div class="card-container" id="team-cards"></div>
+
+  <div class="header">
+    <div class="indicators">
+      <div class="step-indicator-container">
+        <p id="step-indicator">Step 1/3</p>
+      </div>
+      <div class="teams-indicator-container">
+        <p id="teams-indicator">0/5 Teams Selected</p>
+      </div>
+    </div>
+
+    <div class="selected-logos" id="selected-logos">
+      <div class="championsselection">
+        <p>Champions League teams Selected:</p>
+        <div class="step-logo-group" id="selection-step-1"></div>
+      </div>
+      <div class="europaselection">
+        <p>Europa League teams Selected:</p>
+        <div class="step-logo-group" id="selection-step-2"></div>
+      </div>
+      <div class="conferenceselection">
+        <p>Conference League teams Selected:</p>
+        <div class="step-logo-group" id="selection-step-3"></div>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <!-- No name/department here anymore -->
+      <button id="submit-button" disabled>Next</button>
+    </div>
+  </div>
+</body>
+</html>

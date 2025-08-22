@@ -1,13 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Game Unavailable</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Champions League Draft</title>
+  <link rel="stylesheet" href="index.css" />
+  <script>
+    // check if ?beta is present
+    const params = new URLSearchParams(window.location.search);
+    const isBeta = params.has("beta");
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const betaContent = document.getElementById("beta-content");
+      const message = document.getElementById("not-beta");
+
+      if (isBeta) {
+        betaContent.style.display = "block";
+        message.style.display = "none";
+      } else {
+        betaContent.style.display = "none";
+        message.style.display = "flex";
+      }
+    });
+
+    // simple, page-local logic to start the draft
+    function startDraft() {
+      const name = document.getElementById('player-name').value.trim();
+      const department = document.getElementById('department').value.trim();
+      if (!name) {
+        alert('Please enter your name to continue.');
+        return;
+      }
+      localStorage.setItem('playerName', name);
+      localStorage.setItem('department', department);
+      window.location.href = 'draft.html';
+    }
+  </script>
+  <style>
+    #not-beta {
+      display: none;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
 <body>
-    <div class="unavailable-message">
-        <h1>Game unavailable yet</h1>
+  <!-- Fallback message if not beta -->
+  <div id="not-beta">Get ready for the 25/26 season!</div>
+
+  <!-- Full content only visible in beta -->
+  <div id="beta-content" style="display:none;">
+    <div class="title-container">
+      <img src="img/championsleague.png" alt="Champions League" class="title-image" />
+      <h1 id="main-title">Champions League Draft</h1>
+      <img src="img/avinor.PNG" alt="Company Logo" class="title-image" />
     </div>
+<div class="rules" id="game-rules">
+  <h2>How it works</h2>
+
+  <ul class="qs">
+    <li><strong>Pick 5 teams from each tournament</strong> — Champions, Europa, and Conference. <em>Total: 15 teams.</em></li>
+    <li>Earn points from <strong>match results</strong> + <strong>progression bonuses</strong>.</li>
+    <li>Each team’s score is multiplied by its <strong>Pot</strong>.</li>
+    <li>Highest total wins.</li>
+  </ul>
+
+  <div class="tournaments">
+    <section class="t-card">
+        <header>
+        <img src="img/icons/clLogo.png" alt="Champions League" class="t-logo" />
+        <h3>Champions League</h3>
+        <span class="pill">Pick 5</span>
+        </header>
+        <p class="hint">League Phase → Play-offs → Knockouts</p>
+    </section>
+
+    <section class="t-card">
+        <header>
+        <img src="img/icons/elLogo.png" alt="Europa League" class="t-logo" />
+        <h3>Europa League</h3>
+        <span class="pill">Pick 5</span>
+        </header>
+        <p class="hint">League Phase → Play-offs → Knockouts</p>
+    </section>
+
+    <section class="t-card">
+        <header>
+        <img src="img/icons/ecLogo.png" alt="Conference League" class="t-logo" />
+        <h3>Conference League</h3>
+        <span class="pill">Pick 5</span>
+        </header>
+        <p class="hint">League Phase → Play-offs → Knockouts</p>
+    </section>
+    </div>
+
+
+  <div class="rules-grid">
+    <section class="rule-card">
+      <h4>Match points</h4>
+      <div class="rule-row"><span>Win</span><strong>3</strong></div>
+      <div class="rule-row"><span>Draw</span><strong>1</strong></div>
+    </section>
+
+    <section class="rule-card">
+      <h4>Progression bonuses</h4>
+      <div class="rule-row"><span>Top 8 (direct to R16)</span><strong>+10</strong></div>
+      <div class="rule-row"><span>Via playoffs</span><strong>+0</strong></div>
+      <div class="rule-row"><span>Quarter-finals</span><strong>+8</strong></div>
+      <div class="rule-row"><span>Semi-finals</span><strong>+12</strong></div>
+      <div class="rule-row"><span>Final</span><strong>+16</strong></div>
+      <div class="rule-row"><span>Champion</span><strong>+20</strong></div>
+    </section>
+
+    <section class="rule-card">
+      <h4>Pot multipliers</h4>
+      <div class="rule-row"><span>Pot 1</span><span class="badge">×1.0</span></div>
+      <div class="rule-row"><span>Pot 2</span><span class="badge">×1.5</span></div>
+      <div class="rule-row"><span>Pot 3</span><span class="badge">×2.0</span></div>
+      <div class="rule-row"><span>Pot 4</span><span class="badge">×2.5</span></div>
+      <div class="rule-row"><span>Pot 5</span><span class="badge">×3.0</span></div>
+      <div class="rule-row"><span>Pot 6</span><span class="badge">×3.5</span></div>
+    </section>
+  </div>
+
+  <details class="fineprint">
+    <summary>More info</summary>
+    <p>Bonuses apply once per stage per team. Add match + bonus points, then apply the team’s Pot multiplier.</p>
+  </details>
+</div>
+
+
+  <!-- Minimal form -->
+  <div class="start-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;margin:30px 0;">
+    <input type="text" id="player-name" placeholder="Name" class="start-input" />
+    <input type="text" id="department" placeholder="Team/Department" class="start-input" />
+    <button class="start-button" onclick="startDraft()">Start choosing teams</button>
+  </div>
 </body>
 </html>

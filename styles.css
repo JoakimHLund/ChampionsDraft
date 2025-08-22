@@ -1,407 +1,314 @@
-/* General Styles */
+/* =========================================================
+   Champions League Draft — DRAFT PAGE CSS (Light + Dark)
+   - Stable background across steps
+   - Accent color switches per STEP (body class): champions / europa / conference
+   - Selection panels share SAME background; their borders use fixed
+     tournament-specific accents (blue/orange/green)
+   - Tournament logos invert in dark
+   ========================================================= */
+
+/* ---------- Theme tokens ---------- */
+:root {
+  /* Base */
+  --bg: #f0f8ff;
+  --text: #0f172a;
+  --muted: #555;
+
+  /* Brand (purple UI chrome) */
+  --brand: #4a148c;
+  --brand-2: #8e24aa;
+
+  /* Global accent (changes with step via body class) */
+  --accent: #1e88e5; /* default to Champions blue */
+
+  /* Per-tournament accents (fixed, for the three selection panels) */
+  --accent-champions: #1e88e5; /* blue */
+  --accent-europa:    #ff6f00; /* orange */
+  --accent-conference:#2e8b57; /* green */
+
+    /* Selection panel backgrounds */
+  --champions-bg: #6594C0;
+  --champions-br: #0d47a1;
+  --europa-bg: #c0a065;
+  --europa-br: #b36b00;
+  --conference-bg: #74c065;
+  --conference-br: #1b5e20;
+
+  /* Surfaces */
+  --card: #ffffff;
+  --card-border: #dddddd;
+  --card-sep: #eeeeee;
+  --chip-bg: rgba(255,255,255,0.4);
+  --selection-bg: #f7f9ff; /* same background for all three selection panels */
+  --shadow: 0 4px 10px rgba(0,0,0,.08);
+
+  /* Pot header */
+  --pot-header-bg: #e1bee7;
+  --pot-header-text: #4a148c;
+  --pot-badge-bg: #8e24aa;
+  --pot-badge-text: #ffffff;
+
+  --radius: 8px;
+  --space-2: 10px;
+  --space-3: 16px;
+}
+
+/* Auto dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d12;
+    --text: #e5e7eb;
+    --muted: #a1a1aa;
+
+    --brand: #8b5cf6;
+    --brand-2: #8b5cf6;
+
+    /* Global accent default (Champions in dark) */
+    --accent: #64b5f6;
+
+    /* Fixed per-tournament accents (for panels) */
+    --accent-champions: #64b5f6;
+    --accent-europa:    #ffb566;
+    --accent-conference:#5bd08a;
+
+    --card: #111827;
+    --card-border: #1f2937;
+    --card-sep: #273244;
+    --chip-bg: rgba(255,255,255,0.12);
+    --selection-bg: #0f1623; /* shared panel bg in dark */
+    --shadow: 0 8px 22px rgba(0,0,0,.45);
+
+    --pot-header-bg: #2a1b43;
+    --pot-header-text: #dcd6ff;
+    --pot-badge-bg: #5b3baa;
+    --pot-badge-text: #ffffff;
+  }
+}
+* { caret-color: transparent; }
+input, textarea { caret-color: auto; }
+
+/* Manual dark (optional): add class="dark" to <html> */
+html.dark { color-scheme: dark; }
+
+/* ---------- STEP accent by body class ---------- */
+body.champions { --accent: var(--accent-champions); }
+body.europa    { --accent: var(--accent-europa); }
+body.conference{ --accent: var(--accent-conference); }
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f0f8ff;
-    margin: 0;
-    padding-bottom: 150px; /* Added space for fixed footer */
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding-bottom: 150px; /* space for fixed footer */
+  transition: background-color .2s ease, color .2s ease;
+  user-select: text;      /* you can still select text */
+  -webkit-user-modify: read-only !important;
+  -moz-user-modify: read-only !important;
 }
 
-h1, h2 {
-    margin: 0;
-    padding: 0;
-}
+h1, h2 { margin: 0; padding: 0; }
 
-/* Adjusted Header Styles */
+/* ---------- Header (fixed at bottom) ---------- */
 .header {
-    width: 100%;
-    min-height: 25vh; /* Set height to 25% of the viewport */
-    background-color: #4a148c; /* Rich purple */
-    box-sizing: border-box;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    justify-content: space-between; /* Spread elements horizontally */
-    align-items: center;
-    padding: 0 30px; /* Add padding for better alignment */
-    color: #fff;
-    font-size: 1.5em; /* Larger text for clarity */
-    z-index: 1000;
+  width: 100%;
+  min-height: 25vh;
+  background-color: var(--brand);
+  box-shadow: var(--shadow);
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  color: #fff;
+  font-size: 1.5em;
+  z-index: 1000;
 }
+.header p { margin: 0; font-size: 1.6em; font-weight: bold; }
 
-/* Style for the teams indicator text */
-.header p {
-    margin: 0;
-    font-size: 1.6em; /* Bigger and clearer text */
-    font-weight: bold;
-}
 .indicators{
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: space-around;
-    max-width: 20vw;
-}
-/* Style for the container holding the selected logos */
-.selected-logos {
-    display: flex;
-    flex-direction: column; /* Stack logos vertically */
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-left: 20px;
-    width: 40%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
+  max-width: 20vw;
 }
 
-/* Style for the group of logos */
-.step-logo-group {
-    display: flex;
-    align-items: center;
-    justify-content:center ;
-    margin-bottom: 10px;
-    padding: 5px;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.411); /* Softer background */
-    height: 50%;
-    width: 50%;
-    min-height: 35px;
+/* ---------- Selected logos panel ---------- */
+.selected-logos{
+  display:flex; flex-direction:column;
+  justify-content:flex-start; align-items:flex-start;
+  margin-left:20px; width:40%;
+}
+.step-logo-group{
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:10px; padding:5px; border-radius:5px;
+  background-color: var(--chip-bg);
+  min-height:35px; height:50%; width:50%;
+}
+.step-logo-group p.empty{ color:#fff; font-size:.9em; margin-left:10px; }
+.step-logo-group p{ margin:0 10px 0 0; font-weight:700; color:#fff; font-size:1em; }
+.small-logo{ width:50px; height:auto; margin-right:10px; }
+
+/* Tournament logos (if used on this page) */
+.t-logo{
+  width: clamp(20px, 6vw, 28px);
+  height: clamp(20px, 6vw, 28px);
+  object-fit: contain;
+  filter: none; /* light */
+}
+@media (prefers-color-scheme: dark){ .t-logo{ filter: invert(1) hue-rotate(180deg); } }
+html.dark .t-logo{ filter: invert(1) hue-rotate(180deg); }
+
+/* ---------- Inputs & button ---------- */
+.input-container{
+  display:flex; justify-content:flex-end; align-items:center;
+  width:20%; flex-direction:column; gap:10px;
+}
+.input-container input[type="text"]{
+  padding:10px; font-size:1.2em; width:200px; margin-right:20px;
+  border:1px solid var(--card-border); background:var(--card); color:var(--text);
+  border-radius:4px;
+}
+.input-container input[type="text"]::placeholder{ color:var(--muted); }
+.input-container button{
+  padding:10px 20px; background-color: var(--accent); color:#fff;
+  font-size:1.2em; border:none; border-radius:4px; cursor:pointer;
+}
+.input-container button:disabled{
+  background-color:#66666633; color:#aaa; cursor:not-allowed;
 }
 
-/* Placeholder text for empty selections */
-.step-logo-group p.empty {
-    color: #fff; /* Color for the "No teams selected" message */
-    font-size: 0.9em;
-    margin-left: 10px;
+/* ---------- Title area ---------- */
+.title-container{
+  display:flex; align-items:center; justify-content:center; margin:20px 0;
+}
+.title-container .title-image{ width: clamp(56px, 22vw, 100px); height:auto; margin:0 20px; }
+@media (prefers-color-scheme: dark) {
+    .title-container .title-image {
+        filter: invert(1) hue-rotate(180deg);
+    }
+}
+/* ---------- Pot header ---------- */
+.pot-header{
+  background-color:var(--pot-header-bg);
+  padding:10px; margin:30px 0 10px; text-align:center;
+  border-radius:8px; font-size:1.5em; color:var(--pot-header-text); position:relative;
+}
+.pot-header::after{
+  content: attr(data-multiplier);
+  transform: translateY(-50%);
+  background-color: var(--pot-badge-bg);
+  color: var(--pot-badge-text);
+  padding:5px 10px; border-radius:4px; font-size:.9em; margin-left:1em;
 }
 
-.step-logo-group p {
-    margin: 0 10px 0 0;
-    font-weight: bold;
-    color: #fff;
-    font-size: 1em;
+/* ---------- Card container & grid ---------- */
+.card-container{
+  display:flex; flex-direction:column; align-items:center; padding-bottom:25vh;
+}
+.pot-container{
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(20rem,1fr));
+  gap:20px; width:90%; max-width:1200px; margin:0 auto;
 }
 
-.small-logo {
-    width: 50px; /* Bigger logo */
-    height: auto;
-    margin-right: 10px;
+/* ---------- Cards ---------- */
+.card{
+  background-color: var(--card);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 15px;
+  text-align:center;
+  cursor:pointer;
+  transition: transform .2s ease, border-color .2s ease, background-color .2s ease;
+  box-shadow:none;
 }
-
-/* Adjusted input field and button styles */
-.input-container {
-    display: flex;
-    justify-content: flex-end; /* Align input and button to the right */
-    align-items: center;
-    width: 20%;
-    flex-direction: column;
-    gap: 10px;
+.card:hover{ transform: translateY(-5px); border-color: var(--brand-2); }
+.card.selected{
+  border-color: var(--accent);
+  background-color: color-mix(in oklab, var(--accent) 10%, var(--card));
 }
-
-.input-container input[type="text"] {
-    padding: 10px;
-    font-size: 1.2em;
-    width: 200px;
-    margin-right: 20px;
-    border: none;
-    border-radius: 4px;
-}
-
-.input-container input[type="text"]::placeholder {
-    color: #aaa;
-}
-
-.input-container button {
-    padding: 10px 20px;
-    background-color: #ff6f00;
-    color: #fff;
-    font-size: 1.2em;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.input-container button:disabled {
-    background-color: #ddd;
-    color: #aaa;
-    cursor: not-allowed;
-}
-
-/* Title Container Styles */
-.title-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.title-container .title-image {
-    width: 100px;
-    height: auto;
-    margin: 0 20px;
-}
-
-/* Rules Section */
-.rules {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 800px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.rules p {
-    margin: 0 0 10px;
-    font-size: 1.2em;
-}
-
-.rules ul {
-    margin: 10px 0 10px 20px;
-}
-
-.rules li {
-    margin-bottom: 5px;
-}
-
-/* Pot Header Styles */
-.pot-header {
-    background-color: #e1bee7;
-    padding: 10px;
-    margin: 30px 0 10px;
-    text-align: center;
-    border-radius: 8px;
-    font-size: 1.5em;
-    color: #4a148c;
-    position: relative;
-}
-
-.pot-header::after {
-    content: attr(data-multiplier);
-    transform: translateY(-50%);
-    background-color: #8e24aa;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9em;
-    margin-left: 1em;
-}
-
-/* Card Container Styles */
-.card-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 25vh;
-}
-
-.pot-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-    gap: 20px;
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Card Styles */
-.card {
-    background-color: #fff;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    border-color: #8e24aa;
-}
-
-.card.selected {
-    border-color: #ff6f00;
-    background-color: #fff3e0;
-}
-
-.card img.logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.card h2 {
-    margin-bottom: 5px;
-    color: #4a148c;
-}
-
-.card p {
-    margin: 5px 0;
-    font-size: 1.5em;
-    color: #333;
-}
+.card img.logo{ width:80px; height:auto; margin-bottom:10px; }
+.card h2{ margin-bottom:5px; color: var(--brand); }
+.card p{ margin:5px 0; font-size:1.5em; color: var(--text); }
 
 /* Multiplier Badge */
-.multiplier-badge {
-    background-color: #8e24aa;
-    color: #fff;
-    padding: 3px 7px;
-    border-radius: 4px;
-    font-size: 1.2em;
-    display: inline-block;
-    margin-top: 5px;
-    max-width: 100%;
+.multiplier-badge{
+  background-color: var(--brand-2);
+  color:#fff; padding:3px 7px; border-radius:4px; font-size:1.2em;
+  display:inline-block; margin-top:5px; max-width:100%;
 }
 
+/* ---------- Selection panels (same background, different accents) ---------- */
+/* ---------- Selection panels ---------- */
 .championsselection{
-    border: 2px solid blue;
-    margin:2px;
-    padding: 2px;
-    width: 100%;
-    background-color: #6594C0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  border: 2px solid var(--champions-br);
+  margin: 2px;
+  padding: 2px;
+  width: 100%;
+  background-color: var(--champions-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
-.championsselection p{
-    font-size: 1em;
-    
-}
+.championsselection p{ font-size: 1em; }
 
 .europaselection{
-    border: 2px solid #F99500;
-    margin:2px;
-    padding: 2px;
-    width: 100%;
-    background-color: #c0a065;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  border: 2px solid var(--europa-br);
+  margin: 2px;
+  padding: 2px;
+  width: 100%;
+  background-color: var(--europa-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
-.europaselection p{
-    font-size: 1em;
-    
-}
+.europaselection p{ font-size: 1em; }
 
 .conferenceselection{
-    border: 2px solid green;
-    margin:2px;
-    padding: 2px;
-    width: 100%;
-   background-color: #74c065;
-   display: flex;
-    flex-direction: column;
-    align-items: center;
+  border: 2px solid var(--conference-br);
+  margin: 2px;
+  padding: 2px;
+  width: 100%;
+  background-color: var(--conference-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.conferenceselection p{ font-size: 1em; }
+
+/* ---------- Helpers ---------- */
+.step-indicator{ max-width:20vw; }
+.teams-indicator{ max-width:20vw; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px){
+  .header{ flex-direction:column; height:auto; padding:10px; }
+  .indicators{
+    width:100%; display:flex; flex-direction:row; justify-content:space-between;
+    margin-bottom:10px; max-width:100vw;
+  }
+  .selected-logos{
+    flex-direction:row; flex-wrap:wrap; justify-content:space-between; width:100%;
+  }
+  .step-logo-group{ width:auto; height:auto; margin:5px; }
+  .small-logo{ width:40px; }
+  .input-container{ width:100%; justify-content:center; margin-top:10px; flex-direction:column; gap:5px; }
+  .input-container input[type="text"], .input-container button{ width:auto; font-size:1em; }
+  .header p, .input-container input[type="text"]::placeholder{ font-size:1.2em; }
 }
 
-.conferenceselection p{
-    font-size: 1em;
-    
+@media (max-width: 480px){
+  .header{ flex-direction:column; padding:5px; }
+  .indicators{ flex-direction:column; align-items:center; margin-bottom:10px; max-width:20vw; }
+  .selected-logos{ flex-direction:row; overflow-x:auto; width:100%; }
+  .small-logo{ width:30px; }
+  .input-container{ width:100%; justify-content:center; margin-top:10px; flex-direction:column; }
+  .input-container input[type="text"], .input-container button{ width:100%; font-size:1em; }
+  .step-indicator{ max-width:20vw; }
+  .teams-indicator{ max-width:20vw; }
 }
-
-.step-indicator{
-    max-width: 20vw;
-}
-.teams-indicator{
-    max-width: 20vw;
-}
-/* Responsive Styles */
-@media (max-width: 1000px) {
-    .header {
-        flex-direction: column; /* Stack the elements vertically */
-        height: auto; /* Adjust height to content */
-        padding: 10px;
-    }
-
-    .indicators {
-        width: 100%;
-        display: flex;
-        flex-direction: row; /* Display step and team indicators side by side */
-        justify-content: space-between;
-        margin-bottom: 10px;
-        max-width: 100vw;
-        
-    }
-
-    .selected-logos {
-        flex-direction: row; /* Stack logos horizontally on smaller screens */
-        flex-wrap: wrap;
-        justify-content: space-between;
-        width: 100%;
-    }
-
-    .step-logo-group {
-        width: auto; /* Allow logos to resize naturally */
-        height: auto;
-        margin: 5px;
-    }
-
-    .small-logo {
-        width: 40px; /* Reduce logo size on small screens */
-    }
-
-    .input-container {
-        width: 100%;
-        justify-content: center;
-        margin-top: 10px;
-        flex-direction: column;
-        gap:5px;
-    }
-
-    .input-container input[type="text"], .input-container button {
-        width: auto; /* Ensure inputs and buttons adapt to screen size */
-        font-size: 1em;
-    }
-
-    .header p, .input-container input[type="text"]::placeholder {
-        font-size: 1.2em; /* Reduce font size for mobile */
-    }
-    .championsselection{
-        margin-bottom: 2px;
-    }
-}
-
-@media (max-width: 480px) {
-    .header {
-        flex-direction: column;
-        padding: 5px;
-    }
-
-    .indicators {
-        flex-direction: column; /* Stack indicators vertically */
-        align-items: center;
-        margin-bottom: 10px;
-        max-width: 20vw;
-    }
-
-    .selected-logos {
-        flex-direction: row;
-        overflow-x: scroll; /* Allow horizontal scrolling for logos */
-        width: 100%;
-    }
-
-    .small-logo {
-        width: 30px; /* Further reduce logo size for smaller screens */
-    }
-    .input-container {
-        width: 100%;
-        justify-content: center;
-        margin-top: 10px;
-        flex-direction: column;
-    }
-
-    .input-container input[type="text"], .input-container button {
-        width: 100%;
-        font-size: 1em;
-    }
-    .step-indicator{
-        max-width: 20vw;
-    }
-    .teams-indicator{
-        max-width: 20vw;
-    }
-}
-

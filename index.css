@@ -1,0 +1,316 @@
+/* =========================================================
+   Champions League Draft — Index Page Styles (Light + Dark)
+   - Uses CSS variables for theme colors
+   - Auto-dark via prefers-color-scheme
+   - Optional manual toggle: add .dark to <html>
+   ========================================================= */
+
+/* ---------- Theme tokens ---------- */
+:root {
+  --bg: #f0f8ff;
+  --text: #0f172a;
+  --muted: #555;
+  --card: #ffffff;
+  --card-border: #dddddd;
+  --card-sep: #eeeeee;
+  --brand: #4a148c;   /* primary purple */
+  --brand-2: #8e24aa; /* secondary violet */
+  --shadow: 0 4px 10px rgba(0,0,0,.06);
+
+  --radius-lg: 12px;
+  --radius-md: 10px;
+
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 20px;
+}
+
+/* Auto dark mode based on system setting */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d12;
+    --text: #e5e7eb;
+    --muted: #a1a1aa;
+    --card: #111827;
+    --card-border: #1f2937;
+    --card-sep: #273244;
+    --brand: #a78bfa;
+    --brand-2: #8b5cf6;
+    --shadow: 0 6px 18px rgba(0,0,0,.45);
+  }
+}
+
+/* Manual dark mode (optional):
+   Add class="dark" on <html> to force dark mode */
+.dark :root,
+html.dark {
+  --bg: #0b0d12 !important;
+  --text: #e5e7eb !important;
+  --muted: #a1a1aa !important;
+  --card: #111827 !important;
+  --card-border: #1f2937 !important;
+  --card-sep: #273244 !important;
+  --brand: #a78bfa !important;
+  --brand-2: #8b5cf6 !important;
+  --shadow: 0 6px 18px rgba(0,0,0,.45) !important;
+}
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding-bottom: 150px; /* space for fixed footer */
+  transition: background-color .2s ease, color .2s ease;
+  user-select: text;      /* you can still select text */
+  -webkit-user-modify: read-only !important;
+  -moz-user-modify: read-only !important;
+}
+* { caret-color: transparent; }
+input, textarea { caret-color: auto; }
+
+
+h1, h2 { margin: 0; padding: 0; }
+
+/* ---------- Header (fixed footer-style header) ---------- */
+.header {
+  width: 100%;
+  min-height: 25vh;
+  background-color: var(--brand);
+  box-shadow: var(--shadow);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--space-4);
+  color: #fff;
+  font-size: 1.5em;
+  z-index: 1000;
+}
+
+/* ---------- Title ---------- */
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 20px;
+}
+.title-container .title-image {
+  width: clamp(56px, 22vw, 100px);
+  height: auto;
+}
+@media (prefers-color-scheme: dark) {
+    .title-container .title-image {
+        filter: invert(1) hue-rotate(180deg);
+    }
+}
+
+/* ---------- Start form ---------- */
+.start-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 30px 0;
+}
+.start-input {
+  padding: 10px;
+  font-size: 1.1em;
+  width: 260px;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 6px;
+}
+.start-input::placeholder { color: var(--muted); }
+.start-button {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--brand);
+  color: #fff;
+  cursor: pointer;
+}
+.start-button:hover { opacity: 0.9; }
+
+/* ---------- Rules container ---------- */
+.rules {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  margin: var(--space-3) auto;
+  width: min(92%, 860px);
+  box-shadow: var(--shadow);
+}
+.rules h2 {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--brand);
+  margin: 0 0 10px;
+}
+
+/* Quick start list */
+.qs {
+  margin: 0 0 12px;
+  padding: 0 0 0 18px;
+}
+.qs li { margin: 6px 0; line-height: 1.35; }
+
+/* ---------- Step list (if used) ---------- */
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  gap: 8px;
+}
+.steps li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: color-mix(in oklab, var(--brand) 8%, var(--card));
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  font-size: clamp(.95rem, 2.5vw, 1rem);
+}
+.steps li::before {
+  counter-increment: step;
+  content: counter(step);
+  display: inline-grid;
+  place-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------- Tournament mini-cards ---------- */
+.tournaments {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+@media (min-width: 600px) {
+  .tournaments { grid-template-columns: repeat(3, 1fr); }
+}
+.t-card {
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  background: var(--card);
+  box-shadow: none;
+}
+.t-card header {
+  display: flex; align-items: center; gap: 10px;
+}
+.t-logo {
+  width: clamp(20px, 6vw, 28px);
+  height: clamp(20px, 6vw, 28px);
+  object-fit: contain;
+  /* subtle glow in dark mode */
+  filter: none;
+}
+@media (prefers-color-scheme: dark) {
+  .t-logo {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+html.dark .t-logo { filter: drop-shadow(0 0 4px rgba(167,139,250,.35)); }
+
+.t-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: color-mix(in oklab, var(--brand) 40%, var(--text));
+  flex: 1;
+}
+.pill {
+  background: var(--brand);
+  color: #fff;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: .9rem;
+  font-weight: 700;
+}
+.hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: .95rem;
+}
+
+/* ---------- Rule cards (three boxes) ---------- */
+.rules-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 760px) {
+  .rules-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.rule-card {
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  background: var(--card);
+}
+.rule-card h4 {
+  margin: 0 0 8px;
+  color: var(--brand);
+  font-size: 1rem;
+}
+.rule-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px dashed var(--card-sep);
+  font-size: .98rem;
+}
+.rule-row:first-of-type { border-top: 0; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--brand-2);
+  color: #fff;
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+/* ---------- Fine print ---------- */
+.fineprint { margin-top: 10px; font-size: .95rem; }
+.fineprint summary {
+  cursor: pointer;
+  color: var(--brand);
+  font-weight: 600;
+}
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 760px) {
+  .title-container .title-image { width: 50px; }
+  .main-title { font-size: 0.9em; }
+  .rules { padding: 14px; }
+  .pill { padding: 3px 8px; font-size: .85rem; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 15px; }
+  #main-title { font-size: 1.4rem; }
+  .rule-row { padding: 6px 0; }
+}
+
+/* ---------- Nice-to-haves ---------- */
+/* Tell the UA we support both schemes; add this in HTML too:
+   <meta name="color-scheme" content="light dark"> */

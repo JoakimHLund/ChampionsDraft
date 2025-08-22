@@ -76,5 +76,97 @@
     "pot": 2,
     "country": "NL",
     "logo": "goaheadeagles.png"
+  },
+  {
+    "name": "Maccabi Tel Aviv",
+    "pot": 4,
+    "country": "IL",
+    "logo": "maccabi.png"
+  },
+  {
+    "name": "Dynamo Kyiv",
+    "pot": 4,
+    "country": "UA",
+    "logo": "dynamokyiv.png"
+  },
+  {
+    "name": "Shkëndija",
+    "pot": 4,
+    "country": "MK",
+    "logo": "shkendija.png"
+  },
+  {
+    "name": "Ludogorets Razgrad",
+    "pot": 4,
+    "country": "BG",
+    "logo": "ludogorets.png"
+  },
+  {
+    "name": "Slovan Bratislava",
+    "pot": 4,
+    "country": "SK",
+    "logo": "bratislava.png"
+  },
+  {
+    "name": "Young Boys",
+    "pot": 4,
+    "country": "CH",
+    "logo": "youngboys.png"
+  },
+  {
+    "name": "Malmö FF",
+    "pot": 4,
+    "country": "SE",
+    "logo": "malmo.png"
+  },
+  {
+    "name": "Sigma Olomouc",
+    "pot": 4,
+    "country": "CZ",
+    "logo": "sigma.png"
+  },
+  {
+    "name": "Panathinaikos",
+    "pot": 4,
+    "country": "GR",
+    "logo": "panathinaikos.png"
+  },
+  {
+    "name": "Samsunspor",
+    "pot": 4,
+    "country": "TR",
+    "logo": "samsunspor.png"
+  },
+  {
+    "name": "Aberdeen",
+    "pot": 4,
+    "country": "GB",
+    "logo": "aberdeen.png"
+  },
+  {
+    "name": "FCSB",
+    "pot": 4,
+    "country": "RO",
+    "logo": "fcsb.png"
+  },
+  {
+    "name": "Lech Poznań",
+    "pot": 4,
+    "country": "PL",
+    "logo": "lech.png"
+  },
+  {
+    "name": "Genk",
+    "pot": 4,
+    "country": "BE",
+    "logo": "genk.png"
+  },
+  {
+    "name": "Midtjylland",
+    "pot": 4,
+    "country": "DK",
+    "logo": "midtjylland.png"
   }
+  
+
 ]

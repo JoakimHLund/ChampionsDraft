@@ -172,5 +172,89 @@
     "pot": 4,
     "country": "GB",
     "logo": "newcastle.png"
+  },
+  {
+    "name": "Ferencváros",
+    "pot": 4,
+    "country": "HU",
+    "logo": "ferencvaros.png"
+  },
+  {
+    "name": "Qarabağ",
+    "pot": 4,
+    "country": "AZ",
+    "logo": "qarabag.png"
+  },
+  {
+    "name": "Red Star Belgrade",
+    "pot": 4,
+    "country": "RS",
+    "logo": "redstar.png"
+  },
+  {
+    "name": "Pafos",
+    "pot": 4,
+    "country": "CY",
+    "logo": "pafos.png"
+  },
+  {
+    "name": "Bodø/Glimt",
+    "pot": 4,
+    "country": "NO",
+    "logo": "bodo.png"
+  },
+  {
+    "name": "Sturm Graz",
+    "pot": 4,
+    "country": "AT",
+    "logo": "sturmgraz.png"
+  },
+  {
+    "name": "Celtic",
+    "pot": 4,
+    "country": "GB",
+    "logo": "celtic.png"
+  },
+  {
+    "name": "Kairat",
+    "pot": 4,
+    "country": "KZ",
+    "logo": "kairat.png"
+  },
+  {
+    "name": "Basel",
+    "pot": 4,
+    "country": "CH",
+    "logo": "basel.png"
+  },
+  {
+    "name": "Copenhagen",
+    "pot": 4,
+    "country": "DK",
+    "logo": "copenhagen.png"
+  },
+  {
+    "name": "Fenerbahçe",
+    "pot": 4,
+    "country": "TR",
+    "logo": "fenerbahce.png"
+  },
+  {
+    "name": "Benfica",
+    "pot": 4,
+    "country": "PT",
+    "logo": "benfica.png"
+  },
+  {
+    "name": "Rangers",
+    "pot": 4,
+    "country": "GB",
+    "logo": "rangers.png"
+  },
+  {
+    "name": "Club Brugge",
+    "pot": 4,
+    "country": "BE",
+    "logo": "brugge.png"
   }
 ]
