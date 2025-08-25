@@ -1,12 +1,12 @@
 // Initialize Firebase (use your existing configuration)
 const firebaseConfig = {
-    apiKey: "AIzaSyC36DXqx9qnp1TjMGNX32Nm1p9uGXp62ZA",
-    authDomain: "championsdraft-403d0.firebaseapp.com",
-    projectId: "championsdraft-403d0",
-    storageBucket: "championsdraft-403d0.appspot.com",
-    messagingSenderId: "766027841647",
-    appId: "1:766027841647:web:99ef32b25549054b218d9a"
-};
+    apiKey: "AIzaSyCtkvwfwgZmCY7Ho1Uh1Itm8jDXhuff7_g",
+    authDomain: "championsdraft25.firebaseapp.com",
+    projectId: "championsdraft25",
+    storageBucket: "championsdraft25.firebasestorage.app",
+    messagingSenderId: "194206448130",
+    appId: "1:194206448130:web:58358b48e25006f511c51b"
+  };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -88,16 +88,16 @@ async function loadLeaderboard() {
             const rankContainer = document.createElement('div');
             rankContainer.classList.add('rank-container');
 
-            // Add trophy icons for top scorers
-            if (playerData.championspoints === highestChampionsPoints) {
+            // Add trophy icons for top scorers (only if > 0)
+            if (playerData.championspoints === highestChampionsPoints && highestChampionsPoints > 0) {
                 const championsIcon = createTrophyIcon('img/icons/championstrophy.png', 'Champions Trophy', 'champions');
                 rankContainer.appendChild(championsIcon);
             }
-            if (playerData.europapoints === highestEuropaPoints) {
+            if (playerData.europapoints === highestEuropaPoints && highestEuropaPoints > 0) {
                 const europaIcon = createTrophyIcon('img/icons/europatrophy.png', 'Europa Trophy', 'europa');
                 rankContainer.appendChild(europaIcon);
             }
-            if (playerData.conferencepoints === highestConferencePoints) {
+            if (playerData.conferencepoints === highestConferencePoints && highestConferencePoints > 0) {
                 const conferenceIcon = createTrophyIcon('img/icons/conferencetrophy.png', 'Conference Trophy', 'conference');
                 rankContainer.appendChild(conferenceIcon);
             }

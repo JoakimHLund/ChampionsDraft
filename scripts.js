@@ -1,12 +1,12 @@
 // Firebase config (unchanged)
 const firebaseConfig = {
-  apiKey: "AIzaSyC36DXqx9qnp1TjMGNX32Nm1p9uGXp62ZA",
-  authDomain: "championsdraft-403d0.firebaseapp.com",
-  projectId: "championsdraft-403d0",
-  storageBucket: "championsdraft-403d0.appspot.com",
-  messagingSenderId: "766027841647",
-  appId: "1:766027841647:web:99ef32b25549054b218d9a"
-};
+    apiKey: "AIzaSyCtkvwfwgZmCY7Ho1Uh1Itm8jDXhuff7_g",
+    authDomain: "championsdraft25.firebaseapp.com",
+    projectId: "championsdraft25",
+    storageBucket: "championsdraft25.firebasestorage.app",
+    messagingSenderId: "194206448130",
+    appId: "1:194206448130:web:58358b48e25006f511c51b"
+  };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -83,10 +83,13 @@ document.getElementById('submit-button').addEventListener('click', () => {
     // Final submission: pull name/department from localStorage
     const playerName = localStorage.getItem('playerName') || '';
     const department = localStorage.getItem('department') || '';
+    const worksAtAvinorStored = localStorage.getItem('worksAtAvinor');
+    const worksAtAvinor = worksAtAvinorStored ? worksAtAvinorStored === 'yes' : true;
 
     const playerData = {
       Name: playerName,
       Department: department,
+      WorksAtAvinor: worksAtAvinor,
       championspoints: 0,
       europapoints: 0,
       conferencepoints: 0,

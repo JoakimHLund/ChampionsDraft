@@ -27,12 +27,15 @@
     function startDraft() {
       const name = document.getElementById('player-name').value.trim();
       const department = document.getElementById('department').value.trim();
+      const worksAtAvinor = document.getElementById('works-at-avinor').checked;
       if (!name) {
         alert('Please enter your name to continue.');
         return;
       }
       localStorage.setItem('playerName', name);
       localStorage.setItem('department', department);
+      localStorage.setItem('worksAtAvinor', worksAtAvinor ? "yes" : "no");
+      
       window.location.href = 'draft.html';
     }
   </script>
@@ -129,6 +132,7 @@
   <details class="fineprint">
     <summary>More info</summary>
     <p>Bonuses apply once per stage per team. Add match + bonus points, then apply the team’s Pot multiplier.</p>
+    <p>It may take up to 24 hours after a match finish untill the leaderboard is updated</p>
   </details>
 </div>
 
@@ -137,6 +141,11 @@
   <div class="start-container" style="display:flex;flex-direction:column;align-items:center;gap:10px;margin:30px 0;">
     <input type="text" id="player-name" placeholder="Name" class="start-input" />
     <input type="text" id="department" placeholder="Team/Department" class="start-input" />
+    <label style="display:flex;align-items:center;gap:5px;">
+      <input type="checkbox" id="works-at-avinor" checked />
+      I work at/for Avinor
+    </label>
+
     <button class="start-button" onclick="startDraft()">Start choosing teams</button>
   </div>
 </body>
