@@ -1,56 +1,14 @@
 [
     {
-    "name": "KuPS",
+    "name": "Sparta Prague",
     "pot": 4,
-    "country": "FI",
-    "logo": "kups.png"
+    "country": "CZ",
+    "logo": "sparta.png"
   },
   {
-    "name": "Lincoln Red Imps",
+    "name": " AEK Larnaca",
     "pot": 4,
     "country": "GI",
-    "logo": "redimps.png"
-  },
-  {
-    "name": "Braga",
-    "pot": 4,
-    "country": "PT",
-    "logo": "braga.png"
-  },
-  {
-    "name": "Zrinjski Mostar",
-    "pot": 4,
-    "country": "BA",
-    "logo": "zrinjski.png"
-  },
-  {
-    "name": "Utrecht",
-    "pot": 4,
-    "country": "NL",
-    "logo": "utrecht.png"
-  },
-  {
-    "name": "Brann",
-    "pot": 4,
-    "country": "NO",
-    "logo": "brann.png"
-  },
-  {
-    "name": "AEK Larnaca",
-    "pot": 4,
-    "country": "CY",
     "logo": "aek.png"
-  },
-  {
-    "name": "Rijeka",
-    "pot": 4,
-    "country": "HR",
-    "logo": "rijeka.png"
-  },
-  {
-    "name": "PAOK",
-    "pot": 4,
-    "country": "GR",
-    "logo": "paok.png"
   }
 ]
