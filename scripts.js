@@ -69,6 +69,7 @@ function toggleSubmitButton() {
 document.getElementById('submit-button').addEventListener('click', () => {
   if (currentStep < totalSteps) {
     currentStep++;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
     if (currentStep === totalSteps) {
       document.getElementById('submit-button').textContent = 'Submit';
@@ -96,7 +97,10 @@ document.getElementById('submit-button').addEventListener('click', () => {
       totalpoints: 0,
       selectedChampions: selectedTeams[1],
       selectedEuropa: selectedTeams[2],
-      selectedConference: selectedTeams[3]
+      selectedConference: selectedTeams[3],
+      registeredAt: firebase.firestore.FieldValue.serverTimestamp() // <-- add this
+      // (optional) also store client time:
+      // registeredAtIso: new Date().toISOString()
     };
 
     db.collection("players").add(playerData)
@@ -153,7 +157,7 @@ function initializeTeamCards(teams) {
     return acc;
   }, {});
 
-  const sortedPots = Object.keys(teamsByPot).sort((a, b) => a - b);
+  const sortedPots = Object.keys(teamsByPot).sort((a, b) => b - a);
 
   sortedPots.forEach(pot => {
     const potHeader = document.createElement('div');

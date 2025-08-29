@@ -116,3 +116,23 @@ body {
 .trophy-icon.conference {
     filter: brightness(0) saturate(100%) invert(65%) sepia(54%) saturate(571%) hue-rotate(83deg) brightness(95%) contrast(91%);
 }
+
+
+/* QR code container */
+.qr-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.qr-code {
+  max-width: 180px;   /* keeps it from being massive */
+  width: 100%;        /* scales responsively within the limit */
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.qr-url {
+  font-size: 0.9rem;
+  color: #ddd;
+  word-break: break-all; /* ensures long URL doesn't overflow */
+}
