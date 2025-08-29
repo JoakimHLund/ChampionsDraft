@@ -55,7 +55,7 @@ body {
   padding: 30px 50px;
   border-radius: 12px;
   text-align: center;
-  max-width: 400px;
+  max-width: 800px;
   width: 80%;
   z-index: 2;
   backdrop-filter: blur(5px);
@@ -125,7 +125,7 @@ body {
 }
 
 .qr-code {
-  max-width: 180px;   /* keeps it from being massive */
+  max-width: 300px;   /* keeps it from being massive */
   width: 100%;        /* scales responsively within the limit */
   height: auto;
   margin-bottom: 10px;
