@@ -60,6 +60,12 @@
     "logo": "fenerbahce.png"
   },
   {
+    "name": "Braga",
+    "pot": 2,
+    "country": "PT",
+    "logo": "braga.png"
+  },
+  {
     "name": "Red Star Belgrade",
     "pot": 2,
     "country": "RS",
@@ -70,6 +76,12 @@
     "pot": 2,
     "country": "FR",
     "logo": "lyon.png"
+  },
+  {
+    "name": "PAOK",
+    "pot": 2,
+    "country": "GR",
+    "logo": "paok.png"
   },
   {
     "name": "Viktoria Plzeň",
@@ -90,16 +102,40 @@
     "logo": "celtic.png"
   },
   {
+    "name": "Maccabi Tel Aviv",
+    "pot": 2,
+    "country": "IL",
+    "logo": "maccabi.png"
+  },
+  {
+    "name": "Young Boys",
+    "pot": 3,
+    "country": "CH",
+    "logo": "youngboys.png"
+  },
+  {
     "name": "Basel",
     "pot": 3,
     "country": "CH",
     "logo": "basel.png"
   },
   {
+    "name": "Midtjylland",
+    "pot": 3,
+    "country": "DK",
+    "logo": "midtjylland.png"
+  },
+  {
     "name": "SC Freiburg",
     "pot": 3,
     "country": "DE",
     "logo": "freiburg.png"
+  },
+  {
+    "name": "Ludogorets Razgrad",
+    "pot": 3,
+    "country": "BG",
+    "logo": "ludogorets.png"
   },
   {
     "name": "Nottingham Forest",
@@ -112,6 +148,12 @@
     "pot": 3,
     "country": "AT",
     "logo": "sturmgraz.png"
+  },
+  {
+    "name": "FCSB",
+    "pot": 3,
+    "country": "RO",
+    "logo": "fcsb.png"
   },
   {
     "name": "Nice",
@@ -138,10 +180,34 @@
     "logo": "stuttgart.png"
   },
   {
+    "name": "Panathinaikos",
+    "pot": 4,
+    "country": "GR",
+    "logo": "panathinaikos.png"
+  },
+  {
+    "name": "Malmö",
+    "pot": 4,
+    "country": "SE",
+    "logo": "malmo.png"
+  },
+  {
     "name": "Go Ahead Eagles",
     "pot": 4,
     "country": "NL",
     "logo": "goaheadeagles.png"
+  },
+  {
+    "name": "Utrecht",
+    "pot": 4,
+    "country": "NL",
+    "logo": "utrecht.png"
+  },
+  {
+    "name": "Genk",
+    "pot": 4,
+    "country": "BE",
+    "logo": "genk.png"
   },
   {
     "name": "Brann",

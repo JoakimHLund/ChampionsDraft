@@ -1,14 +1,218 @@
 [
-    {
-    "name": "Sparta Prague",
-    "pot": 4,
-    "country": "CZ",
-    "logo": "sparta.png"
+  {
+    "name": "Fiorentina",
+    "pot": 1,
+    "country": "IT",
+    "logo": "fiorentina.png"
   },
   {
-    "name": " AEK Larnaca",
+    "name": "AZ Alkmaar",
+    "pot": 1,
+    "country": "NL",
+    "logo": "az.png"
+  },
+  {
+    "name": "Shakhtar Donetsk",
+    "pot": 1,
+    "country": "UA",
+    "logo": "shakhtar.png"
+  },
+  {
+    "name": "Slovan Bratislava",
+    "pot": 1,
+    "country": "SK",
+    "logo": "slovan.png"
+  },
+  {
+    "name": "Rapid Wien",
+    "pot": 1,
+    "country": "AT",
+    "logo": "rapidwien.png"
+  },
+  {
+    "name": "Legia Warsaw",
+    "pot": 1,
+    "country": "PL",
+    "logo": "legiawarszawa.png"
+  },
+  {
+    "name": "Sparta Prague",
+    "pot": 2,
+    "country": "CZ",
+    "logo": "spartapraha.png"
+  },
+  {
+    "name": "Dynamo Kyiv",
+    "pot": 2,
+    "country": "UA",
+    "logo": "dynamokyiv.png"
+  },
+  {
+    "name": "Crystal Palace",
+    "pot": 2,
+    "country": "GB",
+    "logo": "crystalpalace.png"
+  },
+  {
+    "name": "Lech Poznań",
+    "pot": 2,
+    "country": "PL",
+    "logo": "lech.png"
+  },
+  {
+    "name": "Rayo Vallecano",
+    "pot": 2,
+    "country": "ES",
+    "logo": "rayo.png"
+  },
+  {
+    "name": "Shamrock Rovers",
+    "pot": 2,
+    "country": "IE",
+    "logo": "shamrock.png"
+  },
+  {
+    "name": "Omonia",
+    "pot": 3,
+    "country": "CY",
+    "logo": "omonoia.png"
+  },
+  {
+    "name": "Mainz 05",
+    "pot": 3,
+    "country": "DE",
+    "logo": "mainz.png"
+  },
+  {
+    "name": "Strasbourg",
+    "pot": 3,
+    "country": "FR",
+    "logo": "strasbourg.png"
+  },
+  {
+    "name": "Jagiellonia Białystok",
+    "pot": 3,
+    "country": "PL",
+    "logo": "jagiellonia.png"
+  },
+  {
+    "name": "Celje",
+    "pot": 3,
+    "country": "SI",
+    "logo": "celje.png"
+  },
+  {
+    "name": "Rijeka",
+    "pot": 3,
+    "country": "HR",
+    "logo": "rijeka.png"
+  },
+  {
+    "name": "Zrinjski Mostar",
+    "pot": 4,
+    "country": "BA",
+    "logo": "zrinjski.png"
+  },
+  {
+    "name": "Lincoln Red Imps",
     "pot": 4,
     "country": "GI",
+    "logo": "lincoln.png"
+  },
+  {
+    "name": "KuPS",
+    "pot": 4,
+    "country": "FI",
+    "logo": "kups.png"
+  },
+  {
+    "name": "AEK Athens",
+    "pot": 4,
+    "country": "GR",
+    "logo": "athens.png"
+  },
+  {
+    "name": "Aberdeen",
+    "pot": 4,
+    "country": "GB",
+    "logo": "aberdeen.png"
+  },
+  {
+    "name": "Drita",
+    "pot": 4,
+    "country": "XK",
+    "logo": "drita.png"
+  },
+  {
+    "name": "Breiðablik",
+    "pot": 5,
+    "country": "IS",
+    "logo": "breidablik.png"
+  },
+  {
+    "name": "Sigma Olomouc",
+    "pot": 5,
+    "country": "CZ",
+    "logo": "sigma.png"
+  },
+  {
+    "name": "Samsunspor",
+    "pot": 5,
+    "country": "TR",
+    "logo": "samsunspor.png"
+  },
+  {
+    "name": "Raków Częstochowa",
+    "pot": 5,
+    "country": "PL",
+    "logo": "rakow.png"
+  },
+  {
+    "name": "AEK Larnaca",
+    "pot": 5,
+    "country": "CY",
     "logo": "aek.png"
+  },
+  {
+    "name": "Shkëndija",
+    "pot": 5,
+    "country": "MK",
+    "logo": "shkendija.png"
+  },
+  {
+    "name": "BK Häcken",
+    "pot": 6,
+    "country": "SE",
+    "logo": "hacken.png"
+  },
+  {
+    "name": "Lausanne Sport",
+    "pot": 6,
+    "country": "CH",
+    "logo": "lausanne.png"
+  },
+  {
+    "name": "Universitatea Craiova",
+    "pot": 6,
+    "country": "RO",
+    "logo": "craiova.png"
+  },
+  {
+    "name": "Hamrun Spartans",
+    "pot": 6,
+    "country": "MT",
+    "logo": "hamrun.png"
+  },
+  {
+    "name": "Noah",
+    "pot": 6,
+    "country": "AM",
+    "logo": "noah.png"
+  },
+  {
+    "name": "Shelbourne",
+    "pot": 6,
+    "country": "IE",
+    "logo": "shelbourne.png"
   }
 ]
