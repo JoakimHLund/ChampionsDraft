@@ -5,40 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Champions League Draft</title>
   <link rel="stylesheet" href="index.css" />
-  <script>
-    // check if ?beta is present
-    const params = new URLSearchParams(window.location.search);
-    const isBeta = params.has("beta");
+<script>
+  // simple, page-local logic to start the draft
+  function startDraft() {
+    const name = document.getElementById('player-name').value.trim();
+    const department = document.getElementById('department').value.trim();
+    const worksAtAvinor = document.getElementById('works-at-avinor').checked;
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const betaContent = document.getElementById("beta-content");
-      const message = document.getElementById("not-beta");
-
-      if (isBeta) {
-        betaContent.style.display = "block";
-        message.style.display = "none";
-      } else {
-        betaContent.style.display = "none";
-        message.style.display = "flex";
-      }
-    });
-
-    // simple, page-local logic to start the draft
-    function startDraft() {
-      const name = document.getElementById('player-name').value.trim();
-      const department = document.getElementById('department').value.trim();
-      const worksAtAvinor = document.getElementById('works-at-avinor').checked;
-      if (!name) {
-        alert('Please enter your name to continue.');
-        return;
-      }
-      localStorage.setItem('playerName', name);
-      localStorage.setItem('department', department);
-      localStorage.setItem('worksAtAvinor', worksAtAvinor ? "yes" : "no");
-      
-      window.location.href = 'draft.html';
+    if (!name) {
+      alert('Please enter your name to continue.');
+      return;
     }
-  </script>
+
+    localStorage.setItem('playerName', name);
+    localStorage.setItem('department', department);
+    localStorage.setItem('worksAtAvinor', worksAtAvinor ? "yes" : "no");
+
+    window.location.href = 'draft.html';
+  }
+</script>
+
   <style>
     #not-beta {
       display: none;
@@ -51,18 +37,15 @@
   </style>
 </head>
 <body>
-  <!-- Fallback message if not beta -->
-  <div id="not-beta">Get ready for the 25/26 season!</div>
 
   <!-- Full content only visible in beta -->
-  <div id="beta-content" style="display:none;">
     <div class="title-container">
       <img src="img/championsleague.png" alt="Champions League" class="title-image" />
       <h1 id="main-title">Champions League Draft</h1>
       <img src="img/avinor.PNG" alt="Company Logo" class="title-image" />
     </div>
-<div class="rules" id="game-rules">
-  <h2>How it works</h2>
+    <div class="rules" id="game-rules">
+    <h2>How it works</h2>
 
   <ul class="qs">
     <li><strong>Pick 5 teams from each tournament</strong> — Champions League, Europa League, and Conference League. <em>Total: 15 teams.</em></li>
