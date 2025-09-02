@@ -36,11 +36,19 @@ async function fetchEliminatedStatus() {
     });
 }
 
-async function loadLeaderboard() {
+async function loadLeaderboard(scope = 'global') {
     // First fetch eliminated statuses
     await fetchEliminatedStatus();
 
-    db.collection("players").orderBy("totalpoints", "desc").get().then((querySnapshot) => {
+    let query = db.collection("players");
+    if (scope === 'avinor') {
+        // Only employees with WorksAtAvinor = true
+        query = query.where("WorksAtAvinor", "==", true);
+    }
+    // Order by total points for consistent ranking
+    query = query.orderBy("totalpoints", "desc");
+
+    query.get().then((querySnapshot) => {
         const leaderboardBody = document.getElementById('leaderboard-body');
         leaderboardBody.innerHTML = ''; // Clear existing content
 
@@ -233,4 +241,15 @@ function sortTable(column) {
 }
 
 // Call the loadLeaderboard function after the eliminated status is fetched
-loadLeaderboard();
+loadLeaderboard('global');
+
+// Scope toggle
+document.addEventListener('DOMContentLoaded', () => {
+    const scopeSelect = document.getElementById('scope-select');
+    if (scopeSelect) {
+        scopeSelect.addEventListener('change', (e) => {
+            const scope = e.target.value; // 'global' | 'avinor'
+            loadLeaderboard(scope);
+        });
+    }
+});
