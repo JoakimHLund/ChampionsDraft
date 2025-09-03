@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Management</title>
+  <style>
+    :root {
+      --bg:#0d0f14; --card:#151924; --muted:#7b8190; --text:#e7ecf4; --accent:#4ea1ff;
+      --border:#242a39; --success:#2ecc71; --danger:#ff5d5d;
+    }
+    body {background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;}
+    .wrap {max-width:1100px; margin:24px auto; padding:0 16px;}
+    h1 {font-size:24px; margin:0 0 16px;}
+    .card {background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 1px 0 rgba(0,0,0,.25);}
+    .row {display:grid; gap:16px; grid-template-columns: 1.2fr .8fr;}
+    .header {display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;}
+    .section {padding:16px;}
+    .muted {color:var(--muted); font-size:12px;}
+    .search {display:flex; gap:8px; align-items:center;}
+    .search input {flex:1; background:#0f131c; color:var(--text); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
+    .list {max-height:520px; overflow:auto; border:1px solid var(--border); border-radius:10px;}
+    .list-item {display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px dashed var(--border);}
+    .list-item:last-child {border-bottom:0}
+    .list-item label {display:flex; gap:10px; align-items:center; cursor:pointer;}
+    .badge {background:#0f131c; border:1px solid var(--border); color:var(--muted); font-size:11px; padding:2px 8px; border-radius:999px;}
+    .controls {display:flex; gap:8px; align-items:center;}
+    .btn {border:1px solid var(--border); background:#0f131c; color:#fff; padding:10px 12px; border-radius:8px; cursor:pointer;}
+    .btn.primary {background:var(--accent); border-color:transparent; color:#00162e; font-weight:600;}
+    .btn:disabled {opacity:.6; cursor:not-allowed}
+    .chips {display:flex; flex-wrap:wrap; gap:6px;}
+    .chip {background:#0f131c; border:1px solid var(--border); padding:6px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:8px;}
+    .chip button {background:none; border:none; color:var(--muted); cursor:pointer;}
+    .input {width:100%; background:#0f131c; color:var(--text); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
+    .hint {font-size:12px; color:var(--muted); margin-top:6px;}
+    .inline {display:flex; gap:10px; align-items:center;}
+    .hr {height:1px; background:var(--border); margin:12px 0; border:0;}
+    .groups-table {width:100%; border-collapse:collapse;}
+    .groups-table th, .groups-table td {padding:10px 12px; border-bottom:1px dashed var(--border); text-align:left;}
+    .pill {display:inline-block; padding:2px 8px; border-radius:999px; background:#0f131c; border:1px solid var(--border); font-size:11px; color:var(--muted)}
+    .msg {margin-top:10px; font-size:13px}
+    .msg.success {color:var(--success)}
+    .msg.error {color:var(--danger)}
+  </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Team Management</h1>
+    <p class="muted">Build a named group from existing registered teams used by players, then save that group to Firestore.</p>
+
+    <div class="row">
+      <!-- Left: All registered teams (from players collection) -->
+      <div class="card section">
+        <div class="header">
+          <div>
+            <strong>Registered Teams</strong>
+            <div class="muted">Unique team names referenced by players</div>
+          </div>
+          <div class="search">
+            <input id="teamSearch" type="search" placeholder="Filter teams…" />
+          </div>
+        </div>
+
+        <div id="teamsList" class="list" aria-live="polite"></div>
+      </div>
+
+      <!-- Right: Create new grouped team -->
+      <div class="card section">
+        <div class="header">
+          <div>
+            <strong>Create Team</strong>
+            <div class="muted">Pick one or more registered teams and give the group a name</div>
+          </div>
+        </div>
+
+        <div class="inline" style="margin-bottom:8px;">
+          <input id="groupName" class="input" type="text" placeholder="New team name (e.g., Avinor Bergen)" />
+          <button id="createBtn" class="btn primary" disabled>Create</button>
+        </div>
+        <div class="hint">Selected members:</div>
+        <div id="selectedChips" class="chips" style="min-height:36px"></div>
+        <div id="createMsg" class="msg" role="status"></div>
+
+        <hr class="hr" />
+        <div class="header" style="margin-top:6px;">
+          <div>
+            <strong>Existing Groups</strong>
+            <div class="muted">Saved to <code>TeamGroups</code> collection</div>
+          </div>
+          <button id="refreshGroups" class="btn">Refresh</button>
+        </div>
+        <div class="list" style="max-height:260px;">
+          <table class="groups-table" id="groupsTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Members</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="groupsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Firebase (reuse your existing configuration)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtkvwfwgZmCY7Ho1Uh1Itm8jDXhuff7_g",
+      authDomain: "championsdraft25.firebaseapp.com",
+      projectId: "championsdraft25",
+      storageBucket: "championsdraft25.firebasestorage.app",
+      messagingSenderId: "194206448130",
+      appId: "1:194206448130:web:58358b48e25006f511c51b"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ---- State ----
+    let allTeams = [];         // [{ name, count }]
+    let filteredTeams = [];    // same shape, for search view
+    let selected = new Set();  // selected team names to include in the new group
+
+    // Utility: unique & count from players docs
+    async function fetchRegisteredTeams() {
+      // Pull every player's registered team references.
+      // We try common shapes: `Team` (string) and `Teams` (array<string>).
+      const snap = await db.collection('players').get();
+      const counts = new Map();
+
+      snap.forEach(doc => {
+        const p = doc.data() || {};
+        // Prefer `Team` if present
+        if (typeof p.Department === 'string' && p.Department.trim() !== '') {
+          const key = p.Department.trim();
+          counts.set(key, (counts.get(key) || 0) + 1);
+        }
+        // Also support array field `Teams`
+        if (Array.isArray(p.Department)) {
+          p.Department.filter(t => typeof t === 'string' && t.trim() !== '')
+                 .forEach(t => {
+                   const key = t.trim();
+                   counts.set(key, (counts.get(key) || 0) + 1);
+                 });
+        }
+      });
+
+      // To keep parity with your competition selections (if you meant club names instead):
+      // You can optionally extract names from selectedChampions/Europa/Conference arrays if they contain `{ name }` objects.
+      // Uncomment if desired.
+      /*
+      snap.forEach(doc => {
+        const p = doc.data() || {};
+        ['selectedChampions','selectedEuropa','selectedConference'].forEach(f => {
+          if (Array.isArray(p[f])) {
+            p[f].forEach(x => {
+              if (x && typeof x.name === 'string' && x.name.trim() !== '') {
+                const key = x.name.trim();
+                counts.set(key, (counts.get(key) || 0) + 1);
+              }
+            });
+          }
+        });
+      });
+      */
+
+      const arr = Array.from(counts.entries()).map(([name, count]) => ({ name, count }));
+      // Sort by usage desc, then alpha
+      arr.sort((a,b) => (b.count - a.count) || a.name.localeCompare(b.name));
+      allTeams = arr;
+      filteredTeams = arr.slice();
+    }
+
+    function renderTeamsList() {
+      const container = document.getElementById('teamsList');
+      container.innerHTML = '';
+      if (!filteredTeams.length) {
+        container.innerHTML = '<div class="section muted">No registered teams found.</div>';
+        return;
+      }
+      filteredTeams.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'list-item';
+
+        const label = document.createElement('label');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = selected.has(item.name);
+        cb.addEventListener('change', () => toggleSelect(item.name, cb.checked));
+
+        const span = document.createElement('span');
+        span.textContent = item.name;
+
+        label.appendChild(cb);
+        label.appendChild(span);
+
+        const count = document.createElement('span');
+        count.className = 'badge';
+        count.textContent = item.count;
+
+        row.appendChild(label);
+        row.appendChild(count);
+        container.appendChild(row);
+      });
+    }
+
+    function toggleSelect(name, isChecked) {
+      if (isChecked) selected.add(name); else selected.delete(name);
+      renderSelectedChips();
+      updateCreateButtonState();
+    }
+
+    function renderSelectedChips() {
+      const box = document.getElementById('selectedChips');
+      box.innerHTML = '';
+      if (!selected.size) {
+        box.innerHTML = '<span class="muted">None selected</span>';
+        return;
+      }
+      Array.from(selected).sort((a,b)=>a.localeCompare(b)).forEach(name => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.innerHTML = `${name} <button aria-label="Remove ${name}">×</button>`;
+        chip.querySelector('button').addEventListener('click', () => {
+          selected.delete(name);
+          // Uncheck in list
+          document.querySelectorAll('#teamsList input[type="checkbox"]').forEach(cb => {
+            const label = cb.parentElement.querySelector('span');
+            if (label && label.textContent === name) cb.checked = false;
+          });
+          renderSelectedChips();
+          updateCreateButtonState();
+        });
+        box.appendChild(chip);
+      });
+    }
+
+    function updateCreateButtonState() {
+      const btn = document.getElementById('createBtn');
+      const name = document.getElementById('groupName').value.trim();
+      btn.disabled = !(name && selected.size);
+    }
+
+    async function createGroup() {
+      const msg = document.getElementById('createMsg');
+      msg.textContent = '';
+      msg.className = 'msg';
+
+      const name = document.getElementById('groupName').value.trim();
+      if (!name) { msg.textContent = 'Please enter a team name.'; msg.classList.add('error'); return; }
+      if (!selected.size) { msg.textContent = 'Pick at least one member team.'; msg.classList.add('error'); return; }
+
+      // Ensure unique group name
+      const existing = await db.collection('TeamGroups').where('name', '==', name).limit(1).get();
+      if (!existing.empty) { msg.textContent = 'A group with this name already exists.'; msg.classList.add('error'); return; }
+
+      const payload = {
+        name,
+        members: Array.from(selected),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      try {
+        await db.collection('TeamGroups').add(payload);
+        msg.textContent = 'Team group created.';
+        msg.classList.add('success');
+        // Reset
+        selected.clear();
+        document.getElementById('groupName').value = '';
+        renderSelectedChips();
+        updateCreateButtonState();
+        await loadGroups();
+      } catch (e) {
+        console.error(e);
+        msg.textContent = 'Failed to create team group.';
+        msg.classList.add('error');
+      }
+    }
+
+    async function loadGroups() {
+      const tbody = document.getElementById('groupsTbody');
+      tbody.innerHTML = '';
+      const snap = await db.collection('TeamGroups').orderBy('createdAt', 'desc').get();
+      if (snap.empty) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 3; td.className = 'muted'; td.textContent = 'No groups saved yet.';
+        tr.appendChild(td); tbody.appendChild(tr); return;
+      }
+      snap.forEach(doc => {
+        const g = doc.data();
+        const tr = document.createElement('tr');
+        const tdName = document.createElement('td'); tdName.textContent = g.name || '(unnamed)';
+        const tdMembers = document.createElement('td');
+        tdMembers.innerHTML = (g.members || []).map(m => `<span class="pill">${m}</span>`).join(' ');
+        const tdCreated = document.createElement('td');
+        tdCreated.textContent = g.createdAt?.toDate ? g.createdAt.toDate().toLocaleString() : '–';
+        tr.appendChild(tdName); tr.appendChild(tdMembers); tr.appendChild(tdCreated);
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Search filter
+    document.getElementById('teamSearch').addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      filteredTeams = !q ? allTeams.slice() : allTeams.filter(t => t.name.toLowerCase().includes(q));
+      renderTeamsList();
+    });
+
+    // Create button
+    document.getElementById('createBtn').addEventListener('click', createGroup);
+    document.getElementById('groupName').addEventListener('input', updateCreateButtonState);
+    document.getElementById('refreshGroups').addEventListener('click', loadGroups);
+
+    // Init
+    (async function init(){
+      await fetchRegisteredTeams();
+      renderTeamsList();
+      renderSelectedChips();
+      await loadGroups();
+    })();
+  </script>
+</body>
+</html>

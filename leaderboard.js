@@ -36,141 +36,171 @@ async function fetchEliminatedStatus() {
     });
 }
 
-async function loadLeaderboard(scope = 'global') {
-    // First fetch eliminated statuses
-    await fetchEliminatedStatus();
+async function loadLeaderboard(scope = 'global', groupMembers = []) {
+  // First fetch eliminated statuses
+  await fetchEliminatedStatus();
 
-    let query = db.collection("players");
-    if (scope === 'avinor') {
-        // Only employees with WorksAtAvinor = true
-        query = query.where("WorksAtAvinor", "==", true);
+  const leaderboardBody = document.getElementById('leaderboard-body');
+  leaderboardBody.innerHTML = '';
+
+  let query = db.collection("players");
+  let useClientFilter = false;
+  let members = (groupMembers || []).map(s => s.trim()).filter(Boolean);
+
+  if (scope === 'avinor') {
+    query = query.where("WorksAtAvinor", "==", true);
+  } else if (scope === 'group') {
+    // If >10 members, Firestore 'in' cannot be used -> client filter
+    if (members.length > 0 && members.length <= 10) {
+      try {
+        // Attempt server-side filter + order
+        query = query.where("Department", "in", members)
+                     .orderBy("totalpoints", "desc");
+      } catch {
+        // In case SDK throws early, fall back
+        useClientFilter = true;
+      }
+    } else {
+      useClientFilter = true;
     }
-    // Order by total points for consistent ranking
+  }
+
+  if (scope !== 'group') {
     query = query.orderBy("totalpoints", "desc");
+  }
 
-    query.get().then((querySnapshot) => {
-        const leaderboardBody = document.getElementById('leaderboard-body');
-        leaderboardBody.innerHTML = ''; // Clear existing content
+  try {
+    let docs = [];
+    if (useClientFilter) {
+      // Get ordered globally, filter locally by Department ∈ members
+      const snap = await db.collection("players")
+                           .orderBy("totalpoints", "desc")
+                           .get();
+      docs = snap.docs.filter(d => members.includes((d.data().Department || '').trim()));
+    } else {
+      const snap = await query.get();
+      docs = snap.docs;
+    }
 
-        let highestChampionsPoints = 0;
-        let highestEuropaPoints = 0;
-        let highestConferencePoints = 0;
+    // === First pass: top-per-league ===
+    let highestChampionsPoints = 0;
+    let highestEuropaPoints = 0;
+    let highestConferencePoints = 0;
 
-        // First pass: Determine highest score in each league
-        querySnapshot.forEach(doc => {
-            const playerData = doc.data();
-            highestChampionsPoints = Math.max(highestChampionsPoints, playerData.championspoints || 0);
-            highestEuropaPoints = Math.max(highestEuropaPoints, playerData.europapoints || 0);
-            highestConferencePoints = Math.max(highestConferencePoints, playerData.conferencepoints || 0);
-        });
-
-        // Second pass: Build leaderboard with trophy icons for top scorers
-        let rank = 1;
-        let previousPoints = null;
-        let sameRankCount = 0;
-
-        querySnapshot.forEach((doc, index) => {
-            const playerData = doc.data();
-            const currentPoints = playerData.totalpoints || 0;
-
-            let playerName = playerData.Name;
-            if (playerData.Department && playerData.Department.trim() !== '') {
-                playerName = `[${playerData.Department}] ${playerName}`;
-            }
-
-            // Adjust rank only if the current player's points differ from the previous player's
-            if (previousPoints !== null && currentPoints === previousPoints) {
-                sameRankCount++;
-            } else {
-                rank += sameRankCount;
-                sameRankCount = 1;
-            }
-
-            previousPoints = currentPoints;
-
-            const row = document.createElement('tr');
-
-            const rankCell = document.createElement('td');
-            rankCell.classList.add('rank-cell');
-
-            const rankContainer = document.createElement('div');
-            rankContainer.classList.add('rank-container');
-
-            // Add trophy icons for top scorers (only if > 0)
-            if (playerData.championspoints === highestChampionsPoints && highestChampionsPoints > 0) {
-                const championsIcon = createTrophyIcon('img/icons/championstrophy.png', 'Champions Trophy', 'champions');
-                rankContainer.appendChild(championsIcon);
-            }
-            if (playerData.europapoints === highestEuropaPoints && highestEuropaPoints > 0) {
-                const europaIcon = createTrophyIcon('img/icons/europatrophy.png', 'Europa Trophy', 'europa');
-                rankContainer.appendChild(europaIcon);
-            }
-            if (playerData.conferencepoints === highestConferencePoints && highestConferencePoints > 0) {
-                const conferenceIcon = createTrophyIcon('img/icons/conferencetrophy.png', 'Conference Trophy', 'conference');
-                rankContainer.appendChild(conferenceIcon);
-            }
-
-            const rankNumber = document.createElement('span');
-            rankNumber.textContent = rank;
-            rankContainer.appendChild(rankNumber);
-            rankCell.appendChild(rankContainer);
-
-            const nameCell = document.createElement('td');
-            const nameLink = document.createElement('a');
-            nameLink.textContent = playerName;
-            nameLink.href = 'player.html?playername=' + encodeURIComponent(playerData.Name);
-            nameLink.className = 'player-link';
-            nameCell.appendChild(nameLink);
-
-            // Create containers with league name for eliminated check
-            const championsSelectionCell = document.createElement('td');
-            const championsLogosContainer = createLogosContainer(playerData.selectedChampions, 'champions');
-            championsSelectionCell.appendChild(championsLogosContainer);
-
-            const europaSelectionCell = document.createElement('td');
-            const europaLogosContainer = createLogosContainer(playerData.selectedEuropa, 'europa');
-            europaSelectionCell.appendChild(europaLogosContainer);
-
-            const conferenceSelectionCell = document.createElement('td');
-            const conferenceLogosContainer = createLogosContainer(playerData.selectedConference, 'conference');
-            conferenceSelectionCell.appendChild(conferenceLogosContainer);
-
-            const championsPointsCell = document.createElement('td');
-            championsPointsCell.textContent = playerData.championspoints || 0;
-            championsPointsCell.setAttribute('data-column', 'championspoints');
-
-            const europaPointsCell = document.createElement('td');
-            europaPointsCell.textContent = playerData.europapoints || 0;
-            europaPointsCell.setAttribute('data-column', 'europapoints');
-
-            const conferencePointsCell = document.createElement('td');
-            conferencePointsCell.textContent = playerData.conferencepoints || 0;
-            conferencePointsCell.setAttribute('data-column', 'conferencepoints');
-
-            const totalPointsCell = document.createElement('td');
-            totalPointsCell.textContent = currentPoints;
-            totalPointsCell.setAttribute('data-column', 'totalpoints');
-
-            row.appendChild(rankCell);
-            row.appendChild(nameCell);
-            row.appendChild(championsSelectionCell);
-            row.appendChild(europaSelectionCell);
-            row.appendChild(conferenceSelectionCell);
-            row.appendChild(championsPointsCell);
-            row.appendChild(europaPointsCell);
-            row.appendChild(conferencePointsCell);
-            row.appendChild(totalPointsCell);
-
-            leaderboardBody.appendChild(row);
-
-            document.querySelectorAll('th[data-column]').forEach(th => {
-                th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
-            });
-        });
-    }).catch((error) => {
-        console.error("Error getting documents: ", error);
+    docs.forEach(doc => {
+      const p = doc.data();
+      highestChampionsPoints = Math.max(highestChampionsPoints, p.championspoints || 0);
+      highestEuropaPoints    = Math.max(highestEuropaPoints,    p.europapoints    || 0);
+      highestConferencePoints= Math.max(highestConferencePoints,p.conferencepoints|| 0);
     });
+
+    // === Second pass: render + rank (ties handled) ===
+    let rank = 1;
+    let previousPoints = null;
+    let sameRankCount = 0;
+
+    docs.forEach((doc) => {
+      const playerData = doc.data();
+      const currentPoints = playerData.totalpoints || 0;
+
+      let playerName = playerData.Name;
+      if (playerData.Department && playerData.Department.trim() !== '') {
+        playerName = `[${playerData.Department}] ${playerName}`;
+      }
+
+      if (previousPoints !== null && currentPoints === previousPoints) {
+        sameRankCount++;
+      } else {
+        rank += sameRankCount;
+        sameRankCount = 1;
+      }
+      previousPoints = currentPoints;
+
+      const row = document.createElement('tr');
+
+      const rankCell = document.createElement('td');
+      rankCell.classList.add('rank-cell');
+      const rankContainer = document.createElement('div');
+      rankContainer.classList.add('rank-container');
+
+      if (playerData.championspoints === highestChampionsPoints && highestChampionsPoints > 0) {
+        rankContainer.appendChild(createTrophyIcon('img/icons/championstrophy.png', 'Champions Trophy', 'champions'));
+      }
+      if (playerData.europapoints === highestEuropaPoints && highestEuropaPoints > 0) {
+        rankContainer.appendChild(createTrophyIcon('img/icons/europatrophy.png', 'Europa Trophy', 'europa'));
+      }
+      if (playerData.conferencepoints === highestConferencePoints && highestConferencePoints > 0) {
+        rankContainer.appendChild(createTrophyIcon('img/icons/conferencetrophy.png', 'Conference Trophy', 'conference'));
+      }
+
+      const rankNumber = document.createElement('span');
+      rankNumber.textContent = rank;
+      rankContainer.appendChild(rankNumber);
+      rankCell.appendChild(rankContainer);
+
+      const nameCell = document.createElement('td');
+      const nameLink = document.createElement('a');
+      nameLink.textContent = playerName;
+      nameLink.href = 'player.html?playername=' + encodeURIComponent(playerData.Name);
+      nameLink.className = 'player-link';
+      nameCell.appendChild(nameLink);
+
+      const championsSelectionCell = document.createElement('td');
+      championsSelectionCell.appendChild(createLogosContainer(playerData.selectedChampions, 'champions'));
+
+      const europaSelectionCell = document.createElement('td');
+      europaSelectionCell.appendChild(createLogosContainer(playerData.selectedEuropa, 'europa'));
+
+      const conferenceSelectionCell = document.createElement('td');
+      conferenceSelectionCell.appendChild(createLogosContainer(playerData.selectedConference, 'conference'));
+
+      const championsPointsCell = document.createElement('td');
+      championsPointsCell.textContent = playerData.championspoints || 0;
+      championsPointsCell.setAttribute('data-column', 'championspoints');
+
+      const europaPointsCell = document.createElement('td');
+      europaPointsCell.textContent = playerData.europapoints || 0;
+      europaPointsCell.setAttribute('data-column', 'europapoints');
+
+      const conferencePointsCell = document.createElement('td');
+      conferencePointsCell.textContent = playerData.conferencepoints || 0;
+      conferencePointsCell.setAttribute('data-column', 'conferencepoints');
+
+      const totalPointsCell = document.createElement('td');
+      totalPointsCell.textContent = currentPoints;
+      totalPointsCell.setAttribute('data-column', 'totalpoints');
+
+      row.appendChild(rankCell);
+      row.appendChild(nameCell);
+      row.appendChild(championsSelectionCell);
+      row.appendChild(europaSelectionCell);
+      row.appendChild(conferenceSelectionCell);
+      row.appendChild(championsPointsCell);
+      row.appendChild(europaPointsCell);
+      row.appendChild(conferencePointsCell);
+      row.appendChild(totalPointsCell);
+      leaderboardBody.appendChild(row);
+    });
+
+    // keep your sortable headers
+    document.querySelectorAll('th[data-column]').forEach(th => {
+      th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
+    });
+
+  } catch (error) {
+    // Handle composite index prompts or 'in' + order limitations gracefully
+    console.error("Error getting documents: ", error);
+    // Last-resort fallback: global ordered + local filter if group
+    if (scope === 'group') {
+      const snap = await db.collection("players").orderBy("totalpoints", "desc").get();
+      const filtered = snap.docs.filter(d => members.includes((d.data().Department || '').trim()));
+      // Re-run render path with filtered docs
+      // Quick reuse: call loadLeaderboard again but with client-filter enforced
+      await loadLeaderboard('group', members); // (already falls back above)
+    }
+  }
 }
+
 
 // Helper function to create a trophy icon
 function createTrophyIcon(src, alt, className) {
@@ -244,12 +274,42 @@ function sortTable(column) {
 loadLeaderboard('global');
 
 // Scope toggle
-document.addEventListener('DOMContentLoaded', () => {
-    const scopeSelect = document.getElementById('scope-select');
-    if (scopeSelect) {
-        scopeSelect.addEventListener('change', (e) => {
-            const scope = e.target.value; // 'global' | 'avinor'
-            loadLeaderboard(scope);
-        });
-    }
+document.addEventListener('DOMContentLoaded', async () => {
+  const scopeSelect = document.getElementById('scope-select');
+
+  // populate groups under the optgroup
+  await populateTeamGroupsInScope();
+
+  if (scopeSelect) {
+    scopeSelect.addEventListener('change', async (e) => {
+      const value = e.target.value; // 'global' | 'avinor' | 'group:<docId>'
+      if (value.startsWith('group:')) {
+        const id = value.split(':')[1];
+        const doc = await db.collection('TeamGroups').doc(id).get();
+        const members = (doc.data()?.members || [])
+          .filter(x => typeof x === 'string' && x.trim() !== '');
+        await loadLeaderboard('group', members);
+      } else {
+        await loadLeaderboard(value); // 'global' or 'avinor'
+      }
+    });
+  }
 });
+
+
+
+async function populateTeamGroupsInScope() {
+  const og = document.getElementById('groups-optgroup');
+  if (!og) return;
+
+  og.innerHTML = ''; // clear
+  const snap = await db.collection('TeamGroups').orderBy('name').get();
+  snap.forEach(doc => {
+    const g = doc.data() || {};
+    // value encodes the doc id; we’ll fetch members when selected
+    const opt = document.createElement('option');
+    opt.value = `group:${doc.id}`;
+    opt.textContent = g.name || '(unnamed)';
+    og.appendChild(opt);
+  });
+}
