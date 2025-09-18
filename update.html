@@ -1,50 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Results</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-        }
-        #update-leaderboard-button, #update-champions-button, #update-europa-button, #update-conference-button{
-            padding: 15px 30px;
-            font-size: 1.5em;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        #update-leaderboard-button, #update-champions-button, #update-europa-button, #update-conference-button:hover {
-            background-color: #0056b3;
-        }
-        #update-status {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: #333;
-        }
-    </style>
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-app-compat.js"></script>
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-compat.js"></script>
-    <!-- Link to the external JavaScript file -->
-    <script src="update.js" defer></script>
+  <meta charset="UTF-8" />
+  <title>Update – Champions League</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; margin-right: 10px; }
+    #log { margin-top: 16px; white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; }
+    .ok { color: #0a7f2e; } .warn { color: #b36b00; } .err { color: #b00020; }
+  </style>
 </head>
 <body>
-    <button id="update-team-counts-button">Update Team Selection Counts</button>
-    <button id="update-leaderboard-button">Update Leaderboard</button>
-    <button id="update-bonus-button">Update BonusPoints</button>
-    <p id="update-status"></p>
+  <h1>Update Champions League</h1>
+  <div>
+    <button id="fetch-btn">Fetch Champions League matches</button>
+    <button id="load-teams-btn">Load CL teams</button>
+    <button id="load-el-teams-btn">Load EL teams</button>
+    <button id="load-ec-teams-btn">Load EC teams</button>
+
+    <button id="check-names-btn">Check names</button>
+    <button id="update-scores-btn">Update CL scores</button>
+
+    <button id="update-leaderboard-btn">Update leaderboard</button>
+
+  </div>
+
+  <div id="log"></div>
+
+<script type="module">
+  import { initUpdatePage } from './updatescripts/fetchMatches.js';
+  import { initLoadTeams } from './updatescripts/loadTeams.js';
+  import { initCheckNames } from './updatescripts/checkNames.js';
+  import { initUpdateScores } from './updatescripts/updateScores.js';
+  import { initUpdateLeaderboard } from './updatescripts/updateLeaderboard.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initUpdatePage();
+    initLoadTeams();
+    initCheckNames();
+    initUpdateScores();
+    initUpdateLeaderboard();
+  });
+</script>
+
 </body>
 </html>
