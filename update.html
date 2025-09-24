@@ -148,12 +148,22 @@
     <button id="update-leaderboard-btn">Update All Leaderboards</button>
   </div>
 
+    <!-- Step 5: Update Picked Count -->
+  <div class="step full-width">
+    <h3>Step 5: Update Picked Count</h3>
+    <p>Counts how many players picked each team across all competitions and updates Firestore.</p>
+    <button id="update-picked-count-btn">Update Picked Count</button>
+  </div>
+
+
   <script type="module">
     import { initUpdatePage } from './updatescripts/fetchMatches.js';
     import { initLoadTeams } from './updatescripts/loadTeams.js';
     import { initCheckNames } from './updatescripts/checkNames.js';
     import { initUpdateScores } from './updatescripts/updateScores.js';
     import { initUpdateLeaderboard } from './updatescripts/updateLeaderboard.js';
+    import { initUpdatePickedCount } from './updatescripts/updatePickedCount.js';
+    
 
     document.addEventListener('DOMContentLoaded', () => {
       initUpdatePage();
@@ -161,6 +171,7 @@
       initCheckNames();
       initUpdateScores();
       initUpdateLeaderboard();
+      initUpdatePickedCount(); // NEW
     });
   </script>
 </body>

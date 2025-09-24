@@ -170,55 +170,60 @@
   }
 
   async function populateTable(selectedTeams, tableId, collectionName) {
-    const tbody = document.querySelector(`#${tableId} tbody`);
-    tbody.innerHTML = '';
-    let totalScore = 0;
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  tbody.innerHTML = '';
+  let totalScore = 0;
 
-    // Helper: fetch team doc by Name field (not by doc id)
-    async function getTeamDocByName(name) {
-      const q = await db.collection(collectionName).where('Name', '==', name).limit(1).get();
-      return q.empty ? null : q.docs[0].data();
-    }
-
-    for (const t of (selectedTeams || [])) {
-      const selName = (t?.name || '').trim();
-      if (!selName) continue;
-
-      const teamData = await getTeamDocByName(selName);
-      if (!teamData) {
-        console.warn(`Team "${selName}" not found in ${collectionName}`);
-        continue;
-      }
-
-      const displayName  = teamData.Name || selName;
-      const logo         = teamData.logo || '';
-      const played       = teamData.gamesplayed ?? '-';                // optional
-      const basePoints   = Number(teamData.leaguepoints || 0);    // raw points from matches
-      const bonusPoints  = Number(teamData.bonuspoints || 0);     // optional
-      const multiplier   = Number(teamData.multiplier ?? 1);
-      const storedTotal  = (typeof teamData.totalScore === 'number') ? teamData.totalScore : null;
-
-      // Prefer stored totalScore; else compute fallback
-      const totalForTeam = storedTotal ?? ((basePoints + bonusPoints) * multiplier);
-      totalScore += totalForTeam;
-
-      const rowHtml = `
-        <tr>
-          <td class="logo-cell"><img src="img/logos/${logo}" alt="${displayName} logo"></td>
-          <td>${displayName}</td>
-          <td>${played}</td>
-          <td>${basePoints}</td>
-          <td>${bonusPoints}</td>
-          <td>${multiplier}</td>
-          <td>${totalForTeam.toFixed(1)}</td>
-        </tr>
-      `;
-      tbody.insertAdjacentHTML('beforeend', rowHtml);
-    }
-
-    const totalEl = document.getElementById(`${tableId}-total`);
-    if (totalEl) totalEl.textContent = totalScore.toFixed(1);
+  async function getTeamDocByName(name) {
+    const q = await db.collection(collectionName).where('Name', '==', name).limit(1).get();
+    return q.empty ? null : q.docs[0].data();
   }
+
+  for (const t of (selectedTeams || [])) {
+    const selName = (t?.name || '').trim();
+    if (!selName) continue;
+
+    const teamData = await getTeamDocByName(selName);
+    if (!teamData) {
+      console.warn(`Team "${selName}" not found in ${collectionName}`);
+      continue;
+    }
+
+    const displayName  = teamData.Name || selName;
+    const logo         = teamData.logo || '';
+    const played       = teamData.gamesplayed ?? '-';
+    const basePoints   = Number(teamData.leaguepoints || 0);
+    const bonusPoints  = Number(teamData.bonuspoints || 0);
+    const multiplier   = Number(teamData.multiplier ?? 1);
+    const storedTotal  = (typeof teamData.totalScore === 'number') ? teamData.totalScore : null;
+    const totalForTeam = storedTotal ?? ((basePoints + bonusPoints) * multiplier);
+    totalScore += totalForTeam;
+
+    // Create row normally
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="logo-cell"><img src="img/logos/${logo}" alt="${displayName} logo"></td>
+      <td>${displayName}</td>
+      <td>${played}</td>
+      <td>${basePoints}</td>
+      <td>${bonusPoints}</td>
+      <td>${multiplier}</td>
+      <td>${totalForTeam.toFixed(1)}</td>
+    `;
+
+    // Make row clickable
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', () => {
+      window.location.href = `team.html?team=${encodeURIComponent(displayName)}`;
+    });
+
+    tbody.appendChild(row);
+  }
+
+  const totalEl = document.getElementById(`${tableId}-total`);
+  if (totalEl) totalEl.textContent = totalScore.toFixed(1);
+}
+
 
   // Kick off
   getPlayerData();

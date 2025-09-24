@@ -1,226 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Stats</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0 auto;
-            background-color: #2a2a2a;
-        }
-
-        th, td {
-            border: 1px solid #444;
-            padding: 8px;
-            text-align: center;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-
-        th {
-            background-color: #333;
-            color: #fff;
-            position: relative;
-            user-select: none; /* Prevent text selection */
-        }
-
-
-        th.sorted-asc::after {
-            content: "↑";
-            position: absolute;
-        }
-
-        th.sorted-desc::after {
-            content: "↓";
-            position: absolute;
-        }
-
-        tbody tr:nth-child(even) td {
-            background-color: #242424;
-        }
-
-        tbody tr:hover td {
-            background-color: #383838;
-        }
-
-        .logo, .league-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .league-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .champions-league-logo {
-            filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(0deg);
-        }
-
-        .europa-league-logo {
-            filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
-        }
-
-        .conference-league-logo {
-            filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
-        }
-    </style>
-</head>
-<body>
-    <h1>Team Stats</h1>
-    <table id="team-stats-table">
-        <thead>
-            <tr>
-                <th data-column="league">League</th>
-                <th data-column="logo">Logo</th>
-                <th data-column="team">Name</th>
-                <th data-column="selectedBy">Players Picked</th>
-                <th data-column="played">Played Games</th>
-                <th data-column="points">Points</th>
-                <th data-column="multiplier">Multiplier</th>
-                <th data-column="totalScore">Score</th>
-            </tr>
-        </thead>
-        <tbody id="team-stats-body">
-            <!-- Team rows will be populated here by JavaScript -->
-        </tbody>
-    </table>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtkvwfwgZmCY7Ho1Uh1Itm8jDXhuff7_g",
-            authDomain: "championsdraft25.firebaseapp.com",
-            projectId: "championsdraft25",
-            storageBucket: "championsdraft25.firebasestorage.app",
-            messagingSenderId: "194206448130",
-            appId: "1:194206448130:web:58358b48e25006f511c51b"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        const potMultipliers = {
-            1: 1,
-            2: 1.5,
-            3: 2,
-            4: 2.5,
-            5: 3,
-            6: 3.5
-        };
-
-        const leagueLogos = {
-            'ChampionsTeams': { src: 'img/icons/clLogo.png', className: 'champions-league-logo' },
-            'EuropaTeams': { src: 'img/icons/elLogo.png', className: 'europa-league-logo' },
-            'ConferenceTeams': { src: 'img/icons/ecLogo.png', className: 'conference-league-logo' }
-        };
-
-        let teamsData = [];
-        let currentSortColumn = 'name'; // Set to false for initial descending order
-
-        async function getTeamsData() {
-    teamsData = [];
-    const leagues = ['ChampionsTeams', 'EuropaTeams', 'ConferenceTeams'];
-    
-    for (const league of leagues) {
-        const teamsSnapshot = await db.collection(league).get();
-
-        teamsSnapshot.forEach(doc => {
-            const teamData = doc.data();
-            const multiplier = potMultipliers[teamData.pot] || 1;
-            const selectedBy = teamData.selectedBy || 0;
-
-            teamsData.push({
-                league: league,
-                logo: teamData.logo,
-                team: teamData.team,
-                selectedBy: selectedBy,
-                played: teamData.played,
-                points: teamData.points + teamData.EndgameMatchPoints + teamData.bonuspoints,
-                multiplier: multiplier,
-                totalScore: Number(teamData.score) || 0
-            });
-        });
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Stats</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
     }
+    h1 { text-align: center; margin-bottom: 20px; }
 
-    // Sort by 'totalScore' descending by default and apply initial arrow indicator
-    sortTable('totalScore');
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #2a2a2a;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th {
+      background-color: #333;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+    }
+    th.sorted-asc::after { content: "↑"; position: absolute; right: 4px; }
+    th.sorted-desc::after { content: "↓"; position: absolute; right: 4px; }
+
+    tbody tr:nth-child(even) td { background-color: #242424; }
+    tbody tr:hover td { background-color: #383838; cursor: pointer; }
+
+    .logo, .league-logo { width: 40px; height: 40px; object-fit: contain; }
+    .champions-league-logo {
+  filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(0deg);
 }
 
+.europa-league-logo {
+  filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
+}
 
-        function populateTable() {
-            const teamStatsBody = document.getElementById('team-stats-body');
-            teamStatsBody.innerHTML = teamsData.map(team => `
-                <tr>
-                    <td>
-                        <img src="${leagueLogos[team.league].src}" 
-                            alt="${team.league} Logo" 
-                            class="league-logo ${leagueLogos[team.league].className}">
-                    </td>
-                    <td><img src="img/logos/${team.logo}" alt="${team.team} logo" class="logo"></td>
-                    <td>${team.team}</td>
-                    <td>${team.selectedBy}</td>
-                    <td>${team.played}</td>
-                    <td>${team.points}</td>
-                    <td>${team.multiplier}</td>
-                    <td>${team.totalScore.toFixed(1)}</td>
-                </tr>
-            `).join('');
-        }
+.conference-league-logo {
+  filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
+}
 
-        function sortTable(column) {
-            if (currentSortColumn === column) {
-                sortAscending = !sortAscending;
-            } else {
-                // If it's a different column, reset to ascending
-                sortAscending = false;
-            }
-    
-            currentSortColumn = column;
+  </style>
+</head>
+<body>
+  <h1>Team Stats</h1>
+  <table id="team-stats-table">
+    <thead>
+      <tr>
+        <th data-column="league">League</th>
+        <th data-column="logo">Logo</th>
+        <th data-column="team">Name</th>
+        <th data-column="selectedBy">Players Picked</th>
+        <th data-column="gamesplayed">Played Games</th>
+        <th data-column="leaguepoints">League Points</th>
+        <th data-column="multiplier">Multiplier</th>
+        <th data-column="totalScore">Score</th>
+      </tr>
+    </thead>
+    <tbody id="team-stats-body"></tbody>
+  </table>
 
-            teamsData.sort((a, b) => {
-                const valueA = a[column];
-                const valueB = b[column];
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtkvwfwgZmCY7Ho1Uh1Itm8jDXhuff7_g",
+      authDomain: "championsdraft25.firebaseapp.com",
+      projectId: "championsdraft25",
+      storageBucket: "championsdraft25.firebasestorage.app",
+      messagingSenderId: "194206448130",
+      appId: "1:194206448130:web:58358b48e25006f511c51b"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-                if (valueA < valueB) return sortAscending ? -1 : 1;
-                if (valueA > valueB) return sortAscending ? 1 : -1;
-                return 0;
-            });
+    const potMultipliers = {1:1,2:1.5,3:2,4:2.5,5:3,6:3.5};
+    const leagueLogos = {
+      'CLTeams': { src: 'img/icons/clLogo.png' },
+      'ELTeams': { src: 'img/icons/elLogo.png' },
+      'ECTeams': { src: 'img/icons/ecLogo.png' }
+    };
 
-            document.querySelectorAll('th').forEach(th => {
-                th.classList.remove('sorted-asc', 'sorted-desc');
-            });
-            const currentTh = document.querySelector(`th[data-column="${column}"]`);
-            currentTh.classList.add(sortAscending ? 'sorted-asc' : 'sorted-desc');
+    let teamsData = [];
+    let currentSortColumn = 'totalScore';
+    let sortAscending = false;
 
-            populateTable();
-        }
+    async function getTeamsData() {
+      teamsData = [];
+      const leagues = ['CLTeams', 'ELTeams', 'ECTeams'];
 
-        document.querySelectorAll('th[data-column]').forEach(th => {
-            th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
+      for (const league of leagues) {
+        const snapshot = await db.collection(league).get();
+        snapshot.forEach(doc => {
+          const t = doc.data();
+          teamsData.push({
+            league,
+            logo: t.logo || '',
+            team: t.Name || t.team || '',
+            selectedBy: t.selectedBy || 0,
+            gamesplayed: t.gamesplayed ?? 0,
+            leaguepoints: Number(t.leaguepoints || 0) + Number(t.bonuspoints || 0),
+            multiplier: Number(t.multiplier || potMultipliers[t.pot] || 1),
+            totalScore: Number(t.totalScore || 0)
+          });
         });
+      }
+      sortTable('totalScore');
+    }
 
-        getTeamsData();
-    </script>
+    function populateTable() {
+      const tbody = document.getElementById('team-stats-body');
+      tbody.innerHTML = '';
+      teamsData.forEach(team => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <img 
+                src="${leagueLogos[team.league]?.src || ''}" 
+                class="league-logo ${
+                team.league === 'CLTeams' ? 'champions-league-logo' :
+                team.league === 'ELTeams' ? 'europa-league-logo' :
+                team.league === 'ECTeams' ? 'conference-league-logo' : ''
+                }"
+            >
+          </td>
+          <td><img src="img/logos/${team.logo}" alt="${team.team} logo" class="logo"></td>
+          <td>${team.team}</td>
+          <td>${team.selectedBy}</td>
+          <td>${team.gamesplayed}</td>
+          <td>${team.leaguepoints}</td>
+          <td>${team.multiplier}</td>
+          <td>${team.totalScore.toFixed(1)}</td>
+        `;
+        tr.addEventListener('click', () => {
+          window.location.href = `team.html?team=${encodeURIComponent(team.team)}`;
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function sortTable(column) {
+      if (currentSortColumn === column) {
+        sortAscending = !sortAscending;
+      } else {
+        sortAscending = false;
+      }
+      currentSortColumn = column;
+
+      teamsData.sort((a, b) => {
+        let A = a[column], B = b[column];
+        if (typeof A === "string") A = A.toLowerCase();
+        if (typeof B === "string") B = B.toLowerCase();
+
+        if (A < B) return sortAscending ? -1 : 1;
+        if (A > B) return sortAscending ? 1 : -1;
+        return 0;
+      });
+
+      document.querySelectorAll('th').forEach(th => th.classList.remove('sorted-asc','sorted-desc'));
+      const currentTh = document.querySelector(`th[data-column="${column}"]`);
+      currentTh.classList.add(sortAscending ? 'sorted-asc' : 'sorted-desc');
+
+      populateTable();
+    }
+
+    document.querySelectorAll('th[data-column]').forEach(th => {
+      th.addEventListener('click', () => sortTable(th.getAttribute('data-column')));
+    });
+
+    getTeamsData();
+  </script>
 </body>
 </html>

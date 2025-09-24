@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Team Page</title>
+  <link rel="stylesheet" href="team.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="team-header">
+      <img id="team-logo" class="team-logo" src="" alt="Team Logo" />
+      <h1 id="team-name">Team</h1>
+    </header>
+
+    <section class="team-stats">
+      <div class="stat"><span class="label">Pot</span><span id="team-pot" class="value">-</span></div>
+      <div class="stat"><span class="label">Multiplier</span><span id="team-multiplier" class="value">-</span></div>
+      <div class="stat"><span class="label">League Points</span><span id="team-leaguepoints" class="value">-</span></div>
+      <div class="stat"><span class="label">Total Score</span><span id="team-totalscore" class="value">-</span></div>
+      <div class="stat"><span class="label">Games Played</span><span id="team-gamesplayed" class="value">-</span></div>
+    </section>
+
+    <section class="picked-by">
+      <h2>Picked By <span id="picked-count"></span></h2>
+      <div id="picked-by-list" class="picked-players"></div>
+    </section>
+
+    <h2>Matches</h2>
+    <table id="matches-table">
+      <thead>
+        <tr>
+          <th>Matchday</th>
+          <th>Home</th>
+          <th>Score / Date</th>
+          <th>Away</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script type="module" src="team.js"></script>
+</body>
+</html>
