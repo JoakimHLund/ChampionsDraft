@@ -50,9 +50,31 @@
   filter: invert(1) brightness(1.2) contrast(1.2) hue-rotate(180deg);
 }
 
+.back-button {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  background-color: #333;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1000;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #555;
+}
+
+
   </style>
 </head>
 <body>
+      <a href="leaderboard.html" class="back-button">&larr; Back to Leaderboard</a>
+
   <h1>Team Stats</h1>
   <table id="team-stats-table">
     <thead>
