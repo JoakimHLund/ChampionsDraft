@@ -2,47 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Update – Champions League</title>
+  <title>Update Competitions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: system-ui, sans-serif; margin: 24px; }
-    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; margin-right: 10px; }
-    #log { margin-top: 16px; white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; }
-    .ok { color: #0a7f2e; } .warn { color: #b36b00; } .err { color: #b00020; }
+    body { font-family: system-ui, sans-serif; margin: 24px; background: #f9f9f9; }
+    h1 { margin-bottom: 16px; }
+    h2 { margin-top: 0; }
+    .container { display: flex; gap: 24px; align-items: flex-start; }
+    .competition {
+      flex: 1;
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .step {
+      margin-bottom: 16px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .step h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+    .step p {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #555;
+    }
+    button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #f0f0f0; }
+    #log-container {
+      background: #1e1e1e;
+      color: #eee;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+    }
+    #log-container h2 { margin-top: 0; font-size: 18px; color: #fff; }
+    #log {
+      white-space: pre-wrap;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+    .ok { color: #4CAF50; }
+    .warn { color: #FF9800; }
+    .err { color: #F44336; }
+    .full-width { margin: 16px 0; }
   </style>
 </head>
 <body>
-  <h1>Update Champions League</h1>
-  <div>
-    <button id="fetch-btn">Fetch Champions League matches</button>
-    <button id="load-teams-btn">Load CL teams</button>
-    <button id="load-el-teams-btn">Load EL teams</button>
-    <button id="load-ec-teams-btn">Load EC teams</button>
+  <h1>Competition Update Panel</h1>
 
-    <button id="check-names-btn">Check names</button>
-    <button id="update-scores-btn">Update CL scores</button>
-
-    <button id="update-leaderboard-btn">Update leaderboard</button>
-
+  <!-- Output console -->
+  <div id="log-container">
+    <h2>Output Console</h2>
+    <div id="log"></div>
   </div>
 
-  <div id="log"></div>
+  <!-- Step 1: Fetch Matches per competition -->
+  <div class="container">
+    <div class="competition">
+      <h2>Champions League</h2>
+      <div class="step">
+        <h3>Step 1: Fetch Matches</h3>
+        <p>Downloads CL match data from Wikipedia and saves it to Firestore.</p>
+        <button id="fetch-cl-btn">Fetch CL Matches</button>
+      </div>
+    </div>
 
-<script type="module">
-  import { initUpdatePage } from './updatescripts/fetchMatches.js';
-  import { initLoadTeams } from './updatescripts/loadTeams.js';
-  import { initCheckNames } from './updatescripts/checkNames.js';
-  import { initUpdateScores } from './updatescripts/updateScores.js';
-  import { initUpdateLeaderboard } from './updatescripts/updateLeaderboard.js';
+    <div class="competition">
+      <h2>Europa League</h2>
+      <div class="step">
+        <h3>Step 1: Fetch Matches</h3>
+        <p>Downloads EL match data from Wikipedia and saves it to Firestore.</p>
+        <button id="fetch-el-btn">Fetch EL Matches</button>
+      </div>
+    </div>
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initUpdatePage();
-    initLoadTeams();
-    initCheckNames();
-    initUpdateScores();
-    initUpdateLeaderboard();
-  });
-</script>
+    <div class="competition">
+      <h2>Conference League</h2>
+      <div class="step">
+        <h3>Step 1: Fetch Matches</h3>
+        <p>Downloads EC match data from Wikipedia and saves it to Firestore.</p>
+        <button id="fetch-ec-btn">Fetch EC Matches</button>
+      </div>
+    </div>
+  </div>
 
+  <!-- Step 2: Check Names (shared) -->
+  <div class="step full-width">
+    <h3>Step 2: Check Names</h3>
+    <p>Verifies that all team names match across competitions.  
+       ⚠️ If any mismatch is found, contact Joakim for a fix and do not proceed.</p>
+    <button id="check-names-btn">Check All Names</button>
+  </div>
+
+  <!-- Step 3: Update Scores per competition -->
+  <div class="container">
+    <div class="competition">
+      <h2>Champions League</h2>
+      <div class="step">
+        <h3>Step 3: Update Scores</h3>
+        <p>Calculates points from played matches and updates team scores in Firestore.</p>
+        <button id="update-cl-scores-btn">Update CL Scores</button>
+      </div>
+    </div>
+
+    <div class="competition">
+      <h2>Europa League</h2>
+      <div class="step">
+        <h3>Step 3: Update Scores</h3>
+        <p>Calculates points from played matches and updates team scores in Firestore.</p>
+        <button id="update-el-scores-btn">Update EL Scores</button>
+      </div>
+    </div>
+
+    <div class="competition">
+      <h2>Conference League</h2>
+      <div class="step">
+        <h3>Step 3: Update Scores</h3>
+        <p>Calculates points from played matches and updates team scores in Firestore.</p>
+        <button id="update-ec-scores-btn">Update EC Scores</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Leaderboard (shared) -->
+  <div class="step full-width">
+    <h3>Step 4: Update Leaderboard</h3>
+    <p>Regenerates the leaderboard standings for all competitions.</p>
+    <button id="update-leaderboard-btn">Update All Leaderboards</button>
+  </div>
+
+  <script type="module">
+    import { initUpdatePage } from './updatescripts/fetchMatches.js';
+    import { initLoadTeams } from './updatescripts/loadTeams.js';
+    import { initCheckNames } from './updatescripts/checkNames.js';
+    import { initUpdateScores } from './updatescripts/updateScores.js';
+    import { initUpdateLeaderboard } from './updatescripts/updateLeaderboard.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initUpdatePage();
+      initLoadTeams();
+      initCheckNames();
+      initUpdateScores();
+      initUpdateLeaderboard();
+    });
+  </script>
 </body>
 </html>

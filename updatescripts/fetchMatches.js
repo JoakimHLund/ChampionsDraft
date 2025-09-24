@@ -19,8 +19,8 @@ function parseScoreOrDate(text) {
   return { kind: 'date', raw: t };
 }
 
-async function fetchMatchdayTables() {
-  const restUrl = 'https://en.wikipedia.org/api/rest_v1/page/html/2025%E2%80%9326_UEFA_Champions_League';
+async function fetchMatchdayTables(wikiPage, season, collectionName) {
+  const restUrl = `https://en.wikipedia.org/api/rest_v1/page/html/${wikiPage}`;
   const res = await fetch(restUrl, { headers: { 'Accept': 'text/html' } });
   if (!res.ok) throw new Error(`Failed to fetch Wikipedia HTML: ${res.status}`);
   const html = await res.text();
@@ -44,7 +44,7 @@ async function fetchMatchdayTables() {
       if (!home || !away) continue;
       const sd = parseScoreOrDate(mid);
       allMatches.push({
-        season: '2025-26',
+        season,
         stage: 'League phase',
         matchday,
         homeTeam: home,
@@ -54,7 +54,8 @@ async function fetchMatchdayTables() {
         homeGoals: sd.kind === 'score' ? sd.homeGoals : null,
         awayGoals: sd.kind === 'score' ? sd.awayGoals : null,
         dateText: sd.kind === 'date' ? sd.raw : null,
-        importedAt: new Date().toISOString()
+        importedAt: new Date().toISOString(),
+        collectionName
       });
     }
   }
@@ -62,42 +63,58 @@ async function fetchMatchdayTables() {
 }
 
 async function writeMatchesToFirestore(matches) {
-  // Firestore v9+ uses doc(), setDoc() etc. If you prefer batch, import writeBatch
-  const { doc, setDoc, collection, writeBatch } = await import("https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js");
+  const { doc, collection, writeBatch } = await import("https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js");
   const chunkSize = 400;
   let written = 0;
-  for (let i = 0; i < matches.length; i += chunkSize) {
-    const batch = writeBatch(db);
-    const chunk = matches.slice(i, i + chunkSize);
-    for (const m of chunk) {
-      const id = `${m.season}_md${m.matchday}_${m.homeTeam}_vs_${m.awayTeam}`.replace(/[^\w\-]+/g, '_');
-      batch.set(doc(collection(db, 'CLMatches'), id), m, { merge: true });
+
+  // group matches by collectionName
+  const grouped = matches.reduce((acc, m) => {
+    acc[m.collectionName] ||= [];
+    acc[m.collectionName].push(m);
+    return acc;
+  }, {});
+
+  for (const [coll, collMatches] of Object.entries(grouped)) {
+    for (let i = 0; i < collMatches.length; i += chunkSize) {
+      const batch = writeBatch(db);
+      const chunk = collMatches.slice(i, i + chunkSize);
+      for (const m of chunk) {
+        const id = `${m.season}_md${m.matchday}_${m.homeTeam}_vs_${m.awayTeam}`.replace(/[^\w\-]+/g, '_');
+        batch.set(doc(collection(db, coll), id), m, { merge: true });
+      }
+      await batch.commit();
+      written += chunk.length;
     }
-    await batch.commit();
-    written += chunk.length;
   }
   return written;
 }
 
 export function initUpdatePage() {
-  const btn = document.getElementById('fetch-btn');
   const logEl = document.getElementById('log');
-  if (!btn) return;
-
   const log = (msg, cls = '') => {
     const p = document.createElement('div'); if (cls) p.className = cls;
     p.textContent = msg; logEl.appendChild(p);
   };
 
-  btn.addEventListener('click', async () => {
-    logEl.innerHTML = ''; log('Fetching Wikipedia…');
-    try {
-      const matches = await fetchMatchdayTables();
-      log(`Parsed ${matches.length} matches.`);
-      const written = await writeMatchesToFirestore(matches);
-      log(`Wrote ${written} docs into CLMatches.`, 'ok');
-    } catch (err) {
-      console.error(err); log(`Error: ${err.message}`, 'err');
-    }
+  const setups = [
+    { id: 'fetch-cl-btn', wiki: '2025%E2%80%9326_UEFA_Champions_League', coll: 'CLMatches' },
+    { id: 'fetch-el-btn', wiki: '2025%E2%80%9326_UEFA_Europa_League', coll: 'ELMatches' },
+    { id: 'fetch-ec-btn', wiki: '2025%E2%80%9326_UEFA_Conference_League', coll: 'ECMatches' }
+  ];
+
+  setups.forEach(({ id, wiki, coll }) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      logEl.innerHTML = ''; log('Fetching Wikipedia…');
+      try {
+        const matches = await fetchMatchdayTables(wiki, '2025-26', coll);
+        log(`Parsed ${matches.length} matches.`);
+        const written = await writeMatchesToFirestore(matches);
+        log(`Wrote ${written} docs into ${coll}.`, 'ok');
+      } catch (err) {
+        console.error(err); log(`Error: ${err.message}`, 'err');
+      }
+    });
   });
 }
