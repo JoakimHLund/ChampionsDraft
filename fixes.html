@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fix Player Picks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 24px;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin: 12px 0 4px;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 250px;
+      max-width: 100%;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #f0f0f0;
+    }
+    #log {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      background: #1e1e1e;
+      color: #eee;
+      padding: 12px;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .ok { color: #4CAF50; }
+    .err { color: #F44336; }
+  </style>
+</head>
+<body>
+  <h1>Fix Player Picks</h1>
+  <label for="from">From team name:</label>
+  <input id="from" type="text" placeholder="Old team name" />
+
+  <label for="to">To team name:</label>
+  <input id="to" type="text" placeholder="New team name" />
+
+  <br />
+  <button id="update-names-btn">Update Names in Player Picks</button>
+
+  <div id="log"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs, writeBatch, doc
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    // === Firebase config (replace with yours if needed) ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtkvwfwgZmCY7Ho1Uh1Itm8jDXhuff7_g",
+      authDomain: "championsdraft25.firebaseapp.com",
+      projectId: "championsdraft25",
+      storageBucket: "championsdraft25.firebasestorage.app",
+      messagingSenderId: "194206448130",
+      appId: "1:194206448130:web:58358b48e25006f511c51b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const logEl = document.getElementById('log');
+    const log = (msg, cls = '') => {
+      const p = document.createElement('div');
+      if (cls) p.className = cls;
+      p.textContent = msg;
+      logEl.appendChild(p);
+    };
+
+    document.getElementById('update-names-btn').addEventListener('click', async () => {
+      logEl.innerHTML = '';
+      const from = document.getElementById('from').value.trim();
+      const to = document.getElementById('to').value.trim();
+
+      if (!from || !to) {
+        log("Please fill in both 'from' and 'to' values.", 'err');
+        return;
+      }
+
+      try {
+        log(`🔄 Checking player picks for "${from}" → "${to}"...`);
+        const snap = await getDocs(collection(db, 'players'));
+        let updatedCount = 0;
+
+        const batch = writeBatch(db);
+        snap.forEach(d => {
+          const p = d.data();
+          let changed = false;
+
+          const updateArray = (arrName) => {
+            if (Array.isArray(p[arrName])) {
+              p[arrName] = p[arrName].map(entry => {
+                if (entry?.name?.trim() === from) {
+                  changed = true;
+                  return { ...entry, name: to };
+                }
+                return entry;
+              });
+            }
+          };
+
+          updateArray('selectedChampions');
+          updateArray('selectedEuropa');
+          updateArray('selectedConference');
+
+          if (changed) {
+            batch.update(doc(db, 'players', d.id), {
+              selectedChampions: p.selectedChampions || [],
+              selectedEuropa: p.selectedEuropa || [],
+              selectedConference: p.selectedConference || []
+            });
+            updatedCount++;
+          }
+        });
+
+        if (updatedCount > 0) {
+          await batch.commit();
+        }
+
+        log(`✅ Updated ${updatedCount} players.`, 'ok');
+      } catch (err) {
+        console.error(err);
+        log(`Error: ${err.message}`, 'err');
+      }
+    });
+  </script>
+</body>
+</html>
