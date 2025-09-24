@@ -18,9 +18,13 @@ function parseScoreOrDate(text) {
   }
   return { kind: 'date', raw: t };
 }
+function makeCacheBuster() {
+  return `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
 
 async function fetchMatchdayTables(wikiPage, season, collectionName) {
-  const restUrl = `https://en.wikipedia.org/api/rest_v1/page/html/${wikiPage}`;
+  const cacheBuster = makeCacheBuster();
+  const restUrl = `https://en.wikipedia.org/api/rest_v1/page/html/${wikiPage}?cb=${cacheBuster}`;
   const res = await fetch(restUrl, { headers: { 'Accept': 'text/html' } });
   if (!res.ok) throw new Error(`Failed to fetch Wikipedia HTML: ${res.status}`);
   const html = await res.text();

@@ -24,9 +24,13 @@ export function initUpdateScores() {
     const matchesSnap = await getDocs(collection(db, matchColl));
     const matches = matchesSnap.docs.map(d => d.data());
 
-    // Compute raw league points per team
+    // Score + games played map
     const teamScores = {};
-    for (const t of teams) teamScores[t.Name] = 0;
+    const gamesPlayed = {};
+    for (const t of teams) {
+      teamScores[t.Name] = 0;
+      gamesPlayed[t.Name] = 0;
+    }
 
     for (const m of matches) {
       const hg = m.homeGoals, ag = m.awayGoals;
@@ -36,6 +40,11 @@ export function initUpdateScores() {
       const away = m.awayTeam?.trim();
       if (!home || !away) continue;
 
+      // Count games played
+      gamesPlayed[home] = (gamesPlayed[home] ?? 0) + 1;
+      gamesPlayed[away] = (gamesPlayed[away] ?? 0) + 1;
+
+      // Assign points
       if (hg > ag) {
         teamScores[home] = (teamScores[home] ?? 0) + 3;
       } else if (hg < ag) {
@@ -46,17 +55,19 @@ export function initUpdateScores() {
       }
     }
 
-    // Batch update: leaguepoints (raw) and totalScore (raw * multiplier)
+    // Batch update: leaguepoints, gamesplayed, totalScore
     const batch = writeBatch(db);
     let updated = 0;
 
     for (const team of teams) {
       const rawPoints = teamScores[team.Name] ?? 0;
+      const played = gamesPlayed[team.Name] ?? 0;
       const multiplier = Number(team.multiplier ?? 1.0);
       const totalScore = rawPoints * multiplier;
 
       batch.update(doc(db, teamColl, team.id), {
         leaguepoints: rawPoints,
+        gamesplayed: played,
         totalScore: totalScore
       });
       updated++;

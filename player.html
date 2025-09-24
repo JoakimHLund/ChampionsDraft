@@ -192,7 +192,7 @@
 
       const displayName  = teamData.Name || selName;
       const logo         = teamData.logo || '';
-      const played       = teamData.played ?? '-';                // optional
+      const played       = teamData.gamesplayed ?? '-';                // optional
       const basePoints   = Number(teamData.leaguepoints || 0);    // raw points from matches
       const bonusPoints  = Number(teamData.bonuspoints || 0);     // optional
       const multiplier   = Number(teamData.multiplier ?? 1);
