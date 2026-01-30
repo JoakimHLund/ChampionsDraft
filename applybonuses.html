@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Apply Bonuses</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; background: #f9f9f9; }
+    h1 { margin: 0 0 16px; }
+    .card {
+      background: #fff; padding: 16px; border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 16px;
+    }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    label { font-size: 14px; color: #444; }
+    select, button {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; background: #fff;
+      font-size: 14px;
+    }
+    button { cursor: pointer; }
+    button:hover { background: #f0f0f0; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; background: #f7f7f7; }
+    #log-container {
+      background: #1e1e1e; color: #eee; padding: 16px; border-radius: 8px;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+      margin-bottom: 16px;
+    }
+    #log { white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; }
+    .ok { color: #4CAF50; }
+    .warn { color: #FF9800; }
+    .err { color: #F44336; }
+
+    .teams { display: grid; gap: 10px; }
+    .team {
+      background: #fff; border-radius: 12px; padding: 12px; border: 1px solid #e6e6e6;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .team h3 { margin: 0; font-size: 16px; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .chip { font-size: 12px; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; background: #fafafa; color: #555; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    @media (max-width: 760px) {
+      .team { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Apply Bonuses</h1>
+
+  <div id="log-container">
+    <div id="log"></div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <label for="league">League</label>
+      <select id="league">
+        <option value="CL">Champions League (CLTeams)</option>
+        <option value="EL">Europa League (ELTeams)</option>
+        <option value="EC">Conference League (ECTeams)</option>
+      </select>
+
+      <button id="load-btn">Load Teams</button>
+      <button id="refresh-btn" disabled>Refresh</button>
+    </div>
+  </div>
+
+  <div id="teams" class="teams"></div>
+
+  <script type="module">
+    import { db } from './updatescripts/db.js';
+    import {
+      collection, getDocs, doc, updateDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    const FIELDS = [
+      { key: 'playoffbonus', label: 'Playoff bonus' },
+      { key: 'qfbonus',      label: 'QF bonus' },
+      { key: 'sfbonus',      label: 'SF bonus' },
+      { key: 'finalbonus',   label: 'Final bonus' },
+      { key: 'winnerbonus',  label: 'Winner bonus' },
+      { key: 'eliminated',   label: 'Eliminated' },
+    ];
+
+    const leagueToCollection = (league) => {
+      if (league === 'CL') return 'CLTeams';
+      if (league === 'EL') return 'ELTeams';
+      if (league === 'EC') return 'ECTeams';
+      throw new Error('Unknown league: ' + league);
+    };
+
+    const logEl = document.getElementById('log');
+    const teamsEl = document.getElementById('teams');
+    const leagueEl = document.getElementById('league');
+    const loadBtn = document.getElementById('load-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
+
+    const log = (msg, cls = '') => {
+      const div = document.createElement('div');
+      if (cls) div.className = cls;
+      div.textContent = msg;
+      logEl.appendChild(div);
+    };
+
+    const clearLog = () => { logEl.innerHTML = ''; };
+
+    function isTruthy(v) {
+      return v === true || v === 1 || v === 'true' || v === '1';
+    }
+
+    function renderTeamRow({ collName, id, data }) {
+      const name = (data?.Name || id || '').toString().trim() || '(Unnamed team)';
+
+      const root = document.createElement('div');
+      root.className = 'team';
+
+      const left = document.createElement('div');
+      const title = document.createElement('h3');
+      title.textContent = name;
+      left.appendChild(title);
+
+      // Status chips (only show truthy ones)
+      const chips = document.createElement('div');
+      chips.className = 'chips';
+      const active = FIELDS.filter(f => isTruthy(data?.[f.key]));
+      if (active.length === 0) {
+        const c = document.createElement('span');
+        c.className = 'chip';
+        c.textContent = 'No bonuses/status';
+        chips.appendChild(c);
+      } else {
+        for (const f of active) {
+          const c = document.createElement('span');
+          c.className = 'chip';
+          c.textContent = f.key;
+          chips.appendChild(c);
+        }
+      }
+      left.appendChild(chips);
+
+      const right = document.createElement('div');
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      for (const f of FIELDS) {
+        const btn = document.createElement('button');
+        btn.textContent = f.label;
+        btn.dataset.field = f.key;
+
+        // disable if already applied
+        btn.disabled = isTruthy(data?.[f.key]);
+
+        btn.addEventListener('click', async () => {
+          btn.disabled = true; // optimistic disable
+          try {
+            const ref = doc(db, collName, id);
+            await updateDoc(ref, { [f.key]: true });
+
+            log(`✅ ${name}: set ${f.key}=true`, 'ok');
+
+            // update chips locally
+            const chip = document.createElement('span');
+            chip.className = 'chip';
+            chip.textContent = f.key;
+
+            // remove "No bonuses/status" chip if present
+            const noChip = [...chips.children].find(x => x.textContent === 'No bonuses/status');
+            if (noChip) noChip.remove();
+
+            // avoid duplicates visually (shouldn’t happen because we disabled, but just in case)
+            const exists = [...chips.children].some(x => x.textContent === f.key);
+            if (!exists) chips.appendChild(chip);
+          } catch (err) {
+            console.error(err);
+            btn.disabled = false; // revert
+            log(`❌ ${name}: failed to set ${f.key} (${err.message})`, 'err');
+          }
+        });
+
+        actions.appendChild(btn);
+      }
+
+      right.appendChild(actions);
+
+      root.appendChild(left);
+      root.appendChild(right);
+      return root;
+    }
+
+    async function loadTeams() {
+      clearLog();
+      teamsEl.innerHTML = '';
+
+      const league = leagueEl.value;
+      const collName = leagueToCollection(league);
+
+      log(`Loading teams from ${collName}…`);
+
+      try {
+        const snap = await getDocs(collection(db, collName));
+        const teams = snap.docs
+          .map(d => ({ id: d.id, data: d.data() }))
+          .sort((a, b) => {
+  const aPts = Number(a.data?.leaguepoints ?? 0);
+  const bPts = Number(b.data?.leaguepoints ?? 0);
+
+  // Highest leaguepoints first
+  if (bPts !== aPts) return bPts - aPts;
+
+  // Tie-breaker: name
+  return String(a.data?.Name || a.id).localeCompare(String(b.data?.Name || b.id));
+});
+
+        log(`Loaded ${teams.length} teams.`, 'ok');
+
+        for (const t of teams) {
+          teamsEl.appendChild(renderTeamRow({ collName, id: t.id, data: t.data }));
+        }
+
+        refreshBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        log(`Error: ${err.message}`, 'err');
+      }
+    }
+
+    loadBtn.addEventListener('click', loadTeams);
+    refreshBtn.addEventListener('click', loadTeams);
+  </script>
+</body>
+</html>

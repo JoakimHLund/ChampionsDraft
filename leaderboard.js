@@ -20,20 +20,31 @@ const eliminatedStatus = {
 
 // Fetch eliminated status for all teams
 async function fetchEliminatedStatus() {
-    const championsSnapshot = await db.collection('ChampionsTeams').get();
-    championsSnapshot.forEach(doc => {
-        eliminatedStatus.champions[doc.data().team] = doc.data().eliminated;
-    });
+  // Reset (so refreshes don't keep stale keys)
+  eliminatedStatus.champions = {};
+  eliminatedStatus.europa = {};
+  eliminatedStatus.conference = {};
 
-    const europaSnapshot = await db.collection('EuropaTeams').get();
-    europaSnapshot.forEach(doc => {
-        eliminatedStatus.europa[doc.data().team] = doc.data().eliminated;
-    });
+  const clSnap = await db.collection('CLTeams').get();
+  clSnap.forEach(doc => {
+    const d = doc.data() || {};
+    const name = String(d.Name || doc.id).trim();
+    eliminatedStatus.champions[name] = d.eliminated === true;
+  });
 
-    const conferenceSnapshot = await db.collection('ConferenceTeams').get();
-    conferenceSnapshot.forEach(doc => {
-        eliminatedStatus.conference[doc.data().team] = doc.data().eliminated;
-    });
+  const elSnap = await db.collection('ELTeams').get();
+  elSnap.forEach(doc => {
+    const d = doc.data() || {};
+    const name = String(d.Name || doc.id).trim();
+    eliminatedStatus.europa[name] = d.eliminated === true;
+  });
+
+  const ecSnap = await db.collection('ECTeams').get();
+  ecSnap.forEach(doc => {
+    const d = doc.data() || {};
+    const name = String(d.Name || doc.id).trim();
+    eliminatedStatus.conference[name] = d.eliminated === true;
+  });
 }
 
 async function loadLeaderboard(scope = 'global', groupMembers = []) {
@@ -226,7 +237,9 @@ function createLogosContainer(teamArray, leagueName) {
             logoImg.title = team.name;
 
             // Check if eliminated and apply grayscale if true
-            const isEliminated = eliminatedStatus[leagueName][team.name] === true;
+            const key = String(team.name || '').trim();
+            const isEliminated = eliminatedStatus[leagueName]?.[key] === true;
+
             if (isEliminated) {
                 logoImg.classList.add('eliminated-logo'); // Add CSS class that applies grayscale
             }
