@@ -23,6 +23,7 @@ export function initUpdateScores() {
 
   const toNameKey = (s) => (s ?? '').toString().trim();
   const isTruthy = (v) => v === true || v === 1 || v === 'true' || v === '1';
+  const normStage = (s) => (s ?? '').toString().trim().toLowerCase();
 
   function calcBonusPoints(teamDoc) {
     let sum = 0;
@@ -30,6 +31,17 @@ export function initUpdateScores() {
       if (isTruthy(teamDoc?.[field])) sum += pts;
     }
     return sum;
+  }
+
+  function applyResult(pointsMap, home, away, hg, ag) {
+    if (hg > ag) {
+      pointsMap[home] = (pointsMap[home] ?? 0) + 3;
+    } else if (hg < ag) {
+      pointsMap[away] = (pointsMap[away] ?? 0) + 3;
+    } else {
+      pointsMap[home] = (pointsMap[home] ?? 0) + 1;
+      pointsMap[away] = (pointsMap[away] ?? 0) + 1;
+    }
   }
 
   async function updateCompetitionScores(compName, teamColl, matchColl) {
@@ -44,58 +56,61 @@ export function initUpdateScores() {
     const matches = matchesSnap.docs.map(d => d.data());
 
     // Init maps
-    const teamScores = {};
-    const gamesPlayed = {};
+    const leaguePoints = {};
+    const matchPoints = {};
+    const leagueGamesPlayed = {};
+    const otherGamesPlayed = {}; // optional, useful for debugging
+
     for (const t of teams) {
       const k = toNameKey(t.Name);
-      teamScores[k] = 0;
-      gamesPlayed[k] = 0;
+      leaguePoints[k] = 0;
+      matchPoints[k] = 0;
+      leagueGamesPlayed[k] = 0;
+      otherGamesPlayed[k] = 0;
     }
 
-    // League phase only
     for (const m of matches) {
-      if (m?.stage !== "League phase") continue;
-
       const hg = m.homeGoals, ag = m.awayGoals;
-      if (hg == null || ag == null) continue; // not played
+      if (hg == null || ag == null) continue; // only count played (score set)
 
       const home = toNameKey(m.homeTeam);
       const away = toNameKey(m.awayTeam);
       if (!home || !away) continue;
 
-      // Count games played (league phase only)
-      gamesPlayed[home] = (gamesPlayed[home] ?? 0) + 1;
-      gamesPlayed[away] = (gamesPlayed[away] ?? 0) + 1;
+      const stage = normStage(m.stage);
+      const isLeague = stage === 'league phase';
 
-      // Assign points (league phase)
-      if (hg > ag) {
-        teamScores[home] = (teamScores[home] ?? 0) + 3;
-      } else if (hg < ag) {
-        teamScores[away] = (teamScores[away] ?? 0) + 3;
+      if (isLeague) {
+        leagueGamesPlayed[home] = (leagueGamesPlayed[home] ?? 0) + 1;
+        leagueGamesPlayed[away] = (leagueGamesPlayed[away] ?? 0) + 1;
+        applyResult(leaguePoints, home, away, hg, ag);
       } else {
-        teamScores[home] = (teamScores[home] ?? 0) + 1;
-        teamScores[away] = (teamScores[away] ?? 0) + 1;
+        otherGamesPlayed[home] = (otherGamesPlayed[home] ?? 0) + 1;
+        otherGamesPlayed[away] = (otherGamesPlayed[away] ?? 0) + 1;
+        applyResult(matchPoints, home, away, hg, ag);
       }
     }
 
-    // Batch update: leaguepoints, gamesplayed, bonuspoints, totalScore
+    // Batch update teams
     const batch = writeBatch(db);
     let updated = 0;
 
     for (const team of teams) {
       const nameKey = toNameKey(team.Name);
 
-      const leaguepoints = teamScores[nameKey] ?? 0;
-      const played = gamesPlayed[nameKey] ?? 0;
+      const leaguepoints = leaguePoints[nameKey] ?? 0;
+      const matchpoints  = matchPoints[nameKey] ?? 0;
 
+      const gamesplayed = leagueGamesPlayed[nameKey] ?? 0; // keep this as league games
       const bonuspoints = calcBonusPoints(team);
       const multiplier = Number(team.multiplier ?? 1.0);
 
-      const totalScore = (leaguepoints + bonuspoints) * multiplier;
+      const totalScore = (leaguepoints + matchpoints + bonuspoints) * multiplier;
 
       batch.update(doc(db, teamColl, team.id), {
         leaguepoints,
-        gamesplayed: played,
+        matchpoints,
+        gamesplayed,
         bonuspoints,
         totalScore
       });

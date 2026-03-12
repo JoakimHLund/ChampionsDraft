@@ -16,6 +16,29 @@ const gpEl = document.getElementById("team-gamesplayed");
 const matchesTable = document.querySelector("#matches-table tbody");
 const pickedByList = document.getElementById("picked-by-list");
 
+// 1. Define stage sorting order and display labels
+const stageOrder = {
+  "playoff": 1,
+  "roundof16": 2,
+  "quarterfinal": 3,
+  "semifinal": 4,
+  "final": 5
+};
+
+const stageLabels = {
+  "playoff": "PO",
+  "roundof16": "R16",
+  "quarterfinal": "QF",
+  "semifinal": "SF",
+  "final": "Final"
+};
+
+// Helper to normalize the stage string from Firebase
+const normalizeStage = (stage) => {
+  if (!stage) return "";
+  return stage.toLowerCase().replace(/[\s-]/g, '');
+};
+
 async function loadTeamInfo() {
   if (!teamName) {
     nameEl.textContent = "No team specified";
@@ -108,8 +131,6 @@ async function loadPickedBy() {
   }
 }
 
-
-
 async function loadTeamMatches() {
   if (!teamName) return;
 
@@ -125,12 +146,53 @@ async function loadTeamMatches() {
     snap2.forEach(d => allMatches.push(d.data()));
   }
 
-  allMatches.sort((a, b) => (a.matchday ?? 0) - (b.matchday ?? 0));
+  // 2. Updated sorting logic
+  allMatches.sort((a, b) => {
+    const hasMatchdayA = typeof a.matchday === 'number';
+    const hasMatchdayB = typeof b.matchday === 'number';
 
+    // Both are league matches: sort by matchday
+    if (hasMatchdayA && hasMatchdayB) {
+      return a.matchday - b.matchday;
+    }
+
+    // A is league, B is knockout: A comes first
+    if (hasMatchdayA && !hasMatchdayB) return -1;
+    
+    // B is league, A is knockout: B comes first
+    if (!hasMatchdayA && hasMatchdayB) return 1;
+
+    // Both are knockout: sort by predefined stage order
+    const stageA = normalizeStage(a.stage);
+    const stageB = normalizeStage(b.stage);
+    
+    const rankA = stageOrder[stageA] || 99; // 99 pushes unknown stages to the end
+    const rankB = stageOrder[stageB] || 99;
+
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+
+    // If they are the same stage (e.g., Leg 1 and Leg 2), sort by leg if available
+    const legA = a.leg || 0;
+    const legB = b.leg || 0;
+    return legA - legB;
+  });
+
+  // 3. Render loop with stage labels
   for (const m of allMatches) {
+    let displayLabel = "-";
+
+    if (typeof m.matchday === 'number') {
+      displayLabel = m.matchday;
+    } else if (m.stage) {
+      const normStage = normalizeStage(m.stage);
+      displayLabel = stageLabels[normStage] || m.stage;
+    }
+
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${m.matchday ?? "-"}</td>
+      <td>${displayLabel}</td>
       <td>${m.homeTeam}</td>
       <td>${m.scoreText ?? m.dateText ?? "-"}</td>
       <td>${m.awayTeam}</td>

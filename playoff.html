@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Register Round of 16 Matchups</title>
+  <title>Register Playoff Matchups</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="roundof16.css" />
+  <link rel="stylesheet" href="playoff.css" />
 </head>
 <body>
-  <h1>Round of 16 Matchups</h1>
+  <h1>Playoff Matchups</h1>
 
   <div id="log-container">
     <h2>Output Console</h2>
@@ -28,12 +28,12 @@
     </div>
 
     <p class="muted">
-      Eligible teams = not eliminated.
+      Eligible teams = not eliminated AND no <code>playoffbonus</code> already applied.
     </p>
   </div>
 
   <div id="matches" class="matches"></div>
 
-  <script type="module" src="roundof16.js"></script>
+  <script type="module" src="playoff.js"></script>
 </body>
 </html>

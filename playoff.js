@@ -40,7 +40,7 @@ function normalizeTieId(league, a, b) {
   const x = toKey(a).toLowerCase();
   const y = toKey(b).toLowerCase();
   const [p, q] = x < y ? [x, y] : [y, x];
-  return `${league}-roundof16-${p}__${q}`.replace(/[^a-z0-9_-]/g, '_');
+  return `${league}-playoff-${p}__${q}`.replace(/[^a-z0-9_-]/g, '_');
 }
 
 function buildSelect() {
@@ -273,8 +273,8 @@ function renderMatchRow(idx, matchColl) {
 
       const batch = writeBatch(db);
       batch.set(doc(db, matchColl, leg1Id), {
-        stage: "RoundOf16",
-        round: "RoundOf16",
+        stage: "Playoff",
+        round: "Playoff",
         tieId,
         matchupNumber,
         leg: 1,
@@ -287,8 +287,8 @@ function renderMatchRow(idx, matchColl) {
       }, { merge: true });
 
       batch.set(doc(db, matchColl, leg2Id), {
-        stage: "RoundOf16",
-        round: "RoundOf16",
+        stage: "Playoff",
+        round: "Playoff",
         tieId,
         matchupNumber,
         leg: 2,
@@ -397,10 +397,10 @@ function lockRow(row, matchColl, a, b) {
   });
 }
 
-async function loadExistingRoundOf16Ties(matchColl) {
+async function loadExistingPlayoffTies(matchColl) {
   const q = query(
     collection(db, matchColl),
-    where('stage', '==', 'RoundOf16')
+    where('stage', '==', 'Playoff')
   );
 
   const snap = await getDocs(q);
@@ -440,18 +440,17 @@ async function loadEligibleTeams() {
   const teamSnap = await getDocs(collection(db, teamColl));
   const allTeams = teamSnap.docs.map(d => d.data() || {});
 
-  // Note: Adjust filter here if you have specific round of 16 requirements.
   allEligibleTeams = allTeams
-    .filter(t => !isTruthy(t.eliminated)) 
+    .filter(t => !isTruthy(t.eliminated) && !isTruthy(t.playoffbonus))
     .map(t => toKey(t.Name))
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
 
-  log(`Loading existing Round of 16 ties from ${matchColl}…`);
-  const existingTies = await loadExistingRoundOf16Ties(matchColl);
-  log(`Found ${existingTies.length} existing Round of 16 ties.`, existingTies.length ? 'ok' : 'warn');
+  log(`Loading existing playoff ties from ${matchColl}…`);
+  const existingTies = await loadExistingPlayoffTies(matchColl);
+  log(`Found ${existingTies.length} existing playoff ties.`, existingTies.length ? 'ok' : 'warn');
 
-  // render 8 matches (16 teams total)
+  // render 8
   for (let i = 0; i < 8; i++) {
     matchesEl.appendChild(renderMatchRow(i, matchColl));
   }
