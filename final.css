@@ -1,0 +1,143 @@
+body { font-family: system-ui, sans-serif; margin: 24px; background: #f9f9f9; }
+h1 { margin: 0 0 16px; }
+
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+}
+
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+label { font-size: 14px; color: #444; }
+
+select, button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 14px;
+}
+button { cursor: pointer; }
+button:hover { background: #f0f0f0; }
+button:disabled { cursor: not-allowed; opacity: 0.6; background: #f7f7f7; }
+
+.muted { color: #666; font-size: 13px; margin: 8px 0 0; }
+
+#log-container {
+  background: #1e1e1e;
+  color: #eee;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+}
+#log-container h2 { margin: 0; font-size: 16px; color: #fff; }
+#log {
+  white-space: pre-wrap;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+  margin-top: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.ok { color: #4CAF50; }
+.warn { color: #FF9800; }
+.err { color: #F44336; }
+
+.matches {
+  display: grid;
+  gap: 12px;
+}
+
+.match {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.match-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.match-title { font-weight: 700; }
+.match-sub { color: #666; font-size: 13px; }
+
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .match-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.match.locked {
+  opacity: 0.7;
+  background: #f3f3f3;
+}
+.match.locked .match-sub::after {
+  content: " • Locked (already saved)";
+  color: #666;
+}
+
+.match-result {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #ddd;
+  display: grid;
+  gap: 10px;
+}
+
+.result-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 16px 70px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.teamlabel {
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+.teamlabel:first-child { text-align: right; }
+.teamlabel:nth-last-child(3) { text-align: left; }
+
+.goal {
+  width: 70px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  text-align: center;
+}
+
+.dash {
+  text-align: center;
+  color: #666;
+}
+
+.result-row button {
+  padding: 8px 12px;
+}
+
+.result-status {
+  font-size: 12px;
+  color: #666;
+  grid-column: 1 / -1;
+  margin-top: -4px;
+  text-align: center;
+}

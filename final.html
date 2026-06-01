@@ -1,18 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Final Match</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script defer src="final.js"></script>
-    <link rel="stylesheet" href="playoff.css">
+  <meta charset="UTF-8" />
+  <title>Register Final Matchup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="final.css" />
 </head>
 <body>
-    <h1 id="league-title">Final Match</h1>
-    <button id="update-table">Update Table</button>
+  <h1>Final Matchup</h1>
 
-    <div id="final-container"></div>
+  <div id="log-container">
+    <h2>Output Console</h2>
+    <div id="log"></div>
+  </div>
+
+  <div class="card controls">
+    <div class="row">
+      <label for="league">League</label>
+      <select id="league">
+        <option value="CL">Champions League</option>
+        <option value="EL">Europa League</option>
+        <option value="EC">Conference League</option>
+      </select>
+
+      <button id="load-teams-btn">Load eligible teams</button>
+      <div id="eligible-count" class="muted"></div>
+    </div>
+
+    <p class="muted">
+      Eligible teams = not eliminated.
+    </p>
+  </div>
+
+  <div id="matches" class="matches"></div>
+
+  <script type="module" src="final.js"></script>
 </body>
 </html>
