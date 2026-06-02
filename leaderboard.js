@@ -11,6 +11,116 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+function formatDisplayName(playerData) {
+  const baseName = playerData?.Name || 'Unknown';
+  const department = (playerData?.Department || '').trim();
+  return department ? `[${department}] ${baseName}` : baseName;
+}
+
+function setTextById(id, text) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.textContent = text;
+  }
+}
+
+function setHtmlById(id, html) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.innerHTML = html;
+  }
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function updateLeaderboardHighlights(docs) {
+  const podiumEl = document.getElementById('podium');
+  if (!podiumEl) return;
+
+  const players = docs.map(d => d.data());
+  const sortedByTotal = [...players].sort((a, b) => (b.totalpoints || 0) - (a.totalpoints || 0));
+  const topThree = sortedByTotal.slice(0, 3);
+
+  const podiumSlots = [
+    { rankLabel: '2nd', emoji: '🥈', cssClass: 'podium-second', stepHeight: 56, player: topThree[1] },
+    { rankLabel: '1st', emoji: '🥇', cssClass: 'podium-first', stepHeight: 88, player: topThree[0] },
+    { rankLabel: '3rd', emoji: '🥉', cssClass: 'podium-third', stepHeight: 42, player: topThree[2] }
+  ];
+
+  podiumEl.innerHTML = podiumSlots.map(slot => {
+    const player = slot.player;
+    if (!player) {
+      return `
+        <div class="podium-place ${slot.cssClass}">
+          <span class="podium-emoji">${slot.emoji}</span>
+          <div class="podium-label">${slot.rankLabel}</div>
+          <div class="podium-name">-</div>
+          <div class="podium-points">0 pts</div>
+          <div class="podium-step" style="height:${slot.stepHeight}px"></div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="podium-place ${slot.cssClass}">
+        <span class="podium-emoji">${slot.emoji}</span>
+        <div class="podium-label">${slot.rankLabel}</div>
+        <div class="podium-name">${escapeHtml(formatDisplayName(player))}</div>
+        <div class="podium-points">${player.totalpoints || 0} pts</div>
+        <div class="podium-step" style="height:${slot.stepHeight}px"></div>
+      </div>
+    `;
+  }).join('');
+
+  if (players.length === 0) {
+    setHtmlById('cl-winner', '<img src="img/icons/championstrophy.png" alt="Champions Trophy" class="winner-icon trophy-icon champions">Champions league winner: -');
+    setHtmlById('el-winner', '<img src="img/icons/europatrophy.png" alt="Europa Trophy" class="winner-icon trophy-icon europa">Europa league winner: -');
+    setHtmlById('ecl-winner', '<img src="img/icons/conferencetrophy.png" alt="Conference Trophy" class="winner-icon trophy-icon conference">Conference league winners: -');
+    return;
+  }
+
+  let clWinner = players[0];
+  let elWinner = players[0];
+  let maxConferencePoints = Number.NEGATIVE_INFINITY;
+
+  players.forEach(player => {
+    if ((player.championspoints || 0) > (clWinner.championspoints || 0)) {
+      clWinner = player;
+    }
+    if ((player.europapoints || 0) > (elWinner.europapoints || 0)) {
+      elWinner = player;
+    }
+    if ((player.conferencepoints || 0) > maxConferencePoints) {
+      maxConferencePoints = player.conferencepoints || 0;
+    }
+  });
+
+  const conferenceWinners = players
+    .filter(player => (player.conferencepoints || 0) === maxConferencePoints)
+    .map(formatDisplayName)
+    .join(', ');
+
+  setHtmlById(
+    'cl-winner',
+    `<img src="img/icons/championstrophy.png" alt="Champions Trophy" class="winner-icon trophy-icon champions">Champions league winner: ${escapeHtml(formatDisplayName(clWinner))} (${clWinner.championspoints || 0} pts)`
+  );
+  setHtmlById(
+    'el-winner',
+    `<img src="img/icons/europatrophy.png" alt="Europa Trophy" class="winner-icon trophy-icon europa">Europa league winner: ${escapeHtml(formatDisplayName(elWinner))} (${elWinner.europapoints || 0} pts)`
+  );
+  setHtmlById(
+    'ecl-winner',
+    `<img src="img/icons/conferencetrophy.png" alt="Conference Trophy" class="winner-icon trophy-icon conference">Conference league winners: ${escapeHtml(conferenceWinners || '-')} (${maxConferencePoints > Number.NEGATIVE_INFINITY ? maxConferencePoints : 0} pts)`
+  );
+}
+
 // Global object to store eliminated status of teams by competition
 const eliminatedStatus = {
     champions: {},
@@ -92,6 +202,8 @@ async function loadLeaderboard(scope = 'global', groupMembers = []) {
       const snap = await query.get();
       docs = snap.docs;
     }
+
+    updateLeaderboardHighlights(docs);
 
     // === First pass: top-per-league ===
     let highestChampionsPoints = 0;
